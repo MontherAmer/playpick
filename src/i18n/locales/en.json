@@ -5,7 +5,8 @@
   },
   "common": {
     "language": "Language",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "soon": "Soon"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -38,9 +39,33 @@
   "dashboard": {
     "heading": "What would you like to do?",
     "subtitle": "Pick a tool to start organizing your playlists.",
-    "empty": {
-      "title": "Your tools will live here",
-      "description": "Google sign-in and the playlist tools are being built. This space is reserved for them."
+    "primary": "Popular tools",
+    "more": "More tools"
+  },
+  "tools": {
+    "reorder": {
+      "title": "Reorder Playlist",
+      "description": "Rearrange videos in one of your existing playlists using drag and drop."
+    },
+    "copy": {
+      "title": "Copy Between Playlists",
+      "description": "Copy videos from one playlist to another without removing them from the original playlist."
+    },
+    "create": {
+      "title": "Create Playlist",
+      "description": "Create a new YouTube playlist and start adding videos to it."
+    },
+    "build": {
+      "title": "Build Playlist",
+      "description": "Choose videos from your existing playlists and combine them into a new playlist."
+    },
+    "merge": {
+      "title": "Merge Playlists",
+      "description": "Combine videos from multiple playlists into a single playlist."
+    },
+    "duplicate": {
+      "title": "Duplicate Playlist",
+      "description": "Create a copy of an existing playlist."
     }
   },
   "notFound": {

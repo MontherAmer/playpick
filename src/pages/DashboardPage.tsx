@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next'
 
-/**
- * Intentionally empty for now. The tool cards (Reorder, Copy, Create, …) are
- * added once Google sign-in and the YouTube API layer exist.
- */
+import { ToolCard } from '@/components/tools/ToolCard'
+import { PRIMARY_TOOLS, SECONDARY_TOOLS } from '@/features/tools/toolCatalog'
+
 export function DashboardPage() {
   const { t } = useTranslation()
 
@@ -15,10 +14,35 @@ export function DashboardPage() {
         <p className="mt-2 text-muted-foreground">{t('dashboard.subtitle')}</p>
       </div>
 
-      <section className="animate-fade-in-up rounded-xl border border-dashed p-12 text-center">
-        <h2 className="text-sm font-semibold">{t('dashboard.empty.title')}</h2>
+      <section className="animate-fade-in-up" aria-labelledby="dashboard-primary-tools">
+        <h2
+          id="dashboard-primary-tools"
+          className="mb-4 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+          {t('dashboard.primary')}
+        </h2>
 
-        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{t('dashboard.empty.description')}</p>
+        <div className="grid gap-4 md:grid-cols-3">
+          {PRIMARY_TOOLS.map((tool) => (
+            <ToolCard key={tool.id} tool={tool} primary />
+          ))}
+        </div>
+      </section>
+
+      <section
+        className="animate-fade-in-up"
+        style={{ animationDelay: '80ms' }}
+        aria-labelledby="dashboard-secondary-tools">
+        <h2
+          id="dashboard-secondary-tools"
+          className="mb-4 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+          {t('dashboard.more')}
+        </h2>
+
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {SECONDARY_TOOLS.map((tool) => (
+            <ToolCard key={tool.id} tool={tool} />
+          ))}
+        </div>
       </section>
     </div>
   )
