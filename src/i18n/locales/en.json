@@ -1,6 +1,51 @@
 {
   "app": {
     "name": "PlayPick",
-    "tagline": "Pick videos. Build your playlist."
+    "tagline": "YouTube playlist manager"
+  },
+  "common": {
+    "language": "Language",
+    "loading": "Loading…"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "github": "GitHub"
+  },
+  "auth": {
+    "connect": "Connect with Google",
+    "connecting": "Connecting your Google account…",
+    "signOut": "Sign out"
+  },
+  "errors": {
+    "auth": {
+      "missingClientId": "PlayPick is not configured yet. Set VITE_GOOGLE_CLIENT_ID in your environment file.",
+      "scriptUnavailable": "Could not reach Google. Check your connection and try again.",
+      "popupBlocked": "Your browser blocked the Google sign-in window. Allow pop-ups for this site and try again.",
+      "popupClosed": "Sign-in was cancelled before it finished.",
+      "accessDenied": "PlayPick needs access to your YouTube playlists to continue.",
+      "profileUnavailable": "Signed in, but your Google profile could not be loaded. Please try again.",
+      "unknown": "Sign-in failed. Please try again."
+    }
+  },
+  "landing": {
+    "badge": "Secure Google sign-in",
+    "hero": {
+      "title": "Take control of your YouTube playlists",
+      "subtitle": "Reorder, copy, organize, and build playlists with a simple drag-and-drop experience."
+    },
+    "permission": "PlayPick only requests the YouTube permissions required to manage your playlists."
+  },
+  "dashboard": {
+    "heading": "What would you like to do?",
+    "subtitle": "Pick a tool to start organizing your playlists.",
+    "empty": {
+      "title": "Your tools will live here",
+      "description": "Google sign-in and the playlist tools are being built. This space is reserved for them."
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist.",
+    "backHome": "Back to home"
   }
 }
