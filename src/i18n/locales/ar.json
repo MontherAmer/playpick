@@ -108,7 +108,7 @@
     },
     "loadMore": "تحميل المزيد",
     "showingCount": "عرض {{shown}} من أصل {{total}}",
-    "loadMoreFailed": "تعذّر تحميل المزيد من قوائم التشغيل"
+    "loadMoreFailed": "تعذّر تحميل المزيد من قوائم التشغيل."
   },
   "notFound": {
     "title": "الصفحة غير موجودة",

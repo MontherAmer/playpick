@@ -104,7 +104,7 @@
     },
     "loadMore": "Load more",
     "showingCount": "Showing {{shown}} of {{total}}",
-    "loadMoreFailed": "Could not load more playlists"
+    "loadMoreFailed": "Could not load more playlists."
   },
   "notFound": {
     "title": "Page not found",

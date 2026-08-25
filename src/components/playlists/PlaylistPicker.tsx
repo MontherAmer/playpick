@@ -1,4 +1,4 @@
-import { ListVideo, RefreshCw, SearchX } from 'lucide-react'
+import { ListVideo, Loader2, RefreshCw, RotateCcw, SearchX } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -56,7 +56,8 @@ interface PlaylistPickerProps {
  */
 export function PlaylistPicker({ selectedId, onSelect, label, className }: PlaylistPickerProps) {
   const { t } = useTranslation()
-  const { playlists, status, error, hasMore, refresh } = usePlaylistLibrary()
+  const { playlists, status, error, hasMore, totalResults, isLoadingMore, loadMoreError, loadMore, refresh } =
+    usePlaylistLibrary()
   const [query, setQuery] = useState('')
 
   const isLoadingFirstPage = status === 'idle' || status === 'loading'
@@ -140,6 +141,37 @@ export function PlaylistPicker({ selectedId, onSelect, label, className }: Playl
             </li>
           ))}
         </ul>
+      )}
+
+      {/* Deliberately outside the grid branch, so it stays reachable when the
+          filter matches nothing — the next page is exactly where the missing
+          playlist may be. */}
+      {isReady && hasMore && (
+        <div className="flex flex-col items-center gap-2 pt-1">
+          {loadMoreError !== null && (
+            <p role="alert" className="flex flex-wrap items-center justify-center gap-2 text-sm text-destructive">
+              <span>
+                {t('playlist.loadMoreFailed')} {t(`errors.youtube.${loadMoreError}`)}
+              </span>
+
+              <Button variant="outline" onClick={loadMore} disabled={isLoadingMore}>
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                {t('common.retry')}
+              </Button>
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Button onClick={loadMore} disabled={isLoadingMore}>
+              {isLoadingMore && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+              {t('playlist.loadMore')}
+            </Button>
+
+            <p className="text-sm text-muted-foreground">
+              {t('playlist.showingCount', { shown: visiblePlaylists.length, total: totalResults })}
+            </p>
+          </div>
+        </div>
       )}
     </section>
   )
