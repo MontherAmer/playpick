@@ -6,6 +6,7 @@
   "common": {
     "language": "Language",
     "loading": "Loading…",
+    "retry": "Try again",
     "soon": "Soon"
   },
   "nav": {
@@ -26,6 +27,15 @@
       "accessDenied": "PlayPick needs access to your YouTube playlists to continue.",
       "profileUnavailable": "Signed in, but your Google profile could not be loaded. Please try again.",
       "unknown": "Sign-in failed. Please try again."
+    },
+    "youtube": {
+      "network": "Could not reach YouTube. Check your connection and try again.",
+      "authExpired": "Your Google session has expired. Sign in again to continue.",
+      "quotaExceeded": "PlayPick has reached today's YouTube request limit. Please try again tomorrow.",
+      "insufficientPermissions": "PlayPick is not allowed to read your playlists. Sign in again and grant YouTube access.",
+      "notFound": "That playlist is no longer available on YouTube. Refresh to update the list.",
+      "service": "YouTube is having trouble right now. Please try again in a moment.",
+      "unknown": "Your playlists could not be loaded. Please try again."
     }
   },
   "landing": {
@@ -66,6 +76,23 @@
     "duplicate": {
       "title": "Duplicate Playlist",
       "description": "Create a copy of an existing playlist."
+    }
+  },
+  "playlist": {
+    "regionLabel": "Your playlists",
+    "untitled": "Untitled playlist",
+    "videoCount_one": "{{count}} video",
+    "videoCount_other": "{{count}} videos",
+    "privacy": {
+      "public": "Public",
+      "unlisted": "Unlisted",
+      "private": "Private"
+    },
+    "selected": "Selected",
+    "refresh": "Refresh",
+    "empty": {
+      "title": "No playlists yet",
+      "description": "This account does not own any playlists. Create one on YouTube, then refresh."
     }
   },
   "notFound": {
