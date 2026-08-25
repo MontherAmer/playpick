@@ -1,4 +1,4 @@
-import { Ban, CloudOff, KeyRound, ListX, RotateCcw, ShieldAlert, TriangleAlert, WifiOff } from 'lucide-react'
+import { Ban, CloudOff, KeyRound, ListX, RotateCcw, ShieldAlert, TriangleAlert, WifiOff, Wrench } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -15,6 +15,7 @@ const ICONS: Record<YouTubeErrorCode, LucideIcon> = {
   network: WifiOff,
   authExpired: KeyRound,
   quotaExceeded: Ban,
+  apiNotEnabled: Wrench,
   insufficientPermissions: ShieldAlert,
   notFound: ListX,
   service: CloudOff,

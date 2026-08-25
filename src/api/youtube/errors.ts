@@ -3,7 +3,14 @@
  * must be added to both locale files.
  */
 export type YouTubeErrorCode =
-  'network' | 'authExpired' | 'quotaExceeded' | 'insufficientPermissions' | 'notFound' | 'service' | 'unknown'
+  | 'network'
+  | 'authExpired'
+  | 'quotaExceeded'
+  | 'apiNotEnabled'
+  | 'insufficientPermissions'
+  | 'notFound'
+  | 'service'
+  | 'unknown'
 
 export class YouTubeError extends Error {
   readonly code: YouTubeErrorCode
@@ -22,6 +29,18 @@ export class YouTubeError extends Error {
  * the reason is the only thing separating them.
  */
 const QUOTA_REASONS: readonly string[] = ['quotaExceeded', 'rateLimitExceeded']
+
+/**
+ * The third meaning of 403: the YouTube Data API is not enabled on the Google
+ * Cloud project at all.
+ *
+ * Nothing the user does can fix this — not signing in again, not granting a
+ * scope, not waiting for a quota to reset. Folding it into
+ * `insufficientPermissions` produced a message telling the user to re-grant
+ * YouTube access, which could never work. It is a deployment misconfiguration
+ * and has to read like one.
+ */
+const API_NOT_ENABLED_REASONS: readonly string[] = ['accessNotConfigured']
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -57,9 +76,12 @@ export function toYouTubeErrorCode(status: number, body: unknown): YouTubeErrorC
   }
 
   if (status === 403) {
-    const isQuota = readErrorReasons(body).some((reason) => QUOTA_REASONS.includes(reason))
+    const reasons = readErrorReasons(body)
 
-    return isQuota ? 'quotaExceeded' : 'insufficientPermissions'
+    if (reasons.some((reason) => QUOTA_REASONS.includes(reason))) return 'quotaExceeded'
+    if (reasons.some((reason) => API_NOT_ENABLED_REASONS.includes(reason))) return 'apiNotEnabled'
+
+    return 'insufficientPermissions'
   }
 
   if (status === 404) {

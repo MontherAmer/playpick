@@ -32,6 +32,7 @@
       "network": "Could not reach YouTube. Check your connection and try again.",
       "authExpired": "Your Google session has expired. Sign in again to continue.",
       "quotaExceeded": "PlayPick has reached today's YouTube request limit. Please try again tomorrow.",
+      "apiNotEnabled": "PlayPick is not set up to reach YouTube yet. The YouTube Data API has to be enabled for this deployment — signing in again will not help.",
       "insufficientPermissions": "PlayPick is not allowed to read your playlists. Sign in again and grant YouTube access.",
       "notFound": "That playlist is no longer available on YouTube. Refresh to update the list.",
       "service": "YouTube is having trouble right now. Please try again in a moment.",
