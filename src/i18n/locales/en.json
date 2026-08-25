@@ -81,6 +81,9 @@
   "playlist": {
     "regionLabel": "Your playlists",
     "untitled": "Untitled playlist",
+    "searchLabel": "Search your playlists",
+    "searchPlaceholder": "Search playlists…",
+    "clearSearch": "Clear search",
     "videoCount_one": "{{count}} video",
     "videoCount_other": "{{count}} videos",
     "privacy": {
@@ -93,7 +96,15 @@
     "empty": {
       "title": "No playlists yet",
       "description": "This account does not own any playlists. Create one on YouTube, then refresh."
-    }
+    },
+    "noMatches": {
+      "title": "No playlists match your search",
+      "description": "Try a different word, or clear the search to see all of them again.",
+      "partial": "Only the playlists loaded so far were searched. Load more to search the rest."
+    },
+    "loadMore": "Load more",
+    "showingCount": "Showing {{shown}} of {{total}}",
+    "loadMoreFailed": "Could not load more playlists"
   },
   "notFound": {
     "title": "Page not found",
