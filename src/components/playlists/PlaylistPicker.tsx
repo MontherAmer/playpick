@@ -1,10 +1,13 @@
-import { ListVideo, RefreshCw } from 'lucide-react'
+import { ListVideo, RefreshCw, SearchX } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
+import { SearchInput } from '@/components/common/SearchInput'
 import { PlaylistCard } from '@/components/playlists/PlaylistCard'
 import { Button } from '@/components/ui/Button'
+import { filterPlaylistsByTitle } from '@/features/playlists/filterPlaylists'
 import { usePlaylistLibrary } from '@/features/playlists/usePlaylistLibrary'
 import type { IPlaylist } from '@/models/playlist'
 import { cn } from '@/utils/cn'
@@ -47,13 +50,33 @@ interface PlaylistPickerProps {
  * instances over a single shared library.
  *
  * Reads the library rather than fetching: mounting a second picker, or the same
- * one a second time in a session, costs no request (FR-008).
+ * one a second time in a session, costs no request (FR-008). The filter is the
+ * one piece of state it does own — it is presentation, local to this surface,
+ * and two pickers over one library filter independently.
  */
 export function PlaylistPicker({ selectedId, onSelect, label, className }: PlaylistPickerProps) {
   const { t } = useTranslation()
-  const { playlists, status, error, refresh } = usePlaylistLibrary()
+  const { playlists, status, error, hasMore, refresh } = usePlaylistLibrary()
+  const [query, setQuery] = useState('')
 
   const isLoadingFirstPage = status === 'idle' || status === 'loading'
+  const isReady = status === 'ready'
+
+  // Synchronous and local — typing never reaches the network, because
+  // playlists.list cannot search by title at all (research R2, FR-016).
+  const visiblePlaylists = useMemo(() => filterPlaylistsByTitle(playlists, query), [playlists, query])
+
+  const hasNoMatches = isReady && playlists.length > 0 && visiblePlaylists.length === 0
+
+  /**
+   * With pages still unretrieved, "no matches" is only true of what has loaded.
+   * Saying so is the difference between an actionable state and a quietly wrong
+   * one — the user's playlist may simply be in a page they have not asked for
+   * yet (research R3).
+   */
+  const noMatchesDescription = hasMore
+    ? `${t('playlist.noMatches.description')} ${t('playlist.noMatches.partial')}`
+    : t('playlist.noMatches.description')
 
   return (
     <section
@@ -64,6 +87,17 @@ export function PlaylistPicker({ selectedId, onSelect, label, className }: Playl
           job, and two adjacent controls for one action only reads as confusing. */}
       {status !== 'error' && (
         <div className="flex flex-wrap items-center justify-end gap-2">
+          {isReady && playlists.length > 0 && (
+            <SearchInput
+              value={query}
+              onChange={setQuery}
+              label={t('playlist.searchLabel')}
+              placeholder={t('playlist.searchPlaceholder')}
+              clearLabel={t('playlist.clearSearch')}
+              className="min-w-[180px] flex-1"
+            />
+          )}
+
           <Button variant="ghost" onClick={refresh} disabled={isLoadingFirstPage}>
             <RefreshCw className={cn('h-4 w-4', isLoadingFirstPage && 'animate-spin')} aria-hidden="true" />
             {t('playlist.refresh')}
@@ -85,13 +119,22 @@ export function PlaylistPicker({ selectedId, onSelect, label, className }: Playl
 
       {status === 'error' && error !== null && <ErrorState code={error} onRetry={refresh} />}
 
-      {status === 'ready' && playlists.length === 0 && (
+      {isReady && playlists.length === 0 && (
         <EmptyState icon={ListVideo} title={t('playlist.empty.title')} description={t('playlist.empty.description')} />
       )}
 
-      {status === 'ready' && playlists.length > 0 && (
+      {/* Distinct from the empty library above by icon and by wording: one says
+          "narrow your search", the other "there is nothing to search". */}
+      {hasNoMatches && (
+        <EmptyState icon={SearchX} title={t('playlist.noMatches.title')} description={noMatchesDescription} />
+      )}
+
+      {/* Gated on `isReady` as well as the count: during a refresh the previous
+          playlists are still in state, and rendering them beside the skeletons
+          would show the list twice. */}
+      {isReady && visiblePlaylists.length > 0 && (
         <ul className={cn(GRID_CLASSES, 'list-none p-0')}>
-          {playlists.map((playlist) => (
+          {visiblePlaylists.map((playlist) => (
             <li key={playlist.id}>
               <PlaylistCard playlist={playlist} selected={playlist.id === selectedId} onSelect={onSelect} />
             </li>
