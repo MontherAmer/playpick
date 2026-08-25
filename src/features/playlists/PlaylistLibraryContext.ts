@@ -19,6 +19,15 @@ export interface IPlaylistLibrary {
   status: PlaylistLibraryStatus
   /** Fatal: the first page failed and there is nothing to show. */
   error: YouTubeErrorCode | null
+  /** A continuation is in flight. Distinct from `status`, which tracks the first page only. */
+  isLoadingMore: boolean
+  /**
+   * Non-fatal: a continuation failed. `playlists` and the page cursor are
+   * untouched, so retrying resumes from where it stopped rather than starting
+   * the library over — which is what lets the UI say "these are loaded, the
+   * next page failed" instead of replacing a good list with an error screen.
+   */
+  loadMoreError: YouTubeErrorCode | null
   /** Whether unretrieved playlists remain. Derived from the page cursor, which stays internal. */
   hasMore: boolean
   /** Library size as reported by the API, which may exceed `playlists.length`. */
@@ -29,6 +38,11 @@ export interface IPlaylistLibrary {
    * provider with no consumer costs nothing.
    */
   loadFirstPage(): void
+  /**
+   * Appends the next page. No-op unless the library is ready, more remains, and
+   * nothing is already in flight, so a double press costs one request.
+   */
+  loadMore(): void
   /** Discards everything and re-retrieves from the first page. */
   refresh(): void
 }
