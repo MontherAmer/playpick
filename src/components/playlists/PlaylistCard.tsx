@@ -67,11 +67,18 @@ export function PlaylistCard({ playlist, selected = false, onSelect }: PlaylistC
       </div>
 
       <div className="min-w-0 flex-1 p-3">
-        {/* `dir="auto"` so a title's own direction wins over the interface
+        {/* Deliberately not a heading. The whole card is the button, so a
+            heading here would put one in the outline per playlist — fifty cards
+            would be fifty entries in a screen reader's heading list that are
+            really control labels, and jumping to one would land the user inside
+            a button. `line-clamp-2` sets `display:-webkit-box` regardless of
+            the element, so this renders identically.
+
+            `dir="auto"` so a title's own direction wins over the interface
             direction — an Arabic title stays right-to-left in the English UI. */}
-        <h3 dir="auto" className="line-clamp-2 text-sm leading-snug font-medium">
+        <span dir="auto" className="line-clamp-2 text-sm leading-snug font-medium">
           {playlist.title === '' ? t('playlist.untitled') : playlist.title}
-        </h3>
+        </span>
 
         <span className="mt-2 inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs text-muted-foreground">
           <PrivacyIcon className="h-3 w-3" aria-hidden="true" />
