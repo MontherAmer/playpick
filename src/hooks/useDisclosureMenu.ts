@@ -14,8 +14,8 @@ export interface IDisclosureMenu {
  *
  * These are disclosures, not ARIA menus: the panels hold links, so Tab moves
  * through them and Enter follows them for free. There is deliberately no focus
- * trap (Tab must be able to leave) and no arrow-key roving — adopting
- * `role="menu"` would announce links as menu items and break Ctrl/Cmd-click.
+ * trap (Tab must be able to leave) and no arrow-key roving — a menu role would
+ * announce links as menu items and break Ctrl/Cmd-click.
  *
  * Focus returns to the trigger on Escape and *only* on Escape. After an outside
  * press or a Tab-out the user has deliberately moved focus somewhere else, and
