@@ -26,3 +26,17 @@ export function normalizeLanguage(value: string | undefined | null): string {
 export function getLanguageDirection(code: string): 'ltr' | 'rtl' {
   return LANGUAGES.find((language) => language.code === code)?.dir ?? 'ltr'
 }
+
+/**
+ * The language a user would switch *to* — what the language control is labelled
+ * with, and what it switches to when pressed.
+ *
+ * Written over the LANGUAGES array rather than as an en/ar ternary: it stays
+ * unit-testable, and it is the one place that has to be reconciled if a third
+ * language is ever added, instead of silently returning the wrong one.
+ */
+export function getAlternateLanguage(currentCode: string | undefined | null): ILanguage {
+  const current = normalizeLanguage(currentCode)
+
+  return LANGUAGES.find((language) => language.code !== current) ?? LANGUAGES[0]
+}
