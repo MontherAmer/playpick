@@ -19,14 +19,16 @@ const INTERACTIVE_CLASSES =
 
 export function ToolCard({ tool, primary = false }: ToolCardProps) {
   const { t } = useTranslation()
-  const { icon: Icon, route } = tool
+  const { icon: Icon, path, status } = tool
+
+  const isAvailable = status === 'available'
 
   const content = (
     <>
       <div
         className={cn(
           'flex items-center justify-center rounded-xl bg-brand-muted text-brand transition-colors',
-          route && 'group-hover:bg-brand group-hover:text-brand-foreground',
+          isAvailable && 'group-hover:bg-brand group-hover:text-brand-foreground',
           primary ? 'h-12 w-12' : 'h-9 w-9',
         )}>
         <Icon className={primary ? 'h-6 w-6' : 'h-5 w-5'} aria-hidden="true" />
@@ -42,7 +44,7 @@ export function ToolCard({ tool, primary = false }: ToolCardProps) {
         </p>
       </div>
 
-      {route ? (
+      {isAvailable ? (
         primary && (
           <ArrowUpRight
             aria-hidden="true"
@@ -59,13 +61,13 @@ export function ToolCard({ tool, primary = false }: ToolCardProps) {
 
   const layoutClasses = primary ? 'gap-4 p-6' : 'gap-3 p-4'
 
-  if (!route) {
+  if (!isAvailable) {
     // No page to open yet: keep the card readable but out of the tab order.
     return <div className={cn(CARD_CLASSES, layoutClasses, 'pe-16')}>{content}</div>
   }
 
   return (
-    <Link to={route} className={cn(CARD_CLASSES, INTERACTIVE_CLASSES, layoutClasses, primary && 'pe-12')}>
+    <Link to={path} className={cn(CARD_CLASSES, INTERACTIVE_CLASSES, layoutClasses, primary && 'pe-12')}>
       {content}
     </Link>
   )
