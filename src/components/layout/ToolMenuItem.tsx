@@ -35,7 +35,9 @@ export function ToolMenuItem({ tool, onNavigate }: ToolMenuItemProps) {
         <div className={`${ROW_CLASSES} justify-between text-muted-foreground`}>
           <span className="flex min-w-0 items-center gap-2">
             <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-            <span className="truncate">{title}</span>
+            {/* Wraps rather than truncates: a clipped tool name is unreadable,
+                and title lengths differ per language. */}
+            <span>{title}</span>
           </span>
 
           <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium tracking-wide uppercase">
@@ -53,7 +55,7 @@ export function ToolMenuItem({ tool, onNavigate }: ToolMenuItemProps) {
         onClick={onNavigate}
         className={`${ROW_CLASSES} transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}>
         <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-        <span className="truncate">{title}</span>
+        <span>{title}</span>
       </Link>
     </li>
   )

@@ -40,7 +40,7 @@ export function NavMenu() {
         <div
           id={panelId}
           ref={panelRef}
-          className="absolute end-0 top-full z-50 mt-1 w-60 rounded-lg border bg-popover p-1 text-popover-foreground shadow-elevated">
+          className="absolute end-0 top-full z-50 mt-1 w-64 rounded-lg border bg-popover p-1 text-popover-foreground shadow-elevated">
           <ul>
             <li>
               <NavLink

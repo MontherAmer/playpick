@@ -47,7 +47,7 @@ export function ToolsMenu() {
           id={panelId}
           ref={panelRef}
           // Anchored with logical `start-0`, so Arabic mirrors without a second rule.
-          className="absolute start-0 top-full z-50 mt-1 w-60 rounded-lg border bg-popover p-1 text-popover-foreground shadow-elevated">
+          className="absolute start-0 top-full z-50 mt-1 w-64 rounded-lg border bg-popover p-1 text-popover-foreground shadow-elevated">
           <ul>
             {TOOLS.map((tool) => (
               <ToolMenuItem key={tool.id} tool={tool} onNavigate={close} />

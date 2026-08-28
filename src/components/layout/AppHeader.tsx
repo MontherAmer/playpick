@@ -18,12 +18,24 @@ export function AppHeader() {
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-2 px-4 sm:px-6">
         <Link
           to={ROUTES.dashboard}
+          // Named explicitly because the mark-only variant below `sm` carries no
+          // text of its own, which would leave the link unnamed. The string is
+          // the same one the wordmark shows, so the visible label is contained
+          // in the accessible name at every width.
+          aria-label={t('app.name')}
           className="rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
           {/* The wordmark does not fit alongside the language button, the avatar
               and the menu trigger at 320px, so below `sm` the mark stands alone.
-              The link keeps an accessible name either way. */}
-          <Logo className="sm:hidden" withWordmark={false} />
-          <Logo className="hidden sm:inline-flex" />
+              The responsive display lives on wrapper spans, not on Logo itself:
+              `cn` only joins class names, so a `hidden` passed to Logo would sit
+              alongside the `inline-flex` Logo sets on its own root and lose. */}
+          <span className="sm:hidden">
+            <Logo withWordmark={false} />
+          </span>
+
+          <span className="hidden sm:inline">
+            <Logo />
+          </span>
         </Link>
 
         <nav aria-label={t('nav.label')} className="ms-4 hidden items-center gap-1 md:flex">
