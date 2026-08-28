@@ -50,7 +50,7 @@ export function LandingPage() {
         </Link>
 
         <div className="flex items-center gap-2">
-          <LanguageSwitcher className="min-w-[120px]" />
+          <LanguageSwitcher />
 
           {/* TODO: point at the real PlayPick repository once it is published. */}
           <a
