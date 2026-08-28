@@ -10,7 +10,10 @@
     "soon": "Soon"
   },
   "nav": {
+    "label": "Main navigation",
     "dashboard": "Dashboard",
+    "tools": "Tools",
+    "menu": "Menu",
     "github": "GitHub"
   },
   "auth": {
