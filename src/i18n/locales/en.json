@@ -4,7 +4,7 @@
     "tagline": "YouTube playlist manager"
   },
   "common": {
-    "language": "Language",
+    "switchLanguage": "Switch language",
     "loading": "Loading…",
     "retry": "Try again",
     "soon": "Soon"
