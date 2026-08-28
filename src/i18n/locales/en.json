@@ -14,11 +14,13 @@
     "dashboard": "Dashboard",
     "tools": "Tools",
     "menu": "Menu",
+    "account": "Account",
     "github": "GitHub"
   },
   "auth": {
     "connect": "Connect with Google",
     "connecting": "Connecting your Google account…",
+    "connectedAs": "Connected as",
     "signOut": "Sign out"
   },
   "errors": {

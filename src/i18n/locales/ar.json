@@ -14,11 +14,13 @@
     "dashboard": "لوحة التحكم",
     "tools": "الأدوات",
     "menu": "القائمة",
+    "account": "الحساب",
     "github": "جيت هب"
   },
   "auth": {
     "connect": "الاتصال بحساب جوجل",
     "connecting": "جارٍ ربط حساب جوجل…",
+    "connectedAs": "متصل باسم",
     "signOut": "تسجيل الخروج"
   },
   "errors": {
