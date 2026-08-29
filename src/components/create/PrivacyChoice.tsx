@@ -12,6 +12,8 @@ interface PrivacyChoiceProps {
   onChange: (value: PlaylistPrivacy) => void
   issue?: FieldIssue
   disabled?: boolean
+  /** Fires when focus leaves the group, so an unmade choice can be reported. */
+  onBlur?: () => void
 }
 
 const OPTIONS: readonly PlaylistPrivacy[] = ['public', 'unlisted', 'private']
@@ -28,13 +30,17 @@ const OPTIONS: readonly PlaylistPrivacy[] = ['public', 'unlisted', 'private']
  * a visibility on the person's behalf that PlayPick cannot undo for them — it
  * offers no way to edit or delete a playlist once created.
  */
-export function PrivacyChoice({ value, onChange, issue, disabled = false }: PrivacyChoiceProps) {
+export function PrivacyChoice({ value, onChange, issue, disabled = false, onBlur }: PrivacyChoiceProps) {
   const { t } = useTranslation()
   const groupName = useId()
   const issueId = useId()
 
   return (
-    <fieldset disabled={disabled} aria-invalid={issue !== undefined} aria-describedby={issue ? issueId : undefined}>
+    <fieldset
+      disabled={disabled}
+      aria-invalid={issue !== undefined}
+      aria-describedby={issue ? issueId : undefined}
+      onBlur={onBlur}>
       <legend className="mb-2 text-sm font-medium">
         {t('create.privacy.legend')} <span aria-hidden="true">*</span>
       </legend>

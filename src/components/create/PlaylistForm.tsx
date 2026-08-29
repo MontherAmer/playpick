@@ -1,5 +1,5 @@
 import { CircleAlert, Info, ListPlus, Loader2 } from 'lucide-react'
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { PrivacyChoice } from '@/components/create/PrivacyChoice'
@@ -9,8 +9,10 @@ import { cn } from '@/utils/cn'
 
 interface PlaylistFormProps {
   draft: IPlaylistDraft
-  /** Only the issues that should currently be shown — see the page's timing rule. */
+  /** Every current issue. Which of them are *shown* is decided here — see below. */
   issues: IDraftIssues
+  /** Shows every issue at once, regardless of what has been visited. */
+  forceShowIssues: boolean
   /** Whether the draft could be submitted at all, regardless of what is displayed. */
   canSubmit: boolean
   isSubmitting: boolean
@@ -32,11 +34,40 @@ const FIELD_CLASSES =
  * never a label: it disappears at the first keystroke and is not an accessible
  * name.
  */
-export function PlaylistForm({ draft, issues, canSubmit, isSubmitting, onChange, onSubmit }: PlaylistFormProps) {
+export function PlaylistForm({
+  draft,
+  issues,
+  forceShowIssues,
+  canSubmit,
+  isSubmitting,
+  onChange,
+  onSubmit,
+}: PlaylistFormProps) {
   const { t } = useTranslation()
   const titleId = useId()
   const titleIssueId = useId()
   const descriptionId = useId()
+
+  /**
+   * Which fields the person has visited and left.
+   *
+   * The submit control is unavailable while the draft is invalid (FR-007), so
+   * "report it when they try to submit" would never fire for someone who has not
+   * yet filled the form in — the one person who most needs to be told what is
+   * missing. Reporting on leaving a field gives them that, without marking a
+   * form invalid before they have had a chance to fill it in.
+   */
+  const [visited, setVisited] = useState<{ title?: boolean; privacy?: boolean }>({})
+
+  /**
+   * A rejection by YouTube is always shown: it is the answer to something they
+   * already did, not a prompt about something they have not done yet.
+   */
+  const shows = (field: 'title' | 'privacy') =>
+    issues[field] !== undefined && (forceShowIssues || visited[field] === true || issues[field] === 'rejectedByYouTube')
+
+  const titleIssue = shows('title') ? issues.title : undefined
+  const privacyIssue = shows('privacy') ? issues.privacy : undefined
 
   return (
     <form
@@ -57,19 +88,22 @@ export function PlaylistForm({ draft, issues, canSubmit, isSubmitting, onChange,
           value={draft.title}
           disabled={isSubmitting}
           required
-          aria-invalid={issues.title !== undefined}
-          aria-describedby={issues.title ? titleIssueId : undefined}
+          aria-invalid={titleIssue !== undefined}
+          aria-describedby={titleIssue ? titleIssueId : undefined}
           placeholder={t('create.namePlaceholder')}
           onChange={(event) => {
             onChange({ ...draft, title: event.target.value })
           }}
-          className={cn(FIELD_CLASSES, issues.title && 'border-destructive')}
+          onBlur={() => {
+            setVisited((current) => ({ ...current, title: true }))
+          }}
+          className={cn(FIELD_CLASSES, titleIssue && 'border-destructive')}
         />
 
-        {issues.title && (
+        {titleIssue && (
           <p id={titleIssueId} role="alert" className="inline-flex items-center gap-1.5 text-sm text-destructive">
             <CircleAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
-            {t(issues.title === 'rejectedByYouTube' ? 'create.errors.invalidPlaylistDetails' : 'create.required')}
+            {t(titleIssue === 'rejectedByYouTube' ? 'create.errors.invalidPlaylistDetails' : 'create.required')}
           </p>
         )}
       </div>
@@ -95,10 +129,13 @@ export function PlaylistForm({ draft, issues, canSubmit, isSubmitting, onChange,
 
       <PrivacyChoice
         value={draft.privacy}
-        issue={issues.privacy}
+        issue={privacyIssue}
         disabled={isSubmitting}
         onChange={(privacy) => {
           onChange({ ...draft, privacy })
+        }}
+        onBlur={() => {
+          setVisited((current) => ({ ...current, privacy: true }))
         }}
       />
 

@@ -50,13 +50,16 @@ export function CreatePlaylistPage() {
    * A rejection of the details themselves is shown *at the title*, because it is
    * the only failure the person caused and the only one editing can fix. Every
    * other failure is about the world, not the form, so it is shown above it.
+   *
+   * These are all the issues there are; the form decides which to show, since
+   * that depends on what has been visited.
    */
-  const shownIssues = useMemo(
+  const allIssues = useMemo(
     () => ({
-      ...(hasAttempted ? issues : {}),
+      ...issues,
       ...(failure === 'invalidPlaylistDetails' ? { title: 'rejectedByYouTube' as const } : {}),
     }),
-    [hasAttempted, issues, failure],
+    [issues, failure],
   )
 
   const handleSubmit = useCallback(() => {
@@ -153,7 +156,8 @@ export function CreatePlaylistPage() {
 
       <PlaylistForm
         draft={draft}
-        issues={shownIssues}
+        issues={allIssues}
+        forceShowIssues={hasAttempted}
         canSubmit={isDraftSubmittable(draft)}
         isSubmitting={isSubmitting}
         onChange={handleChange}
