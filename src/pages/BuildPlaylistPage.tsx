@@ -164,6 +164,8 @@ export function BuildPlaylistPage() {
           }
           canSave={canSave}
           isSaving={isSaving}
+          onRemove={draft.remove}
+          onMove={draft.move}
           onDiscard={() => {
             setIsDiscarding(true)
           }}

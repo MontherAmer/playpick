@@ -1,10 +1,23 @@
+import {
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core'
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Info, Layers, Loader2, Save, Trash2 } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { BuildDraftRow } from '@/components/build/BuildDraftRow'
 import { EmptyState } from '@/components/common/EmptyState'
 import { Button } from '@/components/ui/Button'
+import { VideoCard } from '@/components/videos/VideoCard'
 import type { IBuildEntry } from '@/models/build'
 
 interface BuildDraftColumnProps {
@@ -18,6 +31,8 @@ interface BuildDraftColumnProps {
   notice?: ReactNode
   canSave: boolean
   isSaving: boolean
+  onRemove: (key: string) => void
+  onMove: (fromIndex: number, toIndex: number) => void
   onDiscard: () => void
   onSave: () => void
 }
@@ -39,10 +54,35 @@ export function BuildDraftColumn({
   notice,
   canSave,
   isSaving,
+  onRemove,
+  onMove,
   onDiscard,
   onSave,
 }: BuildDraftColumnProps) {
   const { t } = useTranslation()
+
+  const [draggingKey, setDraggingKey] = useState<string | null>(null)
+
+  const keys = useMemo(() => entries.map((entry) => entry.key), [entries])
+  const dragged = entries.find((entry) => entry.key === draggingKey)
+
+  const sensors = useSensors(
+    // A small distance so a tap on the handle is not mistaken for a drag.
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    setDraggingKey(String(active.id))
+  }
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    setDraggingKey(null)
+
+    if (!over || active.id === over.id) return
+
+    onMove(keys.indexOf(String(active.id)), keys.indexOf(String(over.id)))
+  }
 
   return (
     <section
@@ -65,13 +105,40 @@ export function BuildDraftColumn({
             {t('build.draftNotice')}
           </p>
 
-          <ul className="min-h-0 flex-1 list-none space-y-2 overflow-y-auto p-0">
-            {entries.map((entry, index) => (
-              <li key={entry.key}>
-                <BuildDraftRow entry={entry} position={index + 1} isDuplicate={duplicateFlags[index] === true} />
-              </li>
-            ))}
-          </ul>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}>
+            <SortableContext items={keys} strategy={verticalListSortingStrategy}>
+              <ul className="min-h-0 flex-1 list-none space-y-2 overflow-y-auto p-0">
+                {entries.map((entry, index) => (
+                  <BuildDraftRow
+                    key={entry.key}
+                    entry={entry}
+                    position={index + 1}
+                    isDuplicate={duplicateFlags[index] === true}
+                    isFirst={index === 0}
+                    isLast={index === entries.length - 1}
+                    disabled={isSaving}
+                    onMoveUp={() => {
+                      onMove(index, index - 1)
+                    }}
+                    onMoveDown={() => {
+                      onMove(index, index + 1)
+                    }}
+                    onRemove={() => {
+                      onRemove(entry.key)
+                    }}
+                  />
+                ))}
+              </ul>
+            </SortableContext>
+
+            {/* An overlay rather than a transformed row: the list scrolls in its
+                own container, which would clip a row dragged past its edge. */}
+            <DragOverlay>{dragged ? <VideoCard item={dragged.item} compact /> : null}</DragOverlay>
+          </DndContext>
         </>
       )}
 
