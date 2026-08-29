@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { BuildDraftColumn } from '@/components/build/BuildDraftColumn'
-import { NewPlaylistFields } from '@/components/build/NewPlaylistFields'
+import { DestinationChoice, type DestinationKind } from '@/components/build/DestinationChoice'
 import { SourcePlaylistColumn } from '@/components/build/SourcePlaylistColumn'
 import { SourceVideosColumn } from '@/components/build/SourceVideosColumn'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
@@ -14,7 +14,9 @@ import { useBuildDraft } from '@/features/build/useBuildDraft'
 import { useBuildSave } from '@/features/build/useBuildSave'
 import { useSourceItems } from '@/features/build/useSourceItems'
 import { isDraftSubmittable } from '@/features/create/validatePlaylistDraft'
+import { usePlaylistItems } from '@/features/playlists/usePlaylistItems'
 import { usePlaylistSelection } from '@/features/playlists/usePlaylistSelection'
+import { toVideoIdSet } from '@/features/copy/detectDuplicates'
 import type { IBuildDestination } from '@/models/build'
 import { EMPTY_DRAFT, type IPlaylistDraft } from '@/models/playlistDraft'
 
@@ -22,7 +24,7 @@ function playlistUrl(playlistId: string): string {
   return `https://www.youtube.com/playlist?list=${playlistId}`
 }
 
-/** No destination is chosen yet, so nothing is in it. */
+/** A playlist about to be created holds nothing, which is not a special case. */
 const NO_DESTINATION_VIDEOS: ReadonlySet<string> = new Set()
 
 /**
@@ -40,23 +42,49 @@ export function BuildPlaylistPage() {
   // Remembers what has already arrived, so returning to a source is free.
   const sourceItems = useSourceItems(source.selectedId)
 
-  const draft = useBuildDraft(NO_DESTINATION_VIDEOS)
+  const [kind, setKind] = useState<DestinationKind>('new')
+  const existing = usePlaylistSelection()
+  const [newPlaylist, setNewPlaylist] = useState<IPlaylistDraft>(EMPTY_DRAFT)
+
+  // Retrieved only for an existing destination — a new one holds nothing, and
+  // asking would be a request whose answer is already known.
+  const destinationItems = usePlaylistItems(kind === 'existing' ? existing.selectedId : undefined)
+
+  const destinationVideoIds = useMemo(
+    () => (kind === 'existing' ? toVideoIdSet(destinationItems.items) : NO_DESTINATION_VIDEOS),
+    [kind, destinationItems.items],
+  )
+
+  const draft = useBuildDraft(destinationVideoIds)
   const save = useBuildSave()
 
-  const [newPlaylist, setNewPlaylist] = useState<IPlaylistDraft>(EMPTY_DRAFT)
   const [isConfirming, setIsConfirming] = useState(false)
   const [isDiscarding, setIsDiscarding] = useState(false)
 
-  const destination = useMemo<IBuildDestination>(() => ({ kind: 'new', draft: newPlaylist }), [newPlaylist])
+  const destination = useMemo<IBuildDestination>(
+    () =>
+      kind === 'existing' && existing.selected
+        ? { kind: 'existing', playlist: existing.selected }
+        : { kind: 'new', draft: newPlaylist },
+    [kind, existing.selected, newPlaylist],
+  )
 
   const isSaving = save.status === 'creating' || save.status === 'adding'
-  const canSave = draft.additionCount > 0 && isDraftSubmittable(newPlaylist)
+
+  const isDestinationReady =
+    kind === 'existing'
+      ? existing.selected !== undefined && destinationItems.status === 'ready'
+      : isDraftSubmittable(newPlaylist)
+
+  const canSave = draft.additionCount > 0 && isDestinationReady
 
   const startOver = useCallback(() => {
     save.reset()
     draft.discard()
     setNewPlaylist(EMPTY_DRAFT)
   }, [save, draft])
+
+  const destinationName = kind === 'existing' ? (existing.selected?.title ?? '') : newPlaylist.title.trim()
 
   if (save.status === 'succeeded' && save.targetPlaylist) {
     const target = save.targetPlaylist
@@ -124,11 +152,15 @@ export function BuildPlaylistPage() {
           duplicateFlags={draft.duplicateFlags}
           additionCount={draft.additionCount}
           destination={
-            <div className="flex flex-col gap-3">
-              <h3 className="text-sm font-medium">{t('build.destination')}</h3>
-
-              <NewPlaylistFields draft={newPlaylist} onChange={setNewPlaylist} disabled={isSaving} />
-            </div>
+            <DestinationChoice
+              kind={kind}
+              onKindChange={setKind}
+              existing={existing.selected}
+              onExistingChange={existing.select}
+              newPlaylist={newPlaylist}
+              onNewPlaylistChange={setNewPlaylist}
+              disabled={isSaving}
+            />
           }
           canSave={canSave}
           isSaving={isSaving}
@@ -147,7 +179,10 @@ export function BuildPlaylistPage() {
           playlist, that it is about to be created, and what it costs. */}
       <ConfirmDialog
         open={isConfirming}
-        title={t('build.confirm.new', { count: draft.additionCount, playlist: newPlaylist.title.trim() })}
+        title={t(kind === 'existing' ? 'build.confirm.existing' : 'build.confirm.new', {
+          count: draft.additionCount,
+          playlist: destinationName,
+        })}
         message={t('build.confirm.cost')}
         confirmLabel={t('build.confirm.action')}
         onCancel={() => {
