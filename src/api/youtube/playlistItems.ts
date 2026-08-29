@@ -1,4 +1,4 @@
-import { youtubeGet } from '@/api/youtube/client'
+import { youtubeGet, youtubePut } from '@/api/youtube/client'
 import type { IPlaylistItem } from '@/models/playlistItem'
 
 /**
@@ -154,4 +154,58 @@ export async function listAllPlaylistItems(
   } while (pageToken)
 
   return items
+}
+
+export interface IUpdatePositionInput {
+  playlistItemId: string
+  playlistId: string
+  videoId: string
+  /** Zero-based, matching the API's own numbering. */
+  position: number
+}
+
+/**
+ * Moves one item to a position, costing **50 quota units**.
+ *
+ * ## `part` is `snippet` and must stay that way
+ *
+ * The API documents that "if you are submitting an update request, and your
+ * request does not specify a value for a property that already has a value, the
+ * property's existing value will be deleted."
+ *
+ * `contentDetails.note` is a user-authored annotation on the playlist item. Add
+ * `contentDetails` to `part` without echoing the existing note back, and moving
+ * a video **silently deletes the person's note**. Restricting `part` to
+ * `snippet` leaves `contentDetails` untouched entirely, which is why this is not
+ * a parameter.
+ *
+ * `id`, `snippet.playlistId` and `snippet.resourceId` are required and must be
+ * echoed back; omitting them fails the request, which is the safe direction, but
+ * they still have to be right.
+ *
+ * Setting a position removes the item and re-inserts it, shifting its
+ * neighbours — which is why a plan's moves must be applied in the order
+ * `buildMovePlan` produced them, and never concurrently.
+ *
+ * Rejects with `YouTubeError`; a cancellation from `signal` propagates unchanged.
+ */
+export async function updatePlaylistItemPosition(
+  getAccessToken: () => Promise<string>,
+  input: IUpdatePositionInput,
+  signal?: AbortSignal,
+): Promise<void> {
+  await youtubePut(
+    getAccessToken,
+    PLAYLIST_ITEMS_PATH,
+    { part: 'snippet' },
+    {
+      id: input.playlistItemId,
+      snippet: {
+        playlistId: input.playlistId,
+        resourceId: { kind: 'youtube#video', videoId: input.videoId },
+        position: input.position,
+      },
+    },
+    signal,
+  )
 }
