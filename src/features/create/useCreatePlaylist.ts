@@ -4,6 +4,7 @@ import { YouTubeError, type YouTubeErrorCode } from '@/api/youtube/errors'
 import { createPlaylist } from '@/api/youtube/playlists'
 import { useAuth } from '@/features/auth/useAuth'
 import { isDraftSubmittable } from '@/features/create/validatePlaylistDraft'
+import { useAddCreatedPlaylist } from '@/features/playlists/usePlaylistLibrary'
 import type { IPlaylist } from '@/models/playlist'
 import type { IPlaylistDraft } from '@/models/playlistDraft'
 
@@ -48,9 +49,15 @@ function toErrorCode(cause: unknown): YouTubeErrorCode {
  * Failure is carried as a `YouTubeErrorCode` and nothing else. No message, HTTP
  * status, access token or request URL is captured, stored or returned, so there
  * is no path by which one could reach the screen.
+ *
+ * A created playlist is handed to the shared library so every chooser offers it
+ * at once, without a reload and **without a request** — never by refreshing the
+ * library, which would re-retrieve what is already known and throw away every
+ * page already loaded.
  */
-export function useCreatePlaylist(onCreated?: (playlist: IPlaylist) => void): ICreatePlaylist {
+export function useCreatePlaylist(): ICreatePlaylist {
   const { getAccessToken } = useAuth()
+  const addCreatedPlaylist = useAddCreatedPlaylist()
   const [state, setState] = useState<ICreateState>(INITIAL)
 
   const inFlightRef = useRef(false)
@@ -81,14 +88,14 @@ export function useCreatePlaylist(onCreated?: (playlist: IPlaylist) => void): IC
       }
 
       // Only on a confirmed success: a failed creation must add nothing.
-      onCreated?.(created)
+      addCreatedPlaylist(created)
 
       setState({ status: 'succeeded', created, failure: null })
       inFlightRef.current = false
 
       return true
     },
-    [getAccessToken, onCreated],
+    [getAccessToken, addCreatedPlaylist],
   )
 
   const reset = useCallback(() => {
