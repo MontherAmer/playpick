@@ -8,6 +8,14 @@ import { cn } from '@/utils/cn'
 
 interface DestinationVideoCardProps {
   row: IDestinationRow
+  /**
+   * One-based position in the destination as it will be after saving.
+   *
+   * Absent for a row that will not be saved — an excluded duplicate keeps its
+   * place in the list but takes no number, because numbering it would claim a
+   * position it is never going to occupy.
+   */
+  position?: number
   /** Excluded duplicates are shown differently from ones being added. */
   includeDuplicates: boolean
   /** Something is being dragged, so drop targets should show themselves. */
@@ -22,7 +30,7 @@ interface DestinationVideoCardProps {
  * has to be able to tell what has been sent from what has not — and that is
  * exactly the distinction this whole tool turns on.
  */
-export function DestinationVideoCard({ row, includeDuplicates, isDragActive }: DestinationVideoCardProps) {
+export function DestinationVideoCard({ row, position, includeDuplicates, isDragActive }: DestinationVideoCardProps) {
   const { t } = useTranslation()
   const { setNodeRef, isOver } = useDroppable({ id: `row:${row.key}`, disabled: !isDragActive })
 
@@ -33,6 +41,7 @@ export function DestinationVideoCard({ row, includeDuplicates, isDragActive }: D
     <li ref={setNodeRef} className={cn('rounded-xl', isOver && isDragActive && 'ring-2 ring-brand/60')}>
       <VideoCard
         item={row.item}
+        position={position}
         className={cn(
           pending !== undefined && 'border-dashed',
           isExcluded && 'opacity-60',

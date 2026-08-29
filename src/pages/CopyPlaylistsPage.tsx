@@ -128,6 +128,28 @@ export function CopyPlaylistsPage() {
     return sourceItems.items.filter((item) => item.title.toLowerCase().includes(needle))
   }, [sourceItems.items, query])
 
+  /**
+   * One-based position per destination row, numbered over the list that will
+   * actually exist — so an excluded duplicate is skipped rather than consuming
+   * a number the playlist will never have. Same rule the copy plan uses for the
+   * positions it sends.
+   */
+  const destinationPositions = useMemo(() => {
+    const positions = new Map<string, number>()
+    let next = 1
+
+    for (const row of draft.destinationDraft) {
+      const excluded = row.pending !== undefined && row.pending.isDuplicate && !draft.includeDuplicates
+
+      if (excluded) continue
+
+      positions.set(row.key, next)
+      next += 1
+    }
+
+    return positions
+  }, [draft.destinationDraft, draft.includeDuplicates])
+
   const resetForNewPlaylist = useCallback(() => {
     draft.discard()
     setSelectedIds(new Set())
@@ -448,6 +470,7 @@ export function CopyPlaylistsPage() {
                     <DestinationVideoCard
                       key={row.key}
                       row={row}
+                      position={destinationPositions.get(row.key)}
                       includeDuplicates={draft.includeDuplicates}
                       isDragActive={draggingItem !== null}
                     />
