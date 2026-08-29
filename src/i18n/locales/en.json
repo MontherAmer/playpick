@@ -114,6 +114,18 @@
       "notFound": "Part of this playlist no longer exists on YouTube. Go back and load it again."
     }
   },
+  "copy": {
+    "title": "Copy Between Playlists",
+    "subtitle": "Copy videos from one playlist into another. Nothing is removed from the source.",
+    "source": "Source playlist",
+    "destination": "Destination playlist",
+    "choosePlaylist": "Choose a playlist",
+    "changePlaylist": "Change playlist",
+    "selectSource": "Choose the playlist to copy from.",
+    "selectDestination": "Choose the playlist to copy into.",
+    "emptySource": "This playlist has no videos to copy.",
+    "emptyDestination": "This playlist is empty."
+  },
   "pending": {
     "title": "Unsaved changes",
     "count_one": "{{count}} video moved",
