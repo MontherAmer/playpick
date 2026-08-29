@@ -159,3 +159,22 @@ export interface IYouTubePlaylistItemInsertBody {
     position?: number
   }
 }
+
+/**
+ * The body sent to create a playlist.
+ *
+ * `part=snippet,status` names both objects because both are being set. Unlike
+ * an update, naming a part here is not a hazard: this creates a resource, so
+ * there is no existing value that omitting a field could blank.
+ */
+export interface IYouTubePlaylistInsertBody {
+  snippet: {
+    title: string
+    /** Omitted entirely when the person left it blank. */
+    description?: string
+  }
+  status: {
+    /** `private` | `public` | `unlisted` — the values the API accepts. */
+    privacyStatus: string
+  }
+}
