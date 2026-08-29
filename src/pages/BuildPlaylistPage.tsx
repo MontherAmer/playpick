@@ -13,7 +13,7 @@ import { ProgressDialog } from '@/components/common/ProgressDialog'
 import { Button } from '@/components/ui/Button'
 import { buttonStyles } from '@/components/ui/buttonStyles'
 import { useBuildDraft } from '@/features/build/useBuildDraft'
-import { useBuildSave } from '@/features/build/useBuildSave'
+import { useCreateAndFillPlaylist } from '@/features/playlists/useCreateAndFillPlaylist'
 import { useSourceItems } from '@/features/build/useSourceItems'
 import { isDraftSubmittable } from '@/features/create/validatePlaylistDraft'
 import { usePlaylistItems } from '@/features/playlists/usePlaylistItems'
@@ -67,7 +67,7 @@ export function BuildPlaylistPage() {
   )
 
   const draft = useBuildDraft(destinationVideoIds)
-  const save = useBuildSave()
+  const save = useCreateAndFillPlaylist()
 
   const [isConfirming, setIsConfirming] = useState(false)
   const [isDiscarding, setIsDiscarding] = useState(false)

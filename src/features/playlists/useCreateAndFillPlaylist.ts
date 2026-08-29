@@ -8,10 +8,10 @@ import { useAddCreatedPlaylist } from '@/features/playlists/usePlaylistLibrary'
 import type { IBuildDestination, IBuildStep } from '@/models/build'
 import type { IPlaylist } from '@/models/playlist'
 
-export type BuildSaveStatus = 'idle' | 'creating' | 'adding' | 'succeeded' | 'failed'
+export type CreateAndFillStatus = 'idle' | 'creating' | 'adding' | 'succeeded' | 'failed'
 
-export interface IBuildSave {
-  status: BuildSaveStatus
+export interface ICreateAndFillPlaylist {
+  status: CreateAndFillStatus
   /** The plan length captured when the save began, so it cannot move mid-run. */
   total: number
   /** Videos confirmed added. Never rolled back, never re-added. */
@@ -37,7 +37,7 @@ export interface IBuildSave {
 }
 
 interface ISaveState {
-  status: BuildSaveStatus
+  status: CreateAndFillStatus
   total: number
   completed: number
   failure: YouTubeErrorCode | null
@@ -63,8 +63,14 @@ function toErrorCode(cause: unknown): YouTubeErrorCode {
 }
 
 /**
- * Carries out a build: create the destination if it does not exist yet, then add
- * the videos to it, one at a time.
+ * Creates a playlist if it does not exist yet, then adds videos to it, one at a
+ * time.
+ *
+ * Used by **Build Playlist** (its new-playlist destination) and by **Merge
+ * Playlists**, whose write paths are not merely similar but identical. It lived
+ * in `features/build/` until the second consumer arrived; it was moved rather
+ * than copied because the create-once rule below is the one piece of this
+ * application that must never exist twice.
  *
  * ## The create-once rule is why this hook exists
  *
@@ -75,10 +81,10 @@ function toErrorCode(cause: unknown): YouTubeErrorCode {
  * it: once set, every retry re-enters at the add step and the creation is not
  * reconsidered.
  *
- * This is also why the write path is not shared with `useCopySave`. The inner
- * loop is the same, but Copy has no concept of a prelude that must not repeat,
- * and pushing one into a merged, verified write path to save twenty-five lines
- * would risk more than it saves.
+ * This is also why the write path is still **not** shared with `useCopySave`.
+ * The inner loop is the same, but Copy has no concept of a prelude that must not
+ * repeat, so folding it in would push this hook's complexity into a verified
+ * path that does not need it. Sharing followed the *shape*, not the line count.
  *
  * **Sequential, never concurrent**, and it **stops at the first failure**,
  * leaving the destination correct as far as it got with the remainder
@@ -90,7 +96,7 @@ function toErrorCode(cause: unknown): YouTubeErrorCode {
  * **No source playlist is named anywhere in this hook.** There is no code path
  * here that could write to one.
  */
-export function useBuildSave(): IBuildSave {
+export function useCreateAndFillPlaylist(): ICreateAndFillPlaylist {
   const { getAccessToken } = useAuth()
   const addCreatedPlaylist = useAddCreatedPlaylist()
   const [state, setState] = useState<ISaveState>(INITIAL)
