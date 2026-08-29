@@ -1,4 +1,4 @@
-import { ListVideo, Loader2, RefreshCw, RotateCcw, SearchX } from 'lucide-react'
+import { Check, ListVideo, Loader2, RefreshCw, RotateCcw, SearchX } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -15,8 +15,63 @@ import { cn } from '@/utils/cn'
 /** One layout at every breakpoint — the reference design's toggle is deliberately not carried over. */
 const GRID_CLASSES = 'grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3'
 
+/** A single column of slim rows, for a narrow track where a card's thumbnail will not fit. */
+const LIST_CLASSES = 'flex flex-col gap-1'
+
 /** Enough to fill the widest row and imply the next, without pretending to know the library size. */
 const SKELETON_COUNT = 6
+
+/**
+ * One playlist as a slim row, for `layout="list"`.
+ *
+ * Kept here rather than added to `PlaylistCard` so this change touches one file.
+ * It keeps every accessibility property the card documents: the whole row is a
+ * single `<button>`, so one tab stop and one focus ring; the count sits inside
+ * it so it stays part of the accessible name and two playlists sharing a title
+ * remain distinguishable; and selection is a check mark **as well as** colour.
+ */
+function PlaylistRow({
+  playlist,
+  selected,
+  onSelect,
+}: {
+  playlist: IPlaylist
+  selected: boolean
+  onSelect: (playlist: IPlaylist) => void
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={() => {
+        onSelect(playlist)
+      }}
+      className={cn(
+        'flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-start transition-colors',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        selected ? 'bg-brand-muted text-brand' : 'hover:bg-accent',
+      )}>
+      <span className="min-w-0 flex-1">
+        <span dir="auto" className="block truncate text-sm font-medium">
+          {playlist.title === '' ? t('playlist.untitled') : playlist.title}
+        </span>
+
+        <span className="block text-xs text-muted-foreground">
+          {t('playlist.videoCount', { count: playlist.itemCount })}
+        </span>
+      </span>
+
+      {selected && (
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground">
+          <Check className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
+          <span className="sr-only">{t('playlist.selected')}</span>
+        </span>
+      )}
+    </button>
+  )
+}
 
 /** A card's silhouette, so the grid does not reflow when the real cards arrive. */
 function PlaylistCardSkeleton() {
@@ -46,6 +101,15 @@ interface PlaylistPickerProps {
   onSelect: (playlist: IPlaylist) => void
   /** Accessible name for the region. Defaults to a generic translated label. */
   label?: string
+  /**
+   * How the playlists are presented.
+   *
+   * `'grid'` — the default, and exactly what every existing caller gets.
+   * `'list'` — slim rows for a narrow column, where a card's thumbnail does not
+   * fit. Everything else is shared: one library read, one search, one
+   * pagination, one set of empty and error states.
+   */
+  layout?: 'grid' | 'list'
   className?: string
 }
 
@@ -62,7 +126,14 @@ interface PlaylistPickerProps {
  * one piece of state it does own — it is presentation, local to this surface,
  * and two pickers over one library filter independently.
  */
-export function PlaylistPicker({ selectedId, excludeId, onSelect, label, className }: PlaylistPickerProps) {
+export function PlaylistPicker({
+  selectedId,
+  excludeId,
+  onSelect,
+  label,
+  layout = 'grid',
+  className,
+}: PlaylistPickerProps) {
   const { t } = useTranslation()
   const { playlists, status, error, hasMore, totalResults, isLoadingMore, loadMoreError, loadMore, refresh } =
     usePlaylistLibrary()
@@ -132,11 +203,19 @@ export function PlaylistPicker({ selectedId, excludeId, onSelect, label, classNa
         <>
           <span className="sr-only">{t('common.loading')}</span>
 
-          <div className={GRID_CLASSES} aria-hidden="true">
-            {Array.from({ length: SKELETON_COUNT }, (_, index) => (
-              <PlaylistCardSkeleton key={index} />
-            ))}
-          </div>
+          {layout === 'grid' ? (
+            <div className={GRID_CLASSES} aria-hidden="true">
+              {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+                <PlaylistCardSkeleton key={index} />
+              ))}
+            </div>
+          ) : (
+            <div className={LIST_CLASSES} aria-hidden="true">
+              {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+                <div key={index} className="h-11 animate-pulse rounded-lg bg-muted" />
+              ))}
+            </div>
+          )}
         </>
       )}
 
@@ -156,10 +235,14 @@ export function PlaylistPicker({ selectedId, excludeId, onSelect, label, classNa
           playlists are still in state, and rendering them beside the skeletons
           would show the list twice. */}
       {isReady && visiblePlaylists.length > 0 && (
-        <ul className={cn(GRID_CLASSES, 'list-none p-0')}>
+        <ul className={cn(layout === 'grid' ? GRID_CLASSES : LIST_CLASSES, 'list-none p-0')}>
           {visiblePlaylists.map((playlist) => (
             <li key={playlist.id}>
-              <PlaylistCard playlist={playlist} selected={playlist.id === selectedId} onSelect={onSelect} />
+              {layout === 'grid' ? (
+                <PlaylistCard playlist={playlist} selected={playlist.id === selectedId} onSelect={onSelect} />
+              ) : (
+                <PlaylistRow playlist={playlist} selected={playlist.id === selectedId} onSelect={onSelect} />
+              )}
             </li>
           ))}
         </ul>
