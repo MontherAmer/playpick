@@ -505,11 +505,16 @@ export function CopyPlaylistsPage() {
       {/* Rendered above everything, following the cursor. The source row itself
           cannot: it sits inside the panel's own scroll container, so moving it
           there clips it and the drag reads as happening below the destination
-          list rather than over it. */}
+          list rather than over it.
+
+          No width of its own — `DragOverlay` measures the row being dragged and
+          sizes its wrapper to match, so the card keeps exactly the dimensions it
+          had in the list. Setting one here would override that and make the card
+          change size the moment it is picked up. */}
       <DragOverlay dropAnimation={null}>
         {draggingItem ? (
-          <div className="w-[min(20rem,80vw)] cursor-grabbing opacity-95 shadow-elevated">
-            <VideoCard item={draggingItem} />
+          <div className="h-full w-full cursor-grabbing opacity-95 shadow-elevated">
+            <VideoCard item={draggingItem} className="h-full" />
           </div>
         ) : null}
       </DragOverlay>
