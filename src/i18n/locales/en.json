@@ -345,5 +345,40 @@
       "description_other": "{{count}} videos were added to “{{playlist}}” on YouTube.",
       "another": "Build another playlist"
     }
+  },
+  "merge": {
+    "title": "Merge Playlists",
+    "subtitle": "Combine several playlists into one new playlist. The originals are kept.",
+    "choosePlaylists": "Choose playlists to merge",
+    "selectAtLeastTwo": "Select at least two playlists to merge.",
+    "selectedCount_one": "{{count}} playlist selected",
+    "selectedCount_other": "{{count}} playlists selected",
+    "summary": "What you will get",
+    "willAdd_one": "{{count}} video will be added",
+    "willAdd_other": "{{count}} videos will be added",
+    "counting": "Still counting…",
+    "countingHint": "These numbers are not final yet.",
+    "readFailed": "“{{playlist}}” could not be read, so merging would miss its videos.",
+    "retrySource": "Try again",
+    "deselectSource": "Remove from selection",
+    "keepsSources": "Your existing playlists are kept exactly as they are. Nothing is removed or deleted.",
+    "name": "New playlist name",
+    "namePlaceholder": "e.g. Everything running",
+    "description": "Description",
+    "descriptionPlaceholder": "What is this playlist about?",
+    "descriptionOptional": "optional",
+    "required": "This field is required",
+    "action": "Merge into a new playlist",
+    "confirm": {
+      "title_one": "Create “{{playlist}}” with {{count}} video?",
+      "title_other": "Create “{{playlist}}” with {{count}} videos?",
+      "action": "Create and merge"
+    },
+    "success": {
+      "title": "Playlists merged",
+      "description_one": "{{count}} video was added to “{{playlist}}” on YouTube. Your other playlists are unchanged.",
+      "description_other": "{{count}} videos were added to “{{playlist}}” on YouTube. Your other playlists are unchanged.",
+      "another": "Merge more playlists"
+    }
   }
 }

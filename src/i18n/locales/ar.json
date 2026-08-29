@@ -388,5 +388,55 @@
       "description_other": "تمت إضافة {{count}} فيديو إلى «{{playlist}}» على يوتيوب.",
       "another": "بناء قائمة تشغيل أخرى"
     }
+  },
+  "merge": {
+    "title": "دمج قوائم التشغيل",
+    "subtitle": "اجمع عدة قوائم تشغيل في قائمة جديدة واحدة. تبقى القوائم الأصلية كما هي.",
+    "choosePlaylists": "اختر قوائم التشغيل المراد دمجها",
+    "selectAtLeastTwo": "اختر قائمتي تشغيل على الأقل للدمج.",
+    "selectedCount_zero": "لم تُحدَّد أي قائمة",
+    "selectedCount_one": "قائمة تشغيل واحدة محددة",
+    "selectedCount_two": "قائمتا تشغيل محددتان",
+    "selectedCount_few": "{{count}} قوائم تشغيل محددة",
+    "selectedCount_many": "{{count}} قائمة تشغيل محددة",
+    "selectedCount_other": "{{count}} قائمة تشغيل محددة",
+    "summary": "ما الذي ستحصل عليه",
+    "willAdd_zero": "لن تتم إضافة أي فيديو",
+    "willAdd_one": "ستتم إضافة فيديو واحد",
+    "willAdd_two": "ستتم إضافة فيديوين",
+    "willAdd_few": "ستتم إضافة {{count}} فيديوهات",
+    "willAdd_many": "ستتم إضافة {{count}} فيديو",
+    "willAdd_other": "ستتم إضافة {{count}} فيديو",
+    "counting": "جارٍ العد…",
+    "countingHint": "هذه الأرقام ليست نهائية بعد.",
+    "readFailed": "تعذّرت قراءة «{{playlist}}»، لذا سيفوت الدمج فيديوهاتها.",
+    "retrySource": "أعد المحاولة",
+    "deselectSource": "إزالة من التحديد",
+    "keepsSources": "تبقى قوائم التشغيل الحالية كما هي تمامًا. لا يُحذف أو يُزال أي شيء.",
+    "name": "اسم قائمة التشغيل الجديدة",
+    "namePlaceholder": "مثال: كل الجري",
+    "description": "الوصف",
+    "descriptionPlaceholder": "عمّ تدور قائمة التشغيل هذه؟",
+    "descriptionOptional": "اختياري",
+    "required": "هذا الحقل مطلوب",
+    "action": "الدمج في قائمة تشغيل جديدة",
+    "confirm": {
+      "title_one": "إنشاء «{{playlist}}» بفيديو واحد؟",
+      "title_two": "إنشاء «{{playlist}}» بفيديوين؟",
+      "title_few": "إنشاء «{{playlist}}» بـ {{count}} فيديوهات؟",
+      "title_many": "إنشاء «{{playlist}}» بـ {{count}} فيديو؟",
+      "title_other": "إنشاء «{{playlist}}» بـ {{count}} فيديو؟",
+      "action": "إنشاء ودمج"
+    },
+    "success": {
+      "title": "تم دمج قوائم التشغيل",
+      "description_zero": "لم تتم إضافة أي فيديو إلى «{{playlist}}». قوائمك الأخرى لم تتغيّر.",
+      "description_one": "تمت إضافة فيديو واحد إلى «{{playlist}}» على يوتيوب. قوائمك الأخرى لم تتغيّر.",
+      "description_two": "تمت إضافة فيديوين إلى «{{playlist}}» على يوتيوب. قوائمك الأخرى لم تتغيّر.",
+      "description_few": "تمت إضافة {{count}} فيديوهات إلى «{{playlist}}» على يوتيوب. قوائمك الأخرى لم تتغيّر.",
+      "description_many": "تمت إضافة {{count}} فيديو إلى «{{playlist}}» على يوتيوب. قوائمك الأخرى لم تتغيّر.",
+      "description_other": "تمت إضافة {{count}} فيديو إلى «{{playlist}}» على يوتيوب. قوائمك الأخرى لم تتغيّر.",
+      "another": "دمج قوائم أخرى"
+    }
   }
 }
