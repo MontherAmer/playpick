@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { YouTubeError, type YouTubeErrorCode } from '@/api/youtube/errors'
 import { listAllPlaylistItems } from '@/api/youtube/playlistItems'
 import { listVideoDurations } from '@/api/youtube/videos'
 import { useAuth } from '@/features/auth/useAuth'
-import type { IPlaylistItem } from '@/models/playlistItem'
+import { buildMovePlan } from '@/features/reorder/buildMovePlan'
+import type { IMove, IPlaylistItem } from '@/models/playlistItem'
 
 export type ReorderDraftStatus = 'idle' | 'loading' | 'ready' | 'failed'
 
@@ -21,7 +22,16 @@ export interface IReorderDraft {
   /** The working arrangement. Always a permutation of `retrieved`. */
   draft: IPlaylistItem[]
   loadProgress: ILoadProgress | null
+  /** The minimum changes to send. Derived, never stored, so it cannot go stale. */
+  movePlan: IMove[]
+  /** `movePlan.length` — the one number shown as pending, estimate and progress total. */
+  pendingCount: number
+  /** The only mutating operation. Every input path calls exactly this. */
+  moveItem: (from: number, to: number) => void
+  discard: () => void
   retry: () => void
+  /** After a successful save: the draft becomes the retrieved order, with no request. */
+  commitSaved: () => void
 }
 
 function toErrorCode(cause: unknown): YouTubeErrorCode {
@@ -149,5 +159,44 @@ export function useReorderDraft(playlistId: string | undefined): IReorderDraft {
     }
   }, [playlistId, attempt, getAccessToken])
 
-  return { status, error, retrieved, draft, loadProgress, retry }
+  const moveItem = useCallback((from: number, to: number) => {
+    setDraft((current) => {
+      if (from === to || from < 0 || to < 0 || from >= current.length || to >= current.length) {
+        return current
+      }
+
+      const next = [...current]
+      const [moved] = next.splice(from, 1)
+
+      next.splice(to, 0, moved)
+
+      return next
+    })
+  }, [])
+
+  const discard = useCallback(() => {
+    setDraft(retrieved)
+  }, [retrieved])
+
+  const commitSaved = useCallback(() => {
+    // We wrote this order, so we know it. Re-retrieving to be told so would
+    // spend a request to learn nothing (research R13).
+    setRetrieved(draft)
+  }, [draft])
+
+  const movePlan = useMemo(() => buildMovePlan(retrieved, draft), [retrieved, draft])
+
+  return {
+    status,
+    error,
+    retrieved,
+    draft,
+    loadProgress,
+    movePlan,
+    pendingCount: movePlan.length,
+    moveItem,
+    discard,
+    retry,
+    commitSaved,
+  }
 }
