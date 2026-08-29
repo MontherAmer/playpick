@@ -124,7 +124,25 @@
     "selectSource": "Choose the playlist to copy from.",
     "selectDestination": "Choose the playlist to copy into.",
     "emptySource": "This playlist has no videos to copy.",
-    "emptyDestination": "This playlist is empty."
+    "emptyDestination": "This playlist is empty.",
+    "dragHandle": "Copy {{title}}",
+    "selectVideo": "Select {{title}}",
+    "selectAll": "Select all",
+    "deselectAll": "Clear selection",
+    "selectedCount": "{{count}} selected",
+    "copySelected": "Copy selected",
+    "dropHint": "Drop here to add",
+    "pendingBadge": "Will be added",
+    "duplicateBadge": "Already in this playlist",
+    "willAdd_one": "{{count}} will be added",
+    "willAdd_other": "{{count}} will be added",
+    "duplicatesFound_one": "{{count}} already in this playlist",
+    "duplicatesFound_other": "{{count}} already in this playlist",
+    "includeDuplicates": "Add them anyway",
+    "searchVideos": "Search videos…",
+    "clearSearch": "Clear search",
+    "searchLabel": "Search the source playlist",
+    "noMatches": "No videos match your search."
   },
   "pending": {
     "title": "Unsaved changes",
@@ -144,7 +162,17 @@
       "message": "Your changes have not been sent to YouTube. Leaving will lose them.",
       "confirm": "Leave"
     },
-    "cancel": "Keep editing"
+    "cancel": "Keep editing",
+    "discardCopies": {
+      "title": "Discard the videos you added?",
+      "message": "Nothing has been sent to YouTube yet. This cannot be undone.",
+      "confirm": "Discard"
+    },
+    "leaveCopies": {
+      "title": "Leave without saving?",
+      "message": "The videos you added have not been sent to YouTube. Leaving will lose them.",
+      "confirm": "Leave"
+    }
   },
   "progress": {
     "title": "Updating playlist…",

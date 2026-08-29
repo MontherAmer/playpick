@@ -128,7 +128,33 @@
     "selectSource": "اختر قائمة التشغيل التي تريد النسخ منها.",
     "selectDestination": "اختر قائمة التشغيل التي تريد النسخ إليها.",
     "emptySource": "لا تحتوي قائمة التشغيل هذه على فيديوهات لنسخها.",
-    "emptyDestination": "قائمة التشغيل هذه فارغة."
+    "emptyDestination": "قائمة التشغيل هذه فارغة.",
+    "dragHandle": "نسخ {{title}}",
+    "selectVideo": "تحديد {{title}}",
+    "selectAll": "تحديد الكل",
+    "deselectAll": "إلغاء التحديد",
+    "selectedCount": "{{count}} محدد",
+    "copySelected": "نسخ المحدد",
+    "dropHint": "أفلت هنا للإضافة",
+    "pendingBadge": "ستتم إضافته",
+    "duplicateBadge": "موجود بالفعل في قائمة التشغيل هذه",
+    "willAdd_zero": "لن تتم إضافة أي فيديو",
+    "willAdd_one": "ستتم إضافة فيديو واحد",
+    "willAdd_two": "ستتم إضافة فيديوين",
+    "willAdd_few": "ستتم إضافة {{count}} فيديوهات",
+    "willAdd_many": "ستتم إضافة {{count}} فيديو",
+    "willAdd_other": "ستتم إضافة {{count}} فيديو",
+    "duplicatesFound_zero": "لا يوجد أي فيديو موجود مسبقًا",
+    "duplicatesFound_one": "فيديو واحد موجود بالفعل في قائمة التشغيل هذه",
+    "duplicatesFound_two": "فيديوان موجودان بالفعل في قائمة التشغيل هذه",
+    "duplicatesFound_few": "{{count}} فيديوهات موجودة بالفعل في قائمة التشغيل هذه",
+    "duplicatesFound_many": "{{count}} فيديو موجود بالفعل في قائمة التشغيل هذه",
+    "duplicatesFound_other": "{{count}} فيديو موجود بالفعل في قائمة التشغيل هذه",
+    "includeDuplicates": "أضفها على أي حال",
+    "searchVideos": "ابحث في الفيديوهات…",
+    "clearSearch": "مسح البحث",
+    "searchLabel": "ابحث في قائمة التشغيل المصدر",
+    "noMatches": "لا توجد فيديوهات تطابق بحثك."
   },
   "pending": {
     "title": "تغييرات غير محفوظة",
@@ -152,7 +178,17 @@
       "message": "لم تُرسَل تغييراتك إلى يوتيوب. ستفقدها إذا غادرت.",
       "confirm": "مغادرة"
     },
-    "cancel": "متابعة التحرير"
+    "cancel": "متابعة التحرير",
+    "discardCopies": {
+      "title": "هل تريد تجاهل الفيديوهات التي أضفتها؟",
+      "message": "لم يُرسَل أي شيء إلى يوتيوب بعد. لا يمكن التراجع عن هذا.",
+      "confirm": "تجاهل"
+    },
+    "leaveCopies": {
+      "title": "هل تريد المغادرة دون حفظ؟",
+      "message": "لم تُرسَل الفيديوهات التي أضفتها إلى يوتيوب. ستفقدها إذا غادرت.",
+      "confirm": "مغادرة"
+    }
   },
   "progress": {
     "title": "جارٍ تحديث قائمة التشغيل…",
