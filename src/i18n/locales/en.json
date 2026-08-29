@@ -43,6 +43,9 @@
       "notFound": "That playlist is no longer available on YouTube. Refresh to update the list.",
       "service": "YouTube is having trouble right now. Please try again in a moment.",
       "unknown": "Your playlists could not be loaded. Please try again."
+    },
+    "reorder": {
+      "partial": "{{completed}} of {{total}} changes were applied. {{failed}} were not."
     }
   },
   "landing": {
@@ -100,6 +103,12 @@
       "movedTo": "{{title}} moved to position {{position}} of {{total}}.",
       "dropped": "{{title}} dropped at position {{position}} of {{total}}.",
       "cancelled": "Move cancelled. {{title}} returned to position {{position}}."
+    },
+    "save": {
+      "estimate_one": "This will apply {{count}} change on YouTube.",
+      "estimate_other": "This will apply {{count}} changes on YouTube.",
+      "quotaExceeded": "PlayPick has reached today's YouTube limit. Trying again today will not help — the limit resets tomorrow.",
+      "retry": "Retry the rest"
     }
   },
   "pending": {
@@ -121,6 +130,15 @@
       "confirm": "Leave"
     },
     "cancel": "Keep editing"
+  },
+  "progress": {
+    "title": "Updating playlist…",
+    "step": "{{completed}} of {{total}} changes applied"
+  },
+  "success": {
+    "updated": "Playlist updated",
+    "description": "The new order is now on YouTube.",
+    "backToDashboard": "Back to dashboard"
   },
   "playlist": {
     "regionLabel": "Your playlists",
