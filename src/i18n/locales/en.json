@@ -43,7 +43,9 @@
       "notFound": "That playlist is no longer available on YouTube. Refresh to update the list.",
       "service": "YouTube is having trouble right now. Please try again in a moment.",
       "unknown": "Your playlists could not be loaded. Please try again.",
-      "playlistFull": "This playlist cannot hold any more videos."
+      "playlistFull": "This playlist cannot hold any more videos.",
+      "playlistLimitReached": "Your YouTube account has reached the maximum number of playlists.",
+      "invalidPlaylistDetails": "YouTube would not accept those playlist details."
     },
     "reorder": {
       "partial": "Applied {{completed}} of {{total}} changes. {{failed}} did not go through."
@@ -185,6 +187,13 @@
       "title": "Playlist created",
       "privacy": "Visible to: {{privacy}}",
       "another": "Create another playlist"
+    },
+    "errors": {
+      "quotaExceeded": "PlayPick has reached today's YouTube request limit, so the playlist was not created. Trying again today will not help — please try tomorrow.",
+      "insufficientPermissions": "PlayPick is not allowed to create playlists on your account. Sign in again and grant YouTube access.",
+      "playlistLimitReached": "Your YouTube account has reached the maximum number of playlists, so the playlist was not created. Delete a playlist on YouTube to make room.",
+      "invalidPlaylistDetails": "YouTube would not accept this playlist name. Try a different one.",
+      "unknown": "The playlist could not be created. Please try again."
     }
   },
   "pending": {
