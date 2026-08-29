@@ -91,7 +91,36 @@
     "subtitle": "Drag videos to change their order.",
     "empty": "This playlist has no videos.",
     "loading": "Loading videos… {{retrieved}} of {{total}}",
-    "back": "Choose a different playlist"
+    "back": "Choose a different playlist",
+    "dragHandle": "Reorder {{title}}",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "announce": {
+      "pickedUp": "Picked up {{title}}. It is at position {{position}} of {{total}}.",
+      "movedTo": "{{title}} moved to position {{position}} of {{total}}.",
+      "dropped": "{{title}} dropped at position {{position}} of {{total}}.",
+      "cancelled": "Move cancelled. {{title}} returned to position {{position}}."
+    }
+  },
+  "pending": {
+    "title": "Unsaved changes",
+    "count_one": "{{count}} video moved",
+    "count_other": "{{count}} videos moved",
+    "discard": "Cancel changes",
+    "save": "Save changes"
+  },
+  "confirm": {
+    "discard": {
+      "title": "Discard your changes?",
+      "message": "The playlist will go back to the order it was in. This cannot be undone.",
+      "confirm": "Discard changes"
+    },
+    "leave": {
+      "title": "Leave without saving?",
+      "message": "Your changes have not been sent to YouTube. Leaving will lose them.",
+      "confirm": "Leave"
+    },
+    "cancel": "Keep editing"
   },
   "playlist": {
     "regionLabel": "Your playlists",
