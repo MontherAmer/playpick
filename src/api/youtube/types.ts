@@ -143,3 +143,19 @@ export interface IYouTubeVideoResource {
 export interface IYouTubeVideoListResponse {
   items?: IYouTubeVideoResource[]
 }
+
+/**
+ * The body sent to add a video to a playlist.
+ *
+ * `part=snippet` is the only part named on that request, so nothing outside
+ * `snippet` may appear here — including a partial `contentDetails`, which would
+ * delete the item's existing note.
+ */
+export interface IYouTubePlaylistItemInsertBody {
+  snippet: {
+    playlistId: string
+    resourceId: { kind: 'youtube#video'; videoId: string }
+    /** Zero-based. Omitted entirely when no placement was chosen. */
+    position?: number
+  }
+}
