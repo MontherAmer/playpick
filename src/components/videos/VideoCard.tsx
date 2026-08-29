@@ -23,6 +23,16 @@ interface VideoCardProps {
   badge?: ReactNode
   /** Move controls, supplied by `SortableVideoCard`. */
   actions?: ReactNode
+  /**
+   * Drops the thumbnail, for a narrow column where it would squeeze the title
+   * to nothing.
+   *
+   * Default `false` — every existing caller is unaffected. The Build draft
+   * column is 380px and carries a grip, a position, an open link and three
+   * controls, which left the title exactly zero pixels; the approved design's
+   * builder rows have no thumbnail either.
+   */
+  compact?: boolean
   className?: string
 }
 
@@ -50,7 +60,16 @@ function videoUrl(videoId: string): string {
  * `SortableVideoCard` supplies both, so this component stays usable anywhere a
  * video needs displaying.
  */
-export function VideoCard({ item, position, dragHandle, leading, badge, actions, className }: VideoCardProps) {
+export function VideoCard({
+  item,
+  position,
+  dragHandle,
+  leading,
+  badge,
+  actions,
+  compact = false,
+  className,
+}: VideoCardProps) {
   const { t } = useTranslation()
 
   const title = item.title === '' ? t('playlist.untitledVideo') : item.title
@@ -74,23 +93,25 @@ export function VideoCard({ item, position, dragHandle, leading, badge, actions,
         </span>
       )}
 
-      <div className="relative w-24 shrink-0 sm:w-32">
-        <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
-          {item.thumbnailUrl ? (
-            <img src={item.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
-          ) : (
-            <span className="flex h-full w-full items-center justify-center">
-              <Play className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+      {!compact && (
+        <div className="relative w-24 shrink-0 sm:w-32">
+          <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
+            {item.thumbnailUrl ? (
+              <img src={item.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+            ) : (
+              <span className="flex h-full w-full items-center justify-center">
+                <Play className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+              </span>
+            )}
+          </div>
+
+          {duration !== undefined && (
+            <span className="absolute end-1 bottom-1 rounded bg-black/75 px-1 py-0.5 text-[11px] font-medium text-white tabular-nums">
+              {formatDuration(duration)}
             </span>
           )}
         </div>
-
-        {duration !== undefined && (
-          <span className="absolute end-1 bottom-1 rounded bg-black/75 px-1 py-0.5 text-[11px] font-medium text-white tabular-nums">
-            {formatDuration(duration)}
-          </span>
-        )}
-      </div>
+      )}
 
       <div className="min-w-0 flex-1">
         {/* `dir="auto"` so a title in the other script is not laid out backwards. */}
