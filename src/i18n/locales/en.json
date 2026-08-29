@@ -42,10 +42,14 @@
       "insufficientPermissions": "PlayPick is not allowed to read your playlists. Sign in again and grant YouTube access.",
       "notFound": "That playlist is no longer available on YouTube. Refresh to update the list.",
       "service": "YouTube is having trouble right now. Please try again in a moment.",
-      "unknown": "Your playlists could not be loaded. Please try again."
+      "unknown": "Your playlists could not be loaded. Please try again.",
+      "playlistFull": "This playlist cannot hold any more videos."
     },
     "reorder": {
       "partial": "Applied {{completed}} of {{total}} changes. {{failed}} did not go through."
+    },
+    "copy": {
+      "partial": "Added {{completed}} of {{total}} videos. {{failed}} did not go through."
     }
   },
   "landing": {
@@ -142,7 +146,21 @@
     "searchVideos": "Search videos…",
     "clearSearch": "Clear search",
     "searchLabel": "Search the source playlist",
-    "noMatches": "No videos match your search."
+    "noMatches": "No videos match your search.",
+    "save": {
+      "estimate_one": "This will add {{count}} video to {{playlist}}.",
+      "estimate_other": "This will add {{count}} videos to {{playlist}}.",
+      "retry": "Retry the rest",
+      "quotaExceeded": "PlayPick has reached today's YouTube limit. Trying again today will not help — the limit resets tomorrow.",
+      "playlistFull": "The destination playlist is full and cannot hold any more videos.",
+      "insufficientPermissions": "PlayPick is not allowed to change this playlist. Sign in again and grant YouTube access.",
+      "notFound": "The destination playlist or one of the videos no longer exists on YouTube. Reload the panel and try again.",
+      "unknown": "Something went wrong adding your videos to YouTube."
+    },
+    "success": {
+      "title": "Videos copied",
+      "description": "They are now in the destination playlist on YouTube. Nothing was removed from the source."
+    }
   },
   "pending": {
     "title": "Unsaved changes",
