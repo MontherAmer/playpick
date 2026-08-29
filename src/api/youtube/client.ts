@@ -33,8 +33,8 @@ function readErrorMessage(body: unknown): string | undefined {
 }
 
 /**
- * Performs an authorized GET against the YouTube Data API and returns the parsed
- * body as `unknown`, for the caller to narrow.
+ * Performs one authorized request against the YouTube Data API and returns the
+ * parsed body as `unknown`, for the caller to narrow.
  *
  * Takes a token *getter* rather than a token so a caller cannot hold a stale
  * one; `getAccessToken` renews silently and rejects only when the grant is
@@ -45,10 +45,12 @@ function readErrorMessage(body: unknown): string | undefined {
  * propagates unchanged. The access token is sent as a header and never appears
  * in a URL, a message, or a log line.
  */
-export async function youtubeGet(
+async function youtubeRequest(
+  method: 'GET' | 'PUT',
   getAccessToken: () => Promise<string>,
   path: string,
   params: Record<string, string>,
+  body?: unknown,
   signal?: AbortSignal,
 ): Promise<unknown> {
   let accessToken: string
@@ -61,11 +63,19 @@ export async function youtubeGet(
 
   const url = `${YOUTUBE_API_BASE}${path}?${new URLSearchParams(params).toString()}`
 
+  const headers: Record<string, string> = { Authorization: `Bearer ${accessToken}` }
+
+  if (body !== undefined) {
+    headers['Content-Type'] = 'application/json'
+  }
+
   let response: Response
 
   try {
     response = await fetch(url, {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
       signal,
     })
   } catch (cause) {
@@ -74,15 +84,46 @@ export async function youtubeGet(
     throw new YouTubeError('network', `Could not reach ${path}`)
   }
 
-  const body = await readBody(response)
+  const responseBody = await readBody(response)
 
   if (!response.ok) {
-    const code = toYouTubeErrorCode(response.status, body)
+    const code = toYouTubeErrorCode(response.status, responseBody)
 
     // The message is diagnostic only. Never render it — components translate
     // `errors.youtube.<code>` instead.
-    throw new YouTubeError(code, readErrorMessage(body) ?? `${path} responded with ${String(response.status)}`)
+    throw new YouTubeError(code, readErrorMessage(responseBody) ?? `${path} responded with ${String(response.status)}`)
   }
 
-  return body
+  return responseBody
+}
+
+/** Reads from the API. See `youtubeRequest` for the shared guarantees. */
+export async function youtubeGet(
+  getAccessToken: () => Promise<string>,
+  path: string,
+  params: Record<string, string>,
+  signal?: AbortSignal,
+): Promise<unknown> {
+  return youtubeRequest('GET', getAccessToken, path, params, undefined, signal)
+}
+
+/**
+ * Writes to the API — the first thing in PlayPick that changes anything on
+ * YouTube.
+ *
+ * Deliberately a second named function rather than a generic
+ * `youtubeRequest(method, …)` export: a call site that reads `youtubePut` says
+ * plainly that it mutates, which is worth more here than one fewer function.
+ *
+ * The error taxonomy needs no extension for writes — `toYouTubeErrorCode`
+ * classifies a failed write no differently from a failed read.
+ */
+export async function youtubePut(
+  getAccessToken: () => Promise<string>,
+  path: string,
+  params: Record<string, string>,
+  body: unknown,
+  signal?: AbortSignal,
+): Promise<unknown> {
+  return youtubeRequest('PUT', getAccessToken, path, params, body, signal)
 }
