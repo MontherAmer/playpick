@@ -9,7 +9,7 @@ import { ROUTES } from '@/routes'
  * together — an available tool whose path is not served is a broken link.
  */
 export const PRIMARY_TOOLS: readonly ITool[] = [
-  { id: 'reorder', icon: Shuffle, path: ROUTES.tools.reorder, status: 'soon' },
+  { id: 'reorder', icon: Shuffle, path: ROUTES.tools.reorder, status: 'available' },
   { id: 'copy', icon: ArrowRightLeft, path: ROUTES.tools.copy, status: 'soon' },
   { id: 'create', icon: ListPlus, path: ROUTES.tools.create, status: 'soon' },
 ]
