@@ -9,6 +9,7 @@ export type YouTubeErrorCode =
   | 'apiNotEnabled'
   | 'insufficientPermissions'
   | 'notFound'
+  | 'playlistFull'
   | 'service'
   | 'unknown'
 
@@ -41,6 +42,16 @@ const QUOTA_REASONS: readonly string[] = ['quotaExceeded', 'rateLimitExceeded']
  * and has to read like one.
  */
 const API_NOT_ENABLED_REASONS: readonly string[] = ['accessNotConfigured']
+
+/**
+ * The fourth meaning of 403: the destination playlist is at YouTube's maximum
+ * size.
+ *
+ * Without this it falls through to `insufficientPermissions`, which tells the
+ * person to sign in again and grant access — advice that cannot possibly work,
+ * for a problem that has nothing to do with permissions.
+ */
+const PLAYLIST_FULL_REASONS: readonly string[] = ['playlistContainsMaximumNumberOfVideos']
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -80,6 +91,8 @@ export function toYouTubeErrorCode(status: number, body: unknown): YouTubeErrorC
 
     if (reasons.some((reason) => QUOTA_REASONS.includes(reason))) return 'quotaExceeded'
     if (reasons.some((reason) => API_NOT_ENABLED_REASONS.includes(reason))) return 'apiNotEnabled'
+    // Checked before the fallthrough: a full playlist is not a permissions problem.
+    if (reasons.some((reason) => PLAYLIST_FULL_REASONS.includes(reason))) return 'playlistFull'
 
     return 'insufficientPermissions'
   }
