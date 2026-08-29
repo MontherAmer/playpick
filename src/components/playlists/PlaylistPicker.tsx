@@ -102,6 +102,19 @@ interface PlaylistPickerProps {
   /** Accessible name for the region. Defaults to a generic translated label. */
   label?: string
   /**
+   * Selected ids, for choosing **several** playlists rather than one.
+   *
+   * When present the picker is in multi-select: `selected` comes from set
+   * membership rather than id equality, `onSelect` becomes a toggle, and
+   * `selectedId` is ignored. Absent, everything behaves exactly as it always
+   * has.
+   *
+   * `PlaylistCard` needs no change to serve this — it is already a toggle,
+   * rendering `aria-pressed` with a ring **and** a check mark, and a set of
+   * `aria-pressed` buttons is correct ARIA for multi-select.
+   */
+  selectedIds?: ReadonlySet<string>
+  /**
    * How the playlists are presented.
    *
    * `'grid'` — the default, and exactly what every existing caller gets.
@@ -128,6 +141,7 @@ interface PlaylistPickerProps {
  */
 export function PlaylistPicker({
   selectedId,
+  selectedIds,
   excludeId,
   onSelect,
   label,
@@ -161,6 +175,9 @@ export function PlaylistPicker({
   )
 
   const hasNoMatches = isReady && selectablePlaylists.length > 0 && visiblePlaylists.length === 0
+
+  const isSelected = (playlist: IPlaylist) =>
+    selectedIds === undefined ? playlist.id === selectedId : selectedIds.has(playlist.id)
 
   /**
    * With pages still unretrieved, "no matches" is only true of what has loaded.
@@ -239,9 +256,9 @@ export function PlaylistPicker({
           {visiblePlaylists.map((playlist) => (
             <li key={playlist.id}>
               {layout === 'grid' ? (
-                <PlaylistCard playlist={playlist} selected={playlist.id === selectedId} onSelect={onSelect} />
+                <PlaylistCard playlist={playlist} selected={isSelected(playlist)} onSelect={onSelect} />
               ) : (
-                <PlaylistRow playlist={playlist} selected={playlist.id === selectedId} onSelect={onSelect} />
+                <PlaylistRow playlist={playlist} selected={isSelected(playlist)} onSelect={onSelect} />
               )}
             </li>
           ))}
