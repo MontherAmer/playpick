@@ -69,7 +69,7 @@ export function PlaylistForm({ draft, issues, canSubmit, isSubmitting, onChange,
         {issues.title && (
           <p id={titleIssueId} role="alert" className="inline-flex items-center gap-1.5 text-sm text-destructive">
             <CircleAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
-            {t('create.required')}
+            {t(issues.title === 'rejectedByYouTube' ? 'create.errors.invalidPlaylistDetails' : 'create.required')}
           </p>
         )}
       </div>

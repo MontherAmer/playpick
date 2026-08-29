@@ -41,6 +41,16 @@ const ICONS: Record<YouTubeErrorCode, LucideIcon> = {
 
 interface ErrorStateProps {
   code: YouTubeErrorCode
+  /**
+   * A context-specific translation key, tried before `errors.youtube.<code>`
+   * and falling back to it when it does not exist.
+   *
+   * A **key**, never a message: only a translated string can reach the screen,
+   * so no raw API detail can be smuggled in through this prop. It exists because
+   * the shared strings are written for a failed *retrieval* — "your playlists
+   * could not be loaded" is nonsense after a failed write.
+   */
+  messageKey?: string
   /** Omitted where re-attempting cannot help; the message then stands alone. */
   onRetry?: () => void
   className?: string
@@ -53,9 +63,10 @@ interface ErrorStateProps {
  * status, Google's `error.message`, and the request itself never reach the
  * screen, so no token or raw payload can leak through this component (FR-021).
  */
-export function ErrorState({ code, onRetry, className }: ErrorStateProps) {
-  const { t } = useTranslation()
+export function ErrorState({ code, messageKey, onRetry, className }: ErrorStateProps) {
+  const { t, i18n } = useTranslation()
   const Icon = ICONS[code]
+  const message = messageKey !== undefined && i18n.exists(messageKey) ? t(messageKey) : t(`errors.youtube.${code}`)
 
   return (
     <div
@@ -68,7 +79,7 @@ export function ErrorState({ code, onRetry, className }: ErrorStateProps) {
         <Icon className="h-6 w-6 text-destructive" aria-hidden="true" />
       </div>
 
-      <p className="max-w-sm font-semibold">{t(`errors.youtube.${code}`)}</p>
+      <p className="max-w-sm font-semibold">{message}</p>
 
       {onRetry && (
         <Button variant="outline" onClick={onRetry}>

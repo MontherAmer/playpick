@@ -2,6 +2,8 @@ import { CheckCircle2, ExternalLink } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import type { YouTubeErrorCode } from '@/api/youtube/errors'
+import { ErrorState } from '@/components/common/ErrorState'
 import { PlaylistForm } from '@/components/create/PlaylistForm'
 import { Button } from '@/components/ui/Button'
 import { buttonStyles } from '@/components/ui/buttonStyles'
@@ -12,6 +14,14 @@ import { EMPTY_DRAFT, type IPlaylistDraft } from '@/models/playlistDraft'
 function playlistUrl(playlistId: string): string {
   return `https://www.youtube.com/playlist?list=${playlistId}`
 }
+
+/**
+ * Failures that another attempt cannot fix: the daily allowance is spent, the
+ * account holds all the playlists YouTube allows, or this deployment was never
+ * configured to reach the API. Offering a retry here would only invite the
+ * person to spend their time proving the same thing twice.
+ */
+const NO_RETRY: readonly YouTubeErrorCode[] = ['quotaExceeded', 'playlistLimitReached', 'apiNotEnabled']
 
 /**
  * Create Playlist: three fields, one explicit submit, one new playlist.
@@ -34,13 +44,42 @@ export function CreatePlaylistPage() {
 
   const isSubmitting = create.status === 'creating'
   const issues = useMemo(() => validatePlaylistDraft(draft), [draft])
-  const shownIssues = hasAttempted ? issues : {}
+  const failure = create.status === 'failed' ? create.failure : null
+
+  /**
+   * A rejection of the details themselves is shown *at the title*, because it is
+   * the only failure the person caused and the only one editing can fix. Every
+   * other failure is about the world, not the form, so it is shown above it.
+   */
+  const shownIssues = useMemo(
+    () => ({
+      ...(hasAttempted ? issues : {}),
+      ...(failure === 'invalidPlaylistDetails' ? { title: 'rejectedByYouTube' as const } : {}),
+    }),
+    [hasAttempted, issues, failure],
+  )
 
   const handleSubmit = useCallback(() => {
     setHasAttempted(true)
 
     void create.submit(draft)
   }, [create, draft])
+
+  /**
+   * Editing clears a previous failure. Leaving it up would leave the form
+   * contradicting itself — a rejection pinned to a title that has since been
+   * changed. The draft itself is never touched by a failure.
+   */
+  const handleChange = useCallback(
+    (next: IPlaylistDraft) => {
+      setDraft(next)
+
+      if (create.status === 'failed') {
+        create.reset()
+      }
+    },
+    [create],
+  )
 
   const startAnother = useCallback(() => {
     create.reset()
@@ -97,14 +136,27 @@ export function CreatePlaylistPage() {
         <p className="mt-1 text-sm text-muted-foreground sm:text-base">{t('create.subtitle')}</p>
       </div>
 
-      {/* Failure rendering lands in T020. */}
+      {failure !== null && failure !== 'invalidPlaylistDetails' && (
+        <ErrorState
+          code={failure}
+          messageKey={`create.errors.${failure}`}
+          onRetry={
+            NO_RETRY.includes(failure)
+              ? undefined
+              : () => {
+                  void create.submit(draft)
+                }
+          }
+          className="mb-4"
+        />
+      )}
 
       <PlaylistForm
         draft={draft}
         issues={shownIssues}
         canSubmit={isDraftSubmittable(draft)}
         isSubmitting={isSubmitting}
-        onChange={setDraft}
+        onChange={handleChange}
         onSubmit={handleSubmit}
       />
     </div>

@@ -30,8 +30,13 @@ export interface IPlaylistDraft {
  *
  * A reason rather than a message, so the caller translates it and one result
  * serves both languages.
+ *
+ * `'required'` is decided here, before anything is sent. `'rejectedByYouTube'`
+ * can only be learned by asking, and is attached by the page after a failed
+ * creation — it shares this type because both mean the same thing to the person
+ * reading the form: *this field is what needs changing*.
  */
-export type FieldIssue = 'required'
+export type FieldIssue = 'required' | 'rejectedByYouTube'
 
 /** Issues keyed by field, because each must be shown beside the field it concerns. */
 export interface IDraftIssues {
