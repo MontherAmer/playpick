@@ -16,8 +16,10 @@ export interface ISaveOrder {
   failure: YouTubeErrorCode | null
   /** What a retry will attempt. */
   remaining: IMove[]
-  save: (plan: IMove[], items: IPlaylistItem[]) => Promise<void>
-  retry: () => Promise<void>
+  /** Resolves `true` only when every move in the plan landed. */
+  save: (plan: IMove[], items: IPlaylistItem[]) => Promise<boolean>
+  /** Resolves `true` only when the remainder fully landed. */
+  retry: () => Promise<boolean>
   reset: () => void
 }
 
@@ -59,8 +61,8 @@ export function useSaveOrder(playlistId: string): ISaveOrder {
   const inFlightRef = useRef(false)
 
   const run = useCallback(
-    async (moves: IMove[], items: IPlaylistItem[], alreadyCompleted: number, total: number) => {
-      if (inFlightRef.current) return
+    async (moves: IMove[], items: IPlaylistItem[], alreadyCompleted: number, total: number): Promise<boolean> => {
+      if (inFlightRef.current) return false
 
       inFlightRef.current = true
 
@@ -80,7 +82,7 @@ export function useSaveOrder(playlistId: string): ISaveOrder {
           setState({ status: 'failed', total, completed, failure: 'notFound', remaining: outstanding })
           inFlightRef.current = false
 
-          return
+          return false
         }
 
         try {
@@ -94,7 +96,7 @@ export function useSaveOrder(playlistId: string): ISaveOrder {
           setState({ status: 'failed', total, completed, failure: toErrorCode(cause), remaining: outstanding })
           inFlightRef.current = false
 
-          return
+          return false
         }
 
         completed += 1
@@ -105,6 +107,8 @@ export function useSaveOrder(playlistId: string): ISaveOrder {
 
       setState({ status: 'succeeded', total, completed, failure: null, remaining: [] })
       inFlightRef.current = false
+
+      return true
     },
     [getAccessToken, playlistId],
   )
@@ -113,19 +117,19 @@ export function useSaveOrder(playlistId: string): ISaveOrder {
 
   const save = useCallback(
     async (plan: IMove[], items: IPlaylistItem[]) => {
-      if (plan.length === 0) return
+      if (plan.length === 0) return false
 
       itemsRef.current = items
 
-      await run(plan, items, 0, plan.length)
+      return run(plan, items, 0, plan.length)
     },
     [run],
   )
 
   const retry = useCallback(async () => {
-    if (state.remaining.length === 0) return
+    if (state.remaining.length === 0) return false
 
-    await run(state.remaining, itemsRef.current, state.completed, state.total)
+    return run(state.remaining, itemsRef.current, state.completed, state.total)
   }, [run, state.remaining, state.completed, state.total])
 
   const reset = useCallback(() => {

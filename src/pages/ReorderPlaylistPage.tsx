@@ -9,7 +9,7 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { ArrowLeft, ListVideo, Loader2 } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, ExternalLink, ListVideo, Loader2, RotateCcw } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -18,11 +18,32 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
 import { PendingChangesBar } from '@/components/common/PendingChangesBar'
 import { PlaylistPicker } from '@/components/playlists/PlaylistPicker'
+import { ProgressDialog } from '@/components/common/ProgressDialog'
 import { Button } from '@/components/ui/Button'
+import { buttonStyles } from '@/components/ui/buttonStyles'
 import { SortableVideoCard } from '@/components/videos/SortableVideoCard'
 import { usePlaylistSelection } from '@/features/playlists/usePlaylistSelection'
 import { useReorderDraft } from '@/features/reorder/useReorderDraft'
+import { useSaveOrder } from '@/features/reorder/useSaveOrder'
+import type { YouTubeErrorCode } from '@/api/youtube/errors'
 import type { IPlaylist } from '@/models/playlist'
+
+/**
+ * Failures that need save-specific wording. The shared `errors.youtube.*`
+ * strings are written for retrieval — "your playlists could not be loaded",
+ * "not allowed to read your playlists" — which reads as nonsense when it was a
+ * save that failed. Everything else is phrased neutrally enough to reuse.
+ */
+const SAVE_SPECIFIC_ERRORS: readonly YouTubeErrorCode[] = [
+  'quotaExceeded',
+  'insufficientPermissions',
+  'notFound',
+  'unknown',
+]
+
+function playlistUrl(playlistId: string): string {
+  return `https://www.youtube.com/playlist?list=${playlistId}`
+}
 
 interface ReorderEditorProps {
   playlist: IPlaylist
@@ -31,9 +52,13 @@ interface ReorderEditorProps {
 
 function ReorderEditor({ playlist, onLeave }: ReorderEditorProps) {
   const { t } = useTranslation()
-  const { status, error, draft, loadProgress, pendingCount, moveItem, discard, retry } = useReorderDraft(playlist.id)
+  const { status, error, draft, loadProgress, pendingCount, movePlan, moveItem, discard, retry, commitSaved } =
+    useReorderDraft(playlist.id)
+  const save = useSaveOrder(playlist.id)
 
   const [confirming, setConfirming] = useState<'discard' | 'leave' | null>(null)
+
+  const isSaving = save.status === 'saving'
 
   const isReady = status === 'ready'
   const ids = useMemo(() => draft.map((item) => item.id), [draft])
@@ -98,6 +123,14 @@ function ReorderEditor({ playlist, onLeave }: ReorderEditorProps) {
     [ids, moveItem],
   )
 
+  const handleSave = useCallback(() => {
+    void save.save(movePlan, draft).then((succeeded) => {
+      // Only on a clean run. A partial save must keep the draft and its
+      // remaining plan, so a retry has something to work from.
+      if (succeeded) commitSaved()
+    })
+  }, [save, movePlan, draft, commitSaved])
+
   const leave = useCallback(() => {
     if (pendingCount > 0) {
       setConfirming('leave')
@@ -107,6 +140,39 @@ function ReorderEditor({ playlist, onLeave }: ReorderEditorProps) {
 
     onLeave()
   }, [pendingCount, onLeave])
+
+  if (save.status === 'succeeded') {
+    return (
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-brand/30 bg-brand-muted/40 px-6 py-12 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/10">
+          <CheckCircle2 className="h-6 w-6 text-brand" aria-hidden="true" />
+        </div>
+
+        <p className="font-semibold">{t('success.updated')}</p>
+        <p className="text-sm text-muted-foreground">{t('success.description')}</p>
+
+        <div className="mt-2 flex flex-wrap justify-center gap-2">
+          <a
+            href={playlistUrl(playlist.id)}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonStyles({ variant: 'brand' })}>
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+            {t('common.openOnYouTube')}
+          </a>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              save.reset()
+              onLeave()
+            }}>
+            {t('reorder.back')}
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className={pendingCount > 0 ? 'flex flex-col gap-4 pb-28' : 'flex flex-col gap-4'}>
@@ -127,7 +193,11 @@ function ReorderEditor({ playlist, onLeave }: ReorderEditorProps) {
         </div>
       </div>
 
-      {isReady && draft.length > 1 && <p className="text-sm text-muted-foreground">{t('reorder.subtitle')}</p>}
+      {isReady && draft.length > 1 && (
+        <p className="text-sm text-muted-foreground">
+          {pendingCount > 0 ? t('reorder.save.estimate', { count: pendingCount }) : t('reorder.subtitle')}
+        </p>
+      )}
 
       {status === 'loading' && (
         <p role="status" className="flex items-center justify-center gap-2 py-10 text-sm text-muted-foreground">
@@ -139,6 +209,38 @@ function ReorderEditor({ playlist, onLeave }: ReorderEditorProps) {
       )}
 
       {status === 'failed' && error !== null && <ErrorState code={error} onRetry={retry} />}
+
+      {save.status === 'failed' && (
+        <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm">
+          <p className="font-semibold">
+            {t('errors.reorder.partial', {
+              completed: save.completed,
+              total: save.total,
+              failed: save.total - save.completed,
+            })}
+          </p>
+
+          <p className="mt-1 text-muted-foreground">
+            {save.failure !== null && SAVE_SPECIFIC_ERRORS.includes(save.failure)
+              ? t(`reorder.save.${save.failure}`)
+              : t(`errors.youtube.${String(save.failure)}`)}
+          </p>
+
+          {save.failure !== 'quotaExceeded' && save.failure !== 'apiNotEnabled' && (
+            <Button
+              variant="outline"
+              className="mt-3"
+              onClick={() => {
+                void save.retry().then((succeeded) => {
+                  if (succeeded) commitSaved()
+                })
+              }}>
+              <RotateCcw className="h-4 w-4" aria-hidden="true" />
+              {t('reorder.save.retry')}
+            </Button>
+          )}
+        </div>
+      )}
 
       {isReady && draft.length === 0 && <EmptyState icon={ListVideo} title={t('reorder.empty')} />}
 
@@ -157,6 +259,7 @@ function ReorderEditor({ playlist, onLeave }: ReorderEditorProps) {
                   position={index + 1}
                   isFirst={index === 0}
                   isLast={index === draft.length - 1}
+                  disabled={isSaving}
                   onMoveUp={() => {
                     moveItem(index, index - 1)
                   }}
@@ -175,11 +278,11 @@ function ReorderEditor({ playlist, onLeave }: ReorderEditorProps) {
         onDiscard={() => {
           setConfirming('discard')
         }}
-        onSave={() => {
-          // Saving lands in T028.
-        }}
-        isSaving={false}
+        onSave={handleSave}
+        isSaving={isSaving}
       />
+
+      <ProgressDialog open={isSaving} completed={save.completed} total={save.total} />
 
       <ConfirmDialog
         open={confirming === 'discard'}

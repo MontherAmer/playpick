@@ -45,7 +45,7 @@
       "unknown": "Your playlists could not be loaded. Please try again."
     },
     "reorder": {
-      "partial": "{{completed}} of {{total}} changes were applied. {{failed}} were not."
+      "partial": "Applied {{completed}} of {{total}} changes. {{failed}} did not go through."
     }
   },
   "landing": {
@@ -108,7 +108,10 @@
       "estimate_one": "This will apply {{count}} change on YouTube.",
       "estimate_other": "This will apply {{count}} changes on YouTube.",
       "quotaExceeded": "PlayPick has reached today's YouTube limit. Trying again today will not help — the limit resets tomorrow.",
-      "retry": "Retry the rest"
+      "retry": "Retry the rest",
+      "unknown": "Something went wrong sending your changes to YouTube.",
+      "insufficientPermissions": "PlayPick is not allowed to change your playlists. Sign in again and grant YouTube access.",
+      "notFound": "Part of this playlist no longer exists on YouTube. Go back and load it again."
     }
   },
   "pending": {
