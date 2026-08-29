@@ -84,6 +84,14 @@
       "description": "Create a copy of an existing playlist."
     }
   },
+  "reorder": {
+    "title": "Reorder Playlist",
+    "selectFirst": "First, select the playlist you want to reorder.",
+    "subtitle": "Drag videos to change their order.",
+    "empty": "This playlist has no videos.",
+    "loading": "Loading videos… {{retrieved}} of {{total}}",
+    "back": "Choose a different playlist"
+  },
   "playlist": {
     "regionLabel": "Your playlists",
     "untitled": "Untitled playlist",
@@ -110,7 +118,9 @@
     },
     "loadMore": "Load more",
     "showingCount": "Showing {{shown}} of {{total}}",
-    "loadMoreFailed": "Could not load more playlists."
+    "loadMoreFailed": "Could not load more playlists.",
+    "untitledVideo": "Untitled video",
+    "unavailableVideo": "Unavailable video"
   },
   "notFound": {
     "title": "Page not found",
