@@ -154,6 +154,16 @@ export function PlaylistLibraryProvider({ children }: { children: ReactNode }) {
     void retrieveFirstPage()
   }, [retrieveFirstPage])
 
+  // No request, and no other field touched. `totalResults` moves with the list
+  // so a count rendered beside it does not contradict what is on screen.
+  const addCreatedPlaylist = useCallback((playlist: IPlaylist) => {
+    setState((current) => ({
+      ...current,
+      playlists: [playlist, ...current.playlists],
+      totalResults: current.totalResults + 1,
+    }))
+  }, [])
+
   // A different account must never see the previous account's playlists, and
   // signing out must not leave them in memory.
   const userId = user?.id ?? null
@@ -183,8 +193,9 @@ export function PlaylistLibraryProvider({ children }: { children: ReactNode }) {
       loadFirstPage,
       loadMore,
       refresh,
+      addCreatedPlaylist,
     }),
-    [state, loadFirstPage, loadMore, refresh],
+    [state, loadFirstPage, loadMore, refresh, addCreatedPlaylist],
   )
 
   return <PlaylistLibraryContext.Provider value={value}>{children}</PlaylistLibraryContext.Provider>

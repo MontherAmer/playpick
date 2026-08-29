@@ -45,6 +45,23 @@ export interface IPlaylistLibrary {
   loadMore(): void
   /** Discards everything and re-retrieves from the first page. */
   refresh(): void
+  /**
+   * Inserts a playlist this session has just created, so every selection surface
+   * offers it immediately.
+   *
+   * **Issues no request.** The playlist is already known — it is what the API
+   * just returned — so re-retrieving the library would spend the allowance to
+   * learn nothing and discard every page already loaded.
+   *
+   * Prepended rather than appended: on a large library an appended playlist
+   * lands below a "load more" boundary, where the person who just created it
+   * cannot see it.
+   *
+   * Purely additive. Nothing else moves — not `status`, not the page cursor, not
+   * `hasMore`, not the error fields — so a library that failed to load stays
+   * failed and a partially loaded one keeps its place.
+   */
+  addCreatedPlaylist(playlist: IPlaylist): void
 }
 
 export const PlaylistLibraryContext = createContext<IPlaylistLibrary | null>(null)
