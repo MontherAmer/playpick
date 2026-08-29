@@ -27,12 +27,15 @@ export function SourcePlaylistColumn({ selectedId, onSelect }: SourcePlaylistCol
   const { t } = useTranslation()
 
   return (
-    <section
-      aria-label={t('build.yourPlaylists')}
-      // `min-w-0`: a grid item defaults to `min-width: auto`, so an
-      // intrinsically wide child would push this track wider than its column
-      // and scroll the whole page sideways at narrow widths.
-      className="flex min-w-0 flex-col rounded-xl border bg-card p-3 shadow-card sm:p-4">
+    // A plain `div`, not a `section`: `PlaylistPicker` already renders its own
+    // labelled region, and wrapping it in a second one would put two landmarks
+    // with the same name in the page's outline. The heading below is the
+    // visible label; the picker carries the accessible one.
+    //
+    // `min-w-0`: a grid item defaults to `min-width: auto`, so an intrinsically
+    // wide child would push this track wider than its column and scroll the
+    // whole page sideways at narrow widths.
+    <div className="flex min-w-0 flex-col rounded-xl border bg-card p-3 shadow-card sm:p-4">
       <h2 className="mb-3 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
         {t('build.yourPlaylists')}
       </h2>
@@ -43,6 +46,6 @@ export function SourcePlaylistColumn({ selectedId, onSelect }: SourcePlaylistCol
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PlaylistPicker selectedId={selectedId} onSelect={onSelect} label={t('build.yourPlaylists')} layout="list" />
       </div>
-    </section>
+    </div>
   )
 }
