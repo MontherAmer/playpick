@@ -287,6 +287,7 @@
     "deselectAll": "Clear selection",
     "selectedCount": "{{count}} selected",
     "inDraft": "In your draft",
+    "duplicateBadge": "Already there",
     "unavailable": "Unavailable",
     "searchVideos": "Search videos…",
     "searchLabel": "Search this playlist",
@@ -299,7 +300,6 @@
     "descriptionPlaceholder": "What is this playlist about?",
     "descriptionOptional": "optional",
     "required": "This field is required",
-    "privacyRequired": "Choose who can see this playlist",
     "willAdd_one": "{{count}} will be added",
     "willAdd_other": "{{count}} will be added",
     "confirm": {
