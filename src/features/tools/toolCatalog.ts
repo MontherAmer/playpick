@@ -11,7 +11,7 @@ import { ROUTES } from '@/routes'
 export const PRIMARY_TOOLS: readonly ITool[] = [
   { id: 'reorder', icon: Shuffle, path: ROUTES.tools.reorder, status: 'available' },
   { id: 'copy', icon: ArrowRightLeft, path: ROUTES.tools.copy, status: 'available' },
-  { id: 'create', icon: ListPlus, path: ROUTES.tools.create, status: 'soon' },
+  { id: 'create', icon: ListPlus, path: ROUTES.tools.create, status: 'available' },
 ]
 
 /** Secondary tools, shown as compact cards. */
