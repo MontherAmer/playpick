@@ -244,9 +244,27 @@ export function CopyPlaylistsPage() {
       }
 
       if (overId.startsWith('row:')) {
-        const index = draft.destinationDraft.findIndex((row) => `row:${row.key}` === overId)
+        const target = draft.destinationDraft.findIndex((row) => `row:${row.key}` === overId)
 
-        if (index !== -1) draft.addCopy(item, index)
+        if (target === -1) return
+
+        /**
+         * Dropping onto a row already on YouTube means "put it here", so the
+         * video takes that row's place and pushes it down.
+         *
+         * Dropping onto a video you just added means something else: you are
+         * adding another one alongside it, not displacing the one you only just
+         * placed. So the new video lands *after* that row — and after any run of
+         * pending rows it belongs to — which keeps successive drops in the order
+         * they were made instead of reversing them.
+         */
+        let index = target
+
+        while (index < draft.destinationDraft.length && draft.destinationDraft[index].pending !== undefined) {
+          index += 1
+        }
+
+        draft.addCopy(item, index)
       }
     },
     [sourceItems.items, draft],
