@@ -1,7 +1,9 @@
 import {
   Ban,
   CloudOff,
+  FileWarning,
   KeyRound,
+  Layers,
   ListX,
   PackageOpen,
   RotateCcw,
@@ -30,6 +32,9 @@ const ICONS: Record<YouTubeErrorCode, LucideIcon> = {
   insufficientPermissions: ShieldAlert,
   notFound: ListX,
   playlistFull: PackageOpen,
+  // Distinct from `playlistFull`: too many playlists, not too many videos.
+  playlistLimitReached: Layers,
+  invalidPlaylistDetails: FileWarning,
   service: CloudOff,
   unknown: TriangleAlert,
 }

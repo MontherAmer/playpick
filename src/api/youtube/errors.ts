@@ -10,6 +10,8 @@ export type YouTubeErrorCode =
   | 'insufficientPermissions'
   | 'notFound'
   | 'playlistFull'
+  | 'playlistLimitReached'
+  | 'invalidPlaylistDetails'
   | 'service'
   | 'unknown'
 
@@ -53,6 +55,25 @@ const API_NOT_ENABLED_REASONS: readonly string[] = ['accessNotConfigured']
  */
 const PLAYLIST_FULL_REASONS: readonly string[] = ['playlistContainsMaximumNumberOfVideos']
 
+/**
+ * The account already holds as many playlists as YouTube allows.
+ *
+ * Distinct from `playlistFull`, and the names are worth keeping apart: this one
+ * is about the *account* holding too many playlists, that one about a *playlist*
+ * holding too many videos. They arrive from different operations and neither
+ * message would make sense in the other's place.
+ */
+const PLAYLIST_LIMIT_REASONS: readonly string[] = ['maxPlaylistExceeded']
+
+/**
+ * YouTube refused the playlist details themselves — in practice the title.
+ *
+ * The only failure here the person caused and the only one they can fix by
+ * editing, which is why it is worth separating from a generic bad request: it
+ * is attributed to the field rather than shown as a page-level error.
+ */
+const INVALID_PLAYLIST_REASONS: readonly string[] = ['invalidPlaylistSnippet', 'playlistTitleRequired']
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
@@ -95,6 +116,15 @@ export function toYouTubeErrorCode(status: number, body: unknown): YouTubeErrorC
     if (reasons.some((reason) => PLAYLIST_FULL_REASONS.includes(reason))) return 'playlistFull'
 
     return 'insufficientPermissions'
+  }
+
+  // Reasons are read on 400 as well as 403, additively: an unrecognised 400
+  // still falls through to `unknown` exactly as it did before.
+  if (status === 400) {
+    const reasons = readErrorReasons(body)
+
+    if (reasons.some((reason) => PLAYLIST_LIMIT_REASONS.includes(reason))) return 'playlistLimitReached'
+    if (reasons.some((reason) => INVALID_PLAYLIST_REASONS.includes(reason))) return 'invalidPlaylistDetails'
   }
 
   if (status === 404) {
