@@ -1,4 +1,4 @@
-import { CheckCircle2, ExternalLink } from 'lucide-react'
+import { CheckCircle2, ExternalLink, RotateCcw } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -7,6 +7,7 @@ import { DestinationChoice, type DestinationKind } from '@/components/build/Dest
 import { SourcePlaylistColumn } from '@/components/build/SourcePlaylistColumn'
 import { SourceVideosColumn } from '@/components/build/SourceVideosColumn'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+import { ErrorState } from '@/components/common/ErrorState'
 import { DuplicateNotice } from '@/components/copy/DuplicateNotice'
 import { ProgressDialog } from '@/components/common/ProgressDialog'
 import { Button } from '@/components/ui/Button'
@@ -18,6 +19,7 @@ import { isDraftSubmittable } from '@/features/create/validatePlaylistDraft'
 import { usePlaylistItems } from '@/features/playlists/usePlaylistItems'
 import { usePlaylistSelection } from '@/features/playlists/usePlaylistSelection'
 import { toVideoIdSet } from '@/features/copy/detectDuplicates'
+import type { YouTubeErrorCode } from '@/api/youtube/errors'
 import type { IBuildDestination } from '@/models/build'
 import { EMPTY_DRAFT, type IPlaylistDraft } from '@/models/playlistDraft'
 
@@ -27,6 +29,14 @@ function playlistUrl(playlistId: string): string {
 
 /** A playlist about to be created holds nothing, which is not a special case. */
 const NO_DESTINATION_VIDEOS: ReadonlySet<string> = new Set()
+
+/**
+ * Failures another attempt cannot fix: the day's allowance is spent, the account
+ * holds all the playlists YouTube allows, or this deployment was never
+ * configured to reach the API. Offering a retry would only invite someone to
+ * spend their time proving the same thing twice.
+ */
+const NO_RETRY: readonly YouTubeErrorCode[] = ['quotaExceeded', 'playlistLimitReached', 'apiNotEnabled']
 
 /**
  * Build Playlist: gather videos from a playlist, then turn them into a new one.
@@ -130,6 +140,49 @@ export function BuildPlaylistPage() {
         <p className="mt-1 text-sm text-muted-foreground sm:text-base">{t('build.subtitle')}</p>
       </div>
 
+      {save.status === 'failed' && save.failure !== null && (
+        <div className="mb-4 flex flex-col gap-2">
+          {/* No `onRetry`: its control reads "Try again", which here could be
+              taken to mean the whole run. The remainder-only wording matters
+              enough to render the control separately, as Copy does. */}
+          <ErrorState code={save.failure} messageKey={`build.save.${save.failure}`} />
+
+          {/* What actually happened, stated separately from why it stopped: a
+              run that added nine of twelve is not a failed run. */}
+          {save.failedDuring === 'add' && (
+            <p role="status" className="text-center text-sm text-muted-foreground">
+              {t('build.save.partial', {
+                // `count` drives the plural form; the other two are the text.
+                count: save.completed,
+                completed: save.completed,
+                total: save.total,
+              })}
+            </p>
+          )}
+
+          {/* The playlist exists. Saying so is the difference between an honest
+              report and one that invites a second, undeletable playlist. */}
+          {save.failedDuring === 'add' && save.createdPlaylist && (
+            <p role="status" className="text-center text-sm text-muted-foreground">
+              {t('build.save.createdButIncomplete', { playlist: save.createdPlaylist.title })}
+            </p>
+          )}
+
+          {!NO_RETRY.includes(save.failure) && save.remaining.length > 0 && (
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  void save.retry()
+                }}>
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                {t('build.save.retry')}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* `minmax(0, …)` on every track, not bare widths: a grid item defaults to
           `min-width: auto`, so an intrinsically wide child would widen its track
           and scroll the whole page sideways at 320px. */}
@@ -189,7 +242,11 @@ export function BuildPlaylistPage() {
         />
       </div>
 
-      <ProgressDialog open={isSaving} completed={save.completed} total={save.total} />
+      {/* Opened only while videos are being added. During the creation step
+          there is nothing to count, and a dialog reading "0 of 12" would look
+          like a stalled save rather than a step in progress; the save control's
+          own spinner covers that single request. */}
+      <ProgressDialog open={save.status === 'adding'} completed={save.completed} total={save.total} />
 
       {/* Nothing is sent until this is accepted. It names the count, the
           playlist, that it is about to be created, and what it costs. */}
