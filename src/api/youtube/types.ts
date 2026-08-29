@@ -87,3 +87,59 @@ export interface IYouTubeErrorResponse {
     errors?: IYouTubeErrorDetail[]
   }
 }
+
+/**
+ * The video a playlist item points at. `kind` is always `youtube#video` for the
+ * items this app handles, and must be echoed back on an update.
+ */
+export interface IYouTubeResourceId {
+  kind?: string
+  videoId?: string
+}
+
+export interface IYouTubePlaylistItemSnippet {
+  title?: string
+  /** The channel that uploaded the video — not the playlist owner's channel. */
+  videoOwnerChannelTitle?: string
+  thumbnails?: IYouTubeThumbnails
+  /** Zero-based. Read as a sanity check on page ordering; never stored. */
+  position?: number
+  resourceId?: IYouTubeResourceId
+}
+
+export interface IYouTubePlaylistItemContentDetails {
+  videoId?: string
+  videoPublishedAt?: string
+}
+
+export interface IYouTubePlaylistItemStatus {
+  /** `private` here means the underlying video is private or deleted. */
+  privacyStatus?: string
+}
+
+export interface IYouTubePlaylistItemResource {
+  id: string
+  snippet?: IYouTubePlaylistItemSnippet
+  contentDetails?: IYouTubePlaylistItemContentDetails
+  status?: IYouTubePlaylistItemStatus
+}
+
+export interface IYouTubePlaylistItemListResponse {
+  items?: IYouTubePlaylistItemResource[]
+  nextPageToken?: string
+  pageInfo?: IYouTubePageInfo
+}
+
+export interface IYouTubeVideoContentDetails {
+  /** ISO-8601, e.g. `PT4M13S`. Absent for a video the caller cannot see. */
+  duration?: string
+}
+
+export interface IYouTubeVideoResource {
+  id: string
+  contentDetails?: IYouTubeVideoContentDetails
+}
+
+export interface IYouTubeVideoListResponse {
+  items?: IYouTubeVideoResource[]
+}
