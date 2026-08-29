@@ -293,5 +293,66 @@
     "title": "الصفحة غير موجودة",
     "description": "الصفحة التي تبحث عنها غير موجودة.",
     "backHome": "العودة إلى الصفحة الرئيسية"
+  },
+  "build": {
+    "title": "بناء قائمة تشغيل",
+    "subtitle": "اجمع فيديوهات من أي من قوائمك، ثم احفظها كلها دفعة واحدة.",
+    "yourPlaylists": "قوائم التشغيل الخاصة بك",
+    "videos": "الفيديوهات",
+    "draft": "مسودة البناء",
+    "selectPlaylistHint": "اختر قائمة تشغيل لعرض فيديوهاتها.",
+    "playlistEmpty": "لا توجد فيديوهات في قائمة التشغيل هذه.",
+    "draftEmpty": "لم تجمع شيئًا بعد. أضف فيديوهات من القوائم على الجانب.",
+    "draftNotice": "لم تتم إضافة أي شيء هنا إلى يوتيوب بعد.",
+    "add": "إضافة",
+    "addSelected": "إضافة المحدد",
+    "selectVideo": "تحديد {{title}}",
+    "selectAll": "تحديد الكل",
+    "deselectAll": "إلغاء التحديد",
+    "selectedCount": "{{count}} محدد",
+    "inDraft": "في مسودتك",
+    "unavailable": "غير متاح",
+    "searchVideos": "ابحث في الفيديوهات…",
+    "searchLabel": "ابحث في قائمة التشغيل هذه",
+    "clearSearch": "مسح البحث",
+    "noMatches": "لا توجد فيديوهات تطابق بحثك.",
+    "destination": "أين تريد إضافتها؟",
+    "name": "اسم قائمة التشغيل",
+    "namePlaceholder": "مثال: رحلة برية",
+    "description": "الوصف",
+    "descriptionPlaceholder": "عمّ تدور قائمة التشغيل هذه؟",
+    "descriptionOptional": "اختياري",
+    "required": "هذا الحقل مطلوب",
+    "privacyRequired": "اختر من يمكنه رؤية قائمة التشغيل هذه",
+    "willAdd_zero": "لن تتم إضافة أي فيديو",
+    "willAdd_one": "ستتم إضافة فيديو واحد",
+    "willAdd_two": "ستتم إضافة فيديوين",
+    "willAdd_few": "ستتم إضافة {{count}} فيديوهات",
+    "willAdd_many": "ستتم إضافة {{count}} فيديو",
+    "willAdd_other": "ستتم إضافة {{count}} فيديو",
+    "confirm": {
+      "new": "إنشاء «{{playlist}}» وإضافة {{count}} فيديو إليها؟",
+      "new_one": "إنشاء «{{playlist}}» وإضافة فيديو واحد إليها؟",
+      "cost": "يستهلك هذا جزءًا من حد يوتيوب اليومي، ولا يمكن التراجع عنه من بلاي بيك.",
+      "action": "إنشاء وإضافة"
+    },
+    "discard": {
+      "title": "تجاهل كل ما جمعته؟",
+      "message": "لم يُرسل أي شيء إلى يوتيوب بعد. لا يمكن التراجع عن هذا.",
+      "action": "تجاهل المسودة"
+    },
+    "save": {
+      "action": "الحفظ إلى يوتيوب"
+    },
+    "success": {
+      "title": "تم بناء قائمة التشغيل",
+      "description_zero": "لم تتم إضافة أي فيديو إلى «{{playlist}}» على يوتيوب.",
+      "description_one": "تمت إضافة فيديو واحد إلى «{{playlist}}» على يوتيوب.",
+      "description_two": "تمت إضافة فيديوين إلى «{{playlist}}» على يوتيوب.",
+      "description_few": "تمت إضافة {{count}} فيديوهات إلى «{{playlist}}» على يوتيوب.",
+      "description_many": "تمت إضافة {{count}} فيديو إلى «{{playlist}}» على يوتيوب.",
+      "description_other": "تمت إضافة {{count}} فيديو إلى «{{playlist}}» على يوتيوب.",
+      "another": "بناء قائمة تشغيل أخرى"
+    }
   }
 }

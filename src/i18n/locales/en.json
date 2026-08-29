@@ -269,5 +269,58 @@
     "title": "Page not found",
     "description": "The page you are looking for does not exist.",
     "backHome": "Back to home"
+  },
+  "build": {
+    "title": "Build Playlist",
+    "subtitle": "Gather videos from any of your playlists, then save them all at once.",
+    "yourPlaylists": "Your playlists",
+    "videos": "Videos",
+    "draft": "Build draft",
+    "selectPlaylistHint": "Choose a playlist to see its videos.",
+    "playlistEmpty": "This playlist has no videos.",
+    "draftEmpty": "Nothing gathered yet. Add videos from the playlists on the left.",
+    "draftNotice": "Nothing here has been added to YouTube yet.",
+    "add": "Add",
+    "addSelected": "Add selected",
+    "selectVideo": "Select {{title}}",
+    "selectAll": "Select all",
+    "deselectAll": "Clear selection",
+    "selectedCount": "{{count}} selected",
+    "inDraft": "In your draft",
+    "unavailable": "Unavailable",
+    "searchVideos": "Search videos…",
+    "searchLabel": "Search this playlist",
+    "clearSearch": "Clear search",
+    "noMatches": "No videos match your search.",
+    "destination": "Where should these go?",
+    "name": "Playlist name",
+    "namePlaceholder": "e.g. Road trip",
+    "description": "Description",
+    "descriptionPlaceholder": "What is this playlist about?",
+    "descriptionOptional": "optional",
+    "required": "This field is required",
+    "privacyRequired": "Choose who can see this playlist",
+    "willAdd_one": "{{count}} will be added",
+    "willAdd_other": "{{count}} will be added",
+    "confirm": {
+      "new": "Create “{{playlist}}” and add {{count}} videos to it?",
+      "new_one": "Create “{{playlist}}” and add {{count}} video to it?",
+      "cost": "This uses a share of today's YouTube limit and cannot be undone from PlayPick.",
+      "action": "Create and add"
+    },
+    "discard": {
+      "title": "Discard everything you gathered?",
+      "message": "Nothing has been sent to YouTube yet. This cannot be undone.",
+      "action": "Discard draft"
+    },
+    "save": {
+      "action": "Save to YouTube"
+    },
+    "success": {
+      "title": "Playlist built",
+      "description_one": "{{count}} video was added to “{{playlist}}” on YouTube.",
+      "description_other": "{{count}} videos were added to “{{playlist}}” on YouTube.",
+      "another": "Build another playlist"
+    }
   }
 }
