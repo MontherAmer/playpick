@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { LandingPage } from '@/pages/LandingPage'
+import { CopyPlaylistsPage } from '@/pages/CopyPlaylistsPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { ReorderPlaylistPage } from '@/pages/ReorderPlaylistPage'
 import { ROUTES } from '@/routes'
@@ -14,10 +15,11 @@ export const router = createBrowserRouter(
       element: <AppLayout />,
       children: [
         { path: ROUTES.dashboard, element: <DashboardPage /> },
-        // Only tool served so far. The other five keep their recorded
+        // The tools served so far. The remaining four keep their recorded
         // addresses in ROUTES.tools and stay unregistered, so entering one
         // still falls through to the catch-all below.
         { path: ROUTES.tools.reorder, element: <ReorderPlaylistPage /> },
+        { path: ROUTES.tools.copy, element: <CopyPlaylistsPage /> },
       ],
     },
     { path: '*', element: <NotFoundPage /> },
