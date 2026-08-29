@@ -35,6 +35,14 @@ function PlaylistCardSkeleton() {
 interface PlaylistPickerProps {
   /** Controlled: the picker renders the selection, it never owns it. */
   selectedId?: string
+  /**
+   * A playlist to leave out of the list entirely.
+   *
+   * Removed rather than disabled, so a choice that is not allowed simply
+   * cannot be made — nothing has to be explained afterwards. Used by Copy
+   * Between Playlists to keep the source out of the destination chooser.
+   */
+  excludeId?: string
   onSelect: (playlist: IPlaylist) => void
   /** Accessible name for the region. Defaults to a generic translated label. */
   label?: string
@@ -54,7 +62,7 @@ interface PlaylistPickerProps {
  * one piece of state it does own — it is presentation, local to this surface,
  * and two pickers over one library filter independently.
  */
-export function PlaylistPicker({ selectedId, onSelect, label, className }: PlaylistPickerProps) {
+export function PlaylistPicker({ selectedId, excludeId, onSelect, label, className }: PlaylistPickerProps) {
   const { t } = useTranslation()
   const { playlists, status, error, hasMore, totalResults, isLoadingMore, loadMoreError, loadMore, refresh } =
     usePlaylistLibrary()
@@ -63,11 +71,25 @@ export function PlaylistPicker({ selectedId, onSelect, label, className }: Playl
   const isLoadingFirstPage = status === 'idle' || status === 'loading'
   const isReady = status === 'ready'
 
+  /**
+   * Excluded before anything else, so it is invisible to the filter, to the
+   * counts, and to the empty states alike. Excluding the only playlist in the
+   * library must read as "nothing to choose", never as "your search matched
+   * nothing".
+   */
+  const selectablePlaylists = useMemo(
+    () => (excludeId === undefined ? playlists : playlists.filter((playlist) => playlist.id !== excludeId)),
+    [playlists, excludeId],
+  )
+
   // Synchronous and local — typing never reaches the network, because
   // playlists.list cannot search by title at all (research R2, FR-016).
-  const visiblePlaylists = useMemo(() => filterPlaylistsByTitle(playlists, query), [playlists, query])
+  const visiblePlaylists = useMemo(
+    () => filterPlaylistsByTitle(selectablePlaylists, query),
+    [selectablePlaylists, query],
+  )
 
-  const hasNoMatches = isReady && playlists.length > 0 && visiblePlaylists.length === 0
+  const hasNoMatches = isReady && selectablePlaylists.length > 0 && visiblePlaylists.length === 0
 
   /**
    * With pages still unretrieved, "no matches" is only true of what has loaded.
@@ -88,7 +110,7 @@ export function PlaylistPicker({ selectedId, onSelect, label, className }: Playl
           job, and two adjacent controls for one action only reads as confusing. */}
       {status !== 'error' && (
         <div className="flex flex-wrap items-center justify-end gap-2">
-          {isReady && playlists.length > 0 && (
+          {isReady && selectablePlaylists.length > 0 && (
             <SearchInput
               value={query}
               onChange={setQuery}
@@ -120,7 +142,7 @@ export function PlaylistPicker({ selectedId, onSelect, label, className }: Playl
 
       {status === 'error' && error !== null && <ErrorState code={error} onRetry={refresh} />}
 
-      {isReady && playlists.length === 0 && (
+      {isReady && selectablePlaylists.length === 0 && (
         <EmptyState icon={ListVideo} title={t('playlist.empty.title')} description={t('playlist.empty.description')} />
       )}
 
