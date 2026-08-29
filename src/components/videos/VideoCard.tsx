@@ -7,10 +7,20 @@ import { cn } from '@/utils/cn'
 
 interface VideoCardProps {
   item: IPlaylistItem
-  /** One-based, for display. The model holds no position — order is the array index. */
-  position: number
+  /**
+   * One-based, for display. The model holds no position — order is the array
+   * index.
+   *
+   * Optional because a running-order number means nothing in a copy list, where
+   * showing one would imply an ordering the person did not choose.
+   */
+  position?: number
   /** The drag affordance, supplied by `SortableVideoCard`. */
   dragHandle?: ReactNode
+  /** Before the position: a selection checkbox in a copy source panel. */
+  leading?: ReactNode
+  /** Status marking — "will be added", "already in this playlist". */
+  badge?: ReactNode
   /** Move controls, supplied by `SortableVideoCard`. */
   actions?: ReactNode
   className?: string
@@ -40,7 +50,7 @@ function videoUrl(videoId: string): string {
  * `SortableVideoCard` supplies both, so this component stays usable anywhere a
  * video needs displaying.
  */
-export function VideoCard({ item, position, dragHandle, actions, className }: VideoCardProps) {
+export function VideoCard({ item, position, dragHandle, leading, badge, actions, className }: VideoCardProps) {
   const { t } = useTranslation()
 
   const title = item.title === '' ? t('playlist.untitledVideo') : item.title
@@ -56,9 +66,13 @@ export function VideoCard({ item, position, dragHandle, actions, className }: Vi
       )}>
       {dragHandle}
 
-      <span className="w-7 shrink-0 text-center text-sm font-semibold text-muted-foreground tabular-nums">
-        {String(position).padStart(2, '0')}
-      </span>
+      {leading}
+
+      {position !== undefined && (
+        <span className="w-7 shrink-0 text-center text-sm font-semibold text-muted-foreground tabular-nums">
+          {String(position).padStart(2, '0')}
+        </span>
+      )}
 
       <div className="relative w-24 shrink-0 sm:w-32">
         <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
@@ -89,6 +103,8 @@ export function VideoCard({ item, position, dragHandle, actions, className }: Vi
             {item.channelTitle}
           </p>
         )}
+
+        {badge}
 
         {item.isUnavailable && (
           // Icon *and* text: unavailability must never be carried by colour alone.
