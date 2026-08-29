@@ -1,4 +1,5 @@
-import { youtubeGet } from '@/api/youtube/client'
+import { youtubeGet, youtubePost } from '@/api/youtube/client'
+import { YouTubeError } from '@/api/youtube/errors'
 import type { IPlaylist, IPlaylistPage, PlaylistPrivacy } from '@/models/playlist'
 
 /**
@@ -135,4 +136,57 @@ export async function listMyPlaylists(
   }
 
   return mapPlaylistPage(await youtubeGet(getAccessToken, PLAYLISTS_PATH, params, signal))
+}
+
+export interface ICreatePlaylistInput {
+  /** Sent trimmed. What the person typed stays in the form. */
+  title: string
+  /** Omitted from the request entirely when blank. */
+  description?: string
+  privacy: PlaylistPrivacy
+}
+
+/**
+ * Creates a playlist, costing **50 quota units**.
+ *
+ * `part=snippet,status` because both are being set. Naming a part here is not
+ * the hazard it is on an update: this creates a resource, so there is no
+ * existing value that an omitted field could blank.
+ *
+ * A blank description is **omitted entirely** rather than sent as `""` — a
+ * playlist with no description and one with an empty description should not be
+ * different things.
+ *
+ * The response goes through the same `mapPlaylistResource` the library uses, so
+ * a created playlist and a retrieved one are indistinguishable downstream. A
+ * response that cannot be mapped is a failure rather than a half-created
+ * playlist: the playlist may well exist, but PlayPick cannot describe it, and
+ * claiming success for something it cannot show would be worse than saying so.
+ *
+ * Rejects with `YouTubeError`; a cancellation propagates unchanged.
+ */
+export async function createPlaylist(
+  getAccessToken: () => Promise<string>,
+  input: ICreatePlaylistInput,
+  signal?: AbortSignal,
+): Promise<IPlaylist> {
+  const description = input.description?.trim()
+
+  const body = {
+    snippet: {
+      title: input.title.trim(),
+      ...(description === undefined || description === '' ? {} : { description }),
+    },
+    status: { privacyStatus: input.privacy },
+  }
+
+  const created = mapPlaylistResource(
+    await youtubePost(getAccessToken, PLAYLISTS_PATH, { part: 'snippet,status' }, body, signal),
+  )
+
+  if (!created) {
+    throw new YouTubeError('unknown', 'Created playlist could not be read from the response')
+  }
+
+  return created
 }
