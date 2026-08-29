@@ -18,6 +18,9 @@ export interface IBuildDraft {
   additionCount: number
   add: (item: IPlaylistItem, sourcePlaylistId: string) => void
   addMany: (items: readonly IPlaylistItem[], sourcePlaylistId: string) => void
+  /** Removes exactly the entry with this key, leaving other copies of the video. */
+  remove: (key: string) => void
+  move: (fromIndex: number, toIndex: number) => void
   /** Whether any entry holds this video — for marking a source row as already taken. */
   containsVideo: (videoId: string) => boolean
   discard: () => void
@@ -67,6 +70,26 @@ export function useBuildDraft(destinationVideoIds: ReadonlySet<string>): IBuildD
     ])
   }, [])
 
+  const remove = useCallback((key: string) => {
+    // By key, never by video id: two copies of one video are two entries, and
+    // removing one must leave the other exactly where it was.
+    setEntries((current) => current.filter((entry) => entry.key !== key))
+  }, [])
+
+  const move = useCallback((fromIndex: number, toIndex: number) => {
+    setEntries((current) => {
+      if (fromIndex === toIndex || fromIndex < 0 || fromIndex >= current.length) return current
+      if (toIndex < 0 || toIndex >= current.length) return current
+
+      const next = [...current]
+      const [moved] = next.splice(fromIndex, 1)
+
+      next.splice(toIndex, 0, moved)
+
+      return next
+    })
+  }, [])
+
   const discard = useCallback(() => {
     setEntries([])
   }, [])
@@ -94,6 +117,8 @@ export function useBuildDraft(destinationVideoIds: ReadonlySet<string>): IBuildD
     additionCount: plan.length,
     add,
     addMany,
+    remove,
+    move,
     containsVideo,
     discard,
   }
