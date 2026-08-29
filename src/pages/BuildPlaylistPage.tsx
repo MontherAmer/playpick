@@ -12,8 +12,8 @@ import { Button } from '@/components/ui/Button'
 import { buttonStyles } from '@/components/ui/buttonStyles'
 import { useBuildDraft } from '@/features/build/useBuildDraft'
 import { useBuildSave } from '@/features/build/useBuildSave'
+import { useSourceItems } from '@/features/build/useSourceItems'
 import { isDraftSubmittable } from '@/features/create/validatePlaylistDraft'
-import { usePlaylistItems } from '@/features/playlists/usePlaylistItems'
 import { usePlaylistSelection } from '@/features/playlists/usePlaylistSelection'
 import type { IBuildDestination } from '@/models/build'
 import { EMPTY_DRAFT, type IPlaylistDraft } from '@/models/playlistDraft'
@@ -37,7 +37,8 @@ export function BuildPlaylistPage() {
   const { t } = useTranslation()
 
   const source = usePlaylistSelection()
-  const sourceItems = usePlaylistItems(source.selectedId)
+  // Remembers what has already arrived, so returning to a source is free.
+  const sourceItems = useSourceItems(source.selectedId)
 
   const draft = useBuildDraft(NO_DESTINATION_VIDEOS)
   const save = useBuildSave()
