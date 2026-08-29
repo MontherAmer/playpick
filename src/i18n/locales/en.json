@@ -162,6 +162,31 @@
       "description": "They are now in the destination playlist on YouTube. Nothing was removed from the source."
     }
   },
+  "create": {
+    "title": "Create Playlist",
+    "subtitle": "Give your new playlist a name and choose who can see it.",
+    "name": "Playlist name",
+    "namePlaceholder": "e.g. My favourites",
+    "description": "Description",
+    "descriptionPlaceholder": "What is this playlist about?",
+    "descriptionOptional": "Optional",
+    "privacy": {
+      "legend": "Who can see this playlist?",
+      "public": "Public — anyone can see it",
+      "unlisted": "Unlisted — anyone with the link",
+      "private": "Private — only you"
+    },
+    "accountNotice": "This will add a new playlist to your YouTube account.",
+    "submit": "Create playlist",
+    "submitting": "Creating…",
+    "required": "This field is required",
+    "privacyRequired": "Choose who can see this playlist",
+    "success": {
+      "title": "Playlist created",
+      "privacy": "Visible to: {{privacy}}",
+      "another": "Create another playlist"
+    }
+  },
   "pending": {
     "title": "Unsaved changes",
     "count_one": "{{count}} video moved",
