@@ -1,6 +1,6 @@
 import { DndContext, PointerSensor, closestCenter, useDroppable, useSensor, useSensors } from '@dnd-kit/core'
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
-import { CheckSquare, MoveRight, Plus, Square } from 'lucide-react'
+import { CheckSquare, CheckCircle2, ExternalLink, MoveRight, Plus, RotateCcw, Square } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -10,15 +10,40 @@ import { SearchInput } from '@/components/common/SearchInput'
 import { DuplicateNotice } from '@/components/copy/DuplicateNotice'
 import { PlaylistPanel } from '@/components/copy/PlaylistPanel'
 import { PlaylistPicker } from '@/components/playlists/PlaylistPicker'
+import { ProgressDialog } from '@/components/common/ProgressDialog'
 import { Button } from '@/components/ui/Button'
+import { buttonStyles } from '@/components/ui/buttonStyles'
 import { DestinationVideoCard } from '@/components/videos/DestinationVideoCard'
 import { DraggableVideoCard } from '@/components/videos/DraggableVideoCard'
 import { useCopyDraft } from '@/features/copy/useCopyDraft'
+import { useCopySave } from '@/features/copy/useCopySave'
 import { usePlaylistItems } from '@/features/playlists/usePlaylistItems'
 import { usePlaylistSelection } from '@/features/playlists/usePlaylistSelection'
 import type { IPlaylist } from '@/models/playlist'
 import type { IPlaylistItem } from '@/models/playlistItem'
+import type { YouTubeErrorCode } from '@/api/youtube/errors'
 import { cn } from '@/utils/cn'
+
+/**
+ * Failures needing save-specific wording. The shared `errors.youtube.*` strings
+ * are written for retrieval — "your playlists could not be loaded", "not allowed
+ * to read your playlists" — which reads as nonsense when it was a copy that
+ * failed. The rest are phrased neutrally enough to reuse.
+ */
+const SAVE_SPECIFIC_ERRORS: readonly YouTubeErrorCode[] = [
+  'quotaExceeded',
+  'playlistFull',
+  'insufficientPermissions',
+  'notFound',
+  'unknown',
+]
+
+/** Retrying cannot help with these, so no retry is offered. */
+const UNRETRYABLE: readonly YouTubeErrorCode[] = ['quotaExceeded', 'playlistFull', 'apiNotEnabled']
+
+function playlistUrl(playlistId: string): string {
+  return `https://www.youtube.com/playlist?list=${playlistId}`
+}
 
 type ChoosingFor = 'source' | 'destination' | null
 type Confirming = 'discard' | 'leave' | null
@@ -73,6 +98,9 @@ export function CopyPlaylistsPage() {
   const destinationItems = usePlaylistItems(destination.selectedId)
 
   const draft = useCopyDraft(destinationItems.items)
+  const save = useCopySave(destination.selectedId)
+
+  const isSaving = save.status === 'saving'
 
   // Both sides must be fully retrieved: duplicate detection compares against
   // the destination's complete contents, and positions are computed within it.
@@ -146,6 +174,14 @@ export function CopyPlaylistsPage() {
     })
   }, [])
 
+  const handleSave = useCallback(() => {
+    void save.save(draft.plan).then((succeeded) => {
+      // Only on a clean run. A partial save must keep the pending additions and
+      // its remaining plan, so a retry has something to work from.
+      if (succeeded) draft.discard()
+    })
+  }, [save, draft])
+
   const copySelected = useCallback(() => {
     draft.addMany(visibleSourceItems.filter((item) => selectedIds.has(item.id)))
     setSelectedIds(new Set())
@@ -184,6 +220,41 @@ export function CopyPlaylistsPage() {
     },
     [sourceItems.items, draft],
   )
+
+  if (save.status === 'succeeded' && destination.selected) {
+    return (
+      <div className="mx-auto w-full max-w-3xl">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-brand/30 bg-brand-muted/40 px-6 py-12 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/10">
+            <CheckCircle2 className="h-6 w-6 text-brand" aria-hidden="true" />
+          </div>
+
+          <p className="font-semibold">{t('copy.success.title')}</p>
+          <p className="max-w-md text-sm text-muted-foreground">{t('copy.success.description')}</p>
+
+          <div className="mt-2 flex flex-wrap justify-center gap-2">
+            <a
+              href={playlistUrl(destination.selected.id)}
+              target="_blank"
+              rel="noreferrer"
+              className={buttonStyles({ variant: 'brand' })}>
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              {t('common.openOnYouTube')}
+            </a>
+
+            <Button
+              variant="outline"
+              onClick={() => {
+                save.reset()
+                destinationItems.reload()
+              }}>
+              {t('copy.title')}
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (choosingFor !== null) {
     const isSource = choosingFor === 'source'
@@ -271,6 +342,47 @@ export function CopyPlaylistsPage() {
           <p className="mt-1 text-sm text-muted-foreground sm:text-base">{t('copy.subtitle')}</p>
         </div>
 
+        {save.status === 'failed' && (
+          <div role="alert" className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm">
+            <p className="font-semibold">
+              {t('errors.copy.partial', {
+                completed: save.completed,
+                total: save.total,
+                failed: save.total - save.completed,
+              })}
+            </p>
+
+            <p className="mt-1 text-muted-foreground">
+              {save.failure !== null && SAVE_SPECIFIC_ERRORS.includes(save.failure)
+                ? t(`copy.save.${save.failure}`)
+                : t(`errors.youtube.${String(save.failure)}`)}
+            </p>
+
+            {save.failure !== null && !UNRETRYABLE.includes(save.failure) && (
+              <Button
+                variant="outline"
+                className="mt-3"
+                onClick={() => {
+                  void save.retry().then((succeeded) => {
+                    if (succeeded) draft.discard()
+                  })
+                }}>
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                {t('copy.save.retry')}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* Suppressed once a save has failed: the banner above already says
+            what happened and what a retry will attempt, and "this will add 4"
+            beside "2 did not go through" contradicts it. */}
+        {draft.pendingCount > 0 && destination.selected && save.status !== 'failed' && (
+          <p className="mb-4 text-sm text-muted-foreground">
+            {t('copy.save.estimate', { count: draft.pendingCount, playlist: destination.selected.title })}
+          </p>
+        )}
+
         {/* Side by side once there is room; stacked below that, source first, so
             the reading order matches the direction of the copy. */}
         <div className="grid gap-4 lg:grid-cols-2">
@@ -295,7 +407,7 @@ export function CopyPlaylistsPage() {
                       onToggleSelect={() => {
                         toggleSelect(item.id)
                       }}
-                      disabled={!canCopy}
+                      disabled={!canCopy || isSaving}
                     />
                   ))}
                 </ul>
@@ -340,11 +452,11 @@ export function CopyPlaylistsPage() {
           onDiscard={() => {
             setConfirming('discard')
           }}
-          onSave={() => {
-            // Saving lands in T029.
-          }}
-          isSaving={false}
+          onSave={handleSave}
+          isSaving={isSaving}
         />
+
+        <ProgressDialog open={isSaving} completed={save.completed} total={save.total} />
 
         <ConfirmDialog
           open={confirming === 'discard'}
