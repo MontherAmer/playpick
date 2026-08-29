@@ -184,7 +184,9 @@ export function BuildPlaylistPage() {
           playlist: destinationName,
         })}
         message={t('build.confirm.cost')}
-        confirmLabel={t('build.confirm.action')}
+        // Never "Create and add" for a playlist that already exists — the
+        // control must not claim a creation that is not happening.
+        confirmLabel={t(kind === 'existing' ? 'build.confirm.addAction' : 'build.confirm.createAction')}
         onCancel={() => {
           setIsConfirming(false)
         }}
