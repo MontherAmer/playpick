@@ -337,6 +337,13 @@
     "willAdd_few": "ستتم إضافة {{count}} فيديوهات",
     "willAdd_many": "ستتم إضافة {{count}} فيديو",
     "willAdd_other": "ستتم إضافة {{count}} فيديو",
+    "duplicatesFound_zero": "لا شيء موجود بالفعل",
+    "duplicatesFound_one": "واحد موجود بالفعل",
+    "duplicatesFound_two": "اثنان موجودان بالفعل",
+    "duplicatesFound_few": "{{count}} موجودة بالفعل",
+    "duplicatesFound_many": "{{count}} موجودًا بالفعل",
+    "duplicatesFound_other": "{{count}} موجود بالفعل",
+    "includeDuplicates": "أضفها على أي حال",
     "confirm": {
       "existing": "إضافة {{count}} فيديو إلى «{{playlist}}»؟",
       "existing_one": "إضافة فيديو واحد إلى «{{playlist}}»؟",

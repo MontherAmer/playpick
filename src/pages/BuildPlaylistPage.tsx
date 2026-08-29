@@ -7,6 +7,7 @@ import { DestinationChoice, type DestinationKind } from '@/components/build/Dest
 import { SourcePlaylistColumn } from '@/components/build/SourcePlaylistColumn'
 import { SourceVideosColumn } from '@/components/build/SourceVideosColumn'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+import { DuplicateNotice } from '@/components/copy/DuplicateNotice'
 import { ProgressDialog } from '@/components/common/ProgressDialog'
 import { Button } from '@/components/ui/Button'
 import { buttonStyles } from '@/components/ui/buttonStyles'
@@ -160,6 +161,19 @@ export function BuildPlaylistPage() {
               newPlaylist={newPlaylist}
               onNewPlaylistChange={setNewPlaylist}
               disabled={isSaving}
+            />
+          }
+          notice={
+            <DuplicateNotice
+              willAdd={draft.additionCount}
+              duplicateCount={draft.duplicateCount}
+              includeDuplicates={draft.includeDuplicates}
+              onIncludeDuplicatesChange={draft.setIncludeDuplicates}
+              // One opt-in covers both kinds here, so the wording says "already
+              // there" rather than naming only the destination.
+              willAddLabel={t('build.willAdd', { count: draft.additionCount })}
+              duplicatesLabel={t('build.duplicatesFound', { count: draft.duplicateCount })}
+              includeLabel={t('build.includeDuplicates')}
             />
           }
           canSave={canSave}

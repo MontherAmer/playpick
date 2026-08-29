@@ -9,6 +9,17 @@ interface DuplicateNoticeProps {
   duplicateCount: number
   includeDuplicates: boolean
   onIncludeDuplicatesChange: (value: boolean) => void
+  /**
+   * Wording overrides, **already translated by the caller**.
+   *
+   * Omitted, this renders exactly what it always has. Build Playlist supplies
+   * its own because one opt-in there covers two kinds of duplicate — already in
+   * the destination, and repeated within the draft — so "already in this
+   * playlist" would only describe half of what it governs.
+   */
+  willAddLabel?: string
+  duplicatesLabel?: string
+  includeLabel?: string
 }
 
 /**
@@ -24,6 +35,9 @@ export function DuplicateNotice({
   duplicateCount,
   includeDuplicates,
   onIncludeDuplicatesChange,
+  willAddLabel,
+  duplicatesLabel,
+  includeLabel,
 }: DuplicateNoticeProps) {
   const { t } = useTranslation()
   const toggleId = useId()
@@ -39,9 +53,11 @@ export function DuplicateNotice({
         <CircleAlert className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
 
         <span>
-          <span className="font-semibold">{t('copy.willAdd', { count: willAdd })}</span>
+          <span className="font-semibold">{willAddLabel ?? t('copy.willAdd', { count: willAdd })}</span>
           {' · '}
-          <span className="text-muted-foreground">{t('copy.duplicatesFound', { count: duplicateCount })}</span>
+          <span className="text-muted-foreground">
+            {duplicatesLabel ?? t('copy.duplicatesFound', { count: duplicateCount })}
+          </span>
         </span>
       </p>
 
@@ -55,7 +71,7 @@ export function DuplicateNotice({
           }}
           className="h-4 w-4 rounded border-input accent-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         />
-        {t('copy.includeDuplicates')}
+        {includeLabel ?? t('copy.includeDuplicates')}
       </label>
     </div>
   )

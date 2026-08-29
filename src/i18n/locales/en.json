@@ -309,6 +309,9 @@
     "required": "This field is required",
     "willAdd_one": "{{count}} will be added",
     "willAdd_other": "{{count}} will be added",
+    "duplicatesFound_one": "{{count}} already there",
+    "duplicatesFound_other": "{{count}} already there",
+    "includeDuplicates": "Add them anyway",
     "confirm": {
       "existing": "Add {{count}} videos to “{{playlist}}”?",
       "existing_one": "Add {{count}} video to “{{playlist}}”?",
