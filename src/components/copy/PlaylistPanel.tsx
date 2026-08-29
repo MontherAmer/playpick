@@ -54,7 +54,10 @@ export function PlaylistPanel({
   return (
     <section
       aria-label={roleLabel}
-      className={cn('flex min-h-[22rem] flex-col rounded-xl border bg-card p-4 shadow-card', className)}>
+      // `min-w-0` matters: a grid item defaults to `min-width: auto`, so its
+      // content's intrinsic width would push the panel wider than its track and
+      // scroll the whole page sideways at narrow widths.
+      className={cn('flex min-h-[22rem] min-w-0 flex-col rounded-xl border bg-card p-3 shadow-card sm:p-4', className)}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="min-w-0">
           <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{roleLabel}</p>
