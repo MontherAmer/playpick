@@ -1,11 +1,17 @@
 import { Loader2, Save, X } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/Button'
 
 interface PendingChangesBarProps {
-  /** The move count. Zero renders nothing at all. */
+  /** The count of pending changes. Zero renders nothing at all. */
   pendingCount: number
+  /**
+   * Extra context beside the count — Copy Between Playlists puts its duplicate
+   * notice here. Omitted, the bar is exactly what it was.
+   */
+  secondary?: ReactNode
   onDiscard: () => void
   onSave: () => void
   isSaving: boolean
@@ -20,7 +26,7 @@ interface PendingChangesBarProps {
  * The wording says the changes are *unsaved*. It must never read as though
  * YouTube has already been updated, because until Save succeeds it has not.
  */
-export function PendingChangesBar({ pendingCount, onDiscard, onSave, isSaving }: PendingChangesBarProps) {
+export function PendingChangesBar({ pendingCount, secondary, onDiscard, onSave, isSaving }: PendingChangesBarProps) {
   const { t } = useTranslation()
 
   if (pendingCount === 0) return null
@@ -44,6 +50,8 @@ export function PendingChangesBar({ pendingCount, onDiscard, onSave, isSaving }:
         <span className="rounded-full border bg-background px-2.5 py-1 text-xs font-medium text-muted-foreground">
           {t('pending.count', { count: pendingCount })}
         </span>
+
+        {secondary}
 
         <div className="ms-auto flex items-center gap-2">
           <Button variant="ghost" onClick={onDiscard} disabled={isSaving}>
