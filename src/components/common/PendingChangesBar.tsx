@@ -8,6 +8,14 @@ interface PendingChangesBarProps {
   /** The count of pending changes. Zero renders nothing at all. */
   pendingCount: number
   /**
+   * How the count reads. Defaults to Reorder's wording.
+   *
+   * A copy is not a move: "2 videos moved" is simply untrue when what happened
+   * was that two were queued to be added, and the bar is the one place the
+   * person reads what they are about to do.
+   */
+  countLabel?: string
+  /**
    * Extra context beside the count — Copy Between Playlists puts its duplicate
    * notice here. Omitted, the bar is exactly what it was.
    */
@@ -26,7 +34,14 @@ interface PendingChangesBarProps {
  * The wording says the changes are *unsaved*. It must never read as though
  * YouTube has already been updated, because until Save succeeds it has not.
  */
-export function PendingChangesBar({ pendingCount, secondary, onDiscard, onSave, isSaving }: PendingChangesBarProps) {
+export function PendingChangesBar({
+  pendingCount,
+  countLabel,
+  secondary,
+  onDiscard,
+  onSave,
+  isSaving,
+}: PendingChangesBarProps) {
   const { t } = useTranslation()
 
   if (pendingCount === 0) return null
@@ -48,7 +63,7 @@ export function PendingChangesBar({ pendingCount, secondary, onDiscard, onSave, 
         </span>
 
         <span className="rounded-full border bg-background px-2.5 py-1 text-xs font-medium text-muted-foreground">
-          {t('pending.count', { count: pendingCount })}
+          {countLabel ?? t('pending.count', { count: pendingCount })}
         </span>
 
         {secondary}
