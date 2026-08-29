@@ -2,6 +2,84 @@ import { YouTubeError, toYouTubeErrorCode } from '@/api/youtube/errors'
 
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3'
 
+// ================= TEMP HARNESS — NEVER COMMIT =================
+interface IHW {
+  __req__: { method: string; path: string; params: Record<string, string>; body?: unknown }[]
+  __dest__: () => string[]
+  __failAfter__: number
+}
+function hw(): IHW {
+  const scope = globalThis as unknown as IHW
+  scope.__req__ ??= []
+  scope.__failAfter__ ??= -1
+  return scope
+}
+// SOURCE: 8 videos VS1..VS8. DEST: 3 videos, one of which (VS3) is also in SOURCE.
+const H_SOURCE = Array.from({ length: 8 }, (_, i) => ({ id: `S${String(i + 1)}`, videoId: `VS${String(i + 1)}` }))
+const H_DEST = [
+  { id: 'D1', videoId: 'VD1' },
+  { id: 'D2', videoId: 'VS3' },
+  { id: 'D3', videoId: 'VD3' },
+]
+hw().__dest__ = () => H_DEST.map((d) => d.videoId)
+function row(it: { id: string; videoId: string }, label: string) {
+  return {
+    id: it.id,
+    snippet: { title: `${label} ${it.videoId}`, videoOwnerChannelTitle: 'Chan', thumbnails: { medium: { url: '' } } },
+    contentDetails: { videoId: it.videoId },
+    status: { privacyStatus: 'public' },
+  }
+}
+async function harnessRespond(method: string, path: string, params: Record<string, string>, body?: unknown) {
+  const scope = hw()
+  scope.__req__.push({ method, path, params, body })
+  await new Promise((r) => setTimeout(r, 40))
+  if (path === '/playlists') {
+    return {
+      items: [
+        {
+          id: 'PL_SRC',
+          snippet: { title: 'SOURCE list' },
+          contentDetails: { itemCount: 8 },
+          status: { privacyStatus: 'public' },
+        },
+        {
+          id: 'PL_DST',
+          snippet: { title: 'DEST list' },
+          contentDetails: { itemCount: 3 },
+          status: { privacyStatus: 'public' },
+        },
+        {
+          id: 'PL_C',
+          snippet: { title: 'Third list' },
+          contentDetails: { itemCount: 0 },
+          status: { privacyStatus: 'public' },
+        },
+      ],
+      pageInfo: { totalResults: 3 },
+    }
+  }
+  if (path === '/playlistItems' && method === 'GET') {
+    if (params.playlistId === 'PL_SRC')
+      return { items: H_SOURCE.map((i) => row(i, 'Src')), pageInfo: { totalResults: 8 } }
+    if (params.playlistId === 'PL_DST')
+      return { items: H_DEST.map((i) => row(i, 'Dst')), pageInfo: { totalResults: 3 } }
+    return { items: [], pageInfo: { totalResults: 0 } }
+  }
+  if (path === '/videos') return { items: [] }
+  if (path === '/playlistItems' && method === 'POST') {
+    const puts = scope.__req__.filter((r) => r.method === 'POST').length
+    if (scope.__failAfter__ >= 0 && puts > scope.__failAfter__) throw new Error('harness forced failure')
+    const rec = body as { snippet: { resourceId: { videoId: string }; position?: number } }
+    const entry = { id: `NEW${String(H_DEST.length + 1)}`, videoId: rec.snippet.resourceId.videoId }
+    if (rec.snippet.position === undefined) H_DEST.push(entry)
+    else H_DEST.splice(rec.snippet.position, 0, entry)
+    return {}
+  }
+  return {}
+}
+// =============== END TEMP HARNESS ===============
+
 /** An aborted request is a cancellation, not a failure — it must not be wrapped. */
 function isAbortError(cause: unknown): boolean {
   return cause instanceof DOMException && cause.name === 'AbortError'
@@ -46,13 +124,15 @@ function readErrorMessage(body: unknown): string | undefined {
  * in a URL, a message, or a log line.
  */
 async function youtubeRequest(
-  method: 'GET' | 'PUT',
+  method: 'GET' | 'PUT' | 'POST',
   getAccessToken: () => Promise<string>,
   path: string,
   params: Record<string, string>,
   body?: unknown,
   signal?: AbortSignal,
 ): Promise<unknown> {
+  return harnessRespond(method, path, params, body)
+
   let accessToken: string
 
   try {
@@ -126,4 +206,21 @@ export async function youtubePut(
   signal?: AbortSignal,
 ): Promise<unknown> {
   return youtubeRequest('PUT', getAccessToken, path, params, body, signal)
+}
+
+/**
+ * Creates a resource — adding a video to a playlist.
+ *
+ * A third named function rather than a generic exported `youtubeRequest`, for
+ * the same reason as `youtubePut`: a call site that reads `youtubePost` says
+ * plainly that it creates something.
+ */
+export async function youtubePost(
+  getAccessToken: () => Promise<string>,
+  path: string,
+  params: Record<string, string>,
+  body: unknown,
+  signal?: AbortSignal,
+): Promise<unknown> {
+  return youtubeRequest('POST', getAccessToken, path, params, body, signal)
 }
