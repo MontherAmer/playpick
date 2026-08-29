@@ -1,5 +1,4 @@
 import { useDraggable } from '@dnd-kit/core'
-import { CSS } from '@dnd-kit/utilities'
 import { GripVertical } from 'lucide-react'
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,7 +27,7 @@ interface DraggableVideoCardProps {
 export function DraggableVideoCard({ item, selected, onToggleSelect, disabled = false }: DraggableVideoCardProps) {
   const { t } = useTranslation()
   const checkboxId = useId()
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: item.id,
     disabled,
     data: { item },
@@ -37,10 +36,11 @@ export function DraggableVideoCard({ item, selected, onToggleSelect, disabled = 
   const title = item.title === '' ? t('playlist.untitledVideo') : item.title
 
   return (
-    <li
-      ref={setNodeRef}
-      style={{ transform: CSS.Translate.toString(transform) }}
-      className={cn(isDragging && 'relative z-10 opacity-50')}>
+    // The row stays put and dims; a `DragOverlay` in the page is what follows
+    // the cursor. Transforming this element instead would move it inside the
+    // panel's own scroll container, which clips it — so the drag appeared to
+    // happen *below* the destination list rather than over it.
+    <li ref={setNodeRef} className={cn(isDragging && 'opacity-40')}>
       <VideoCard
         item={item}
         dragHandle={

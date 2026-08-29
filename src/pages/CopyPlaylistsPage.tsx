@@ -1,4 +1,12 @@
-import { DndContext, PointerSensor, closestCenter, useDroppable, useSensor, useSensors } from '@dnd-kit/core'
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  closestCenter,
+  useDroppable,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
 import { CheckSquare, CheckCircle2, ExternalLink, MoveRight, Plus, RotateCcw, Square } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
@@ -15,6 +23,7 @@ import { Button } from '@/components/ui/Button'
 import { buttonStyles } from '@/components/ui/buttonStyles'
 import { DestinationVideoCard } from '@/components/videos/DestinationVideoCard'
 import { DraggableVideoCard } from '@/components/videos/DraggableVideoCard'
+import { VideoCard } from '@/components/videos/VideoCard'
 import { useCopyDraft } from '@/features/copy/useCopyDraft'
 import { useCopySave } from '@/features/copy/useCopySave'
 import { usePlaylistItems } from '@/features/playlists/usePlaylistItems'
@@ -334,7 +343,10 @@ export function CopyPlaylistsPage() {
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}>
+      onDragEnd={handleDragEnd}
+      onDragCancel={() => {
+        setDraggingItem(null)
+      }}>
       <div className={cn('mx-auto w-full max-w-6xl', draft.pendingCount > 0 && 'pb-28')}>
         <div className="mb-6">
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('copy.title')}</h1>
@@ -489,6 +501,18 @@ export function CopyPlaylistsPage() {
           }}
         />
       </div>
+
+      {/* Rendered above everything, following the cursor. The source row itself
+          cannot: it sits inside the panel's own scroll container, so moving it
+          there clips it and the drag reads as happening below the destination
+          list rather than over it. */}
+      <DragOverlay dropAnimation={null}>
+        {draggingItem ? (
+          <div className="w-[min(20rem,80vw)] cursor-grabbing opacity-95 shadow-elevated">
+            <VideoCard item={draggingItem} />
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   )
 }
