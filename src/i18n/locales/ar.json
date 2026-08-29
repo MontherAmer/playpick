@@ -5,6 +5,7 @@
   },
   "common": {
     "switchLanguage": "تبديل اللغة",
+    "openOnYouTube": "فتح في يوتيوب",
     "loading": "جارٍ التحميل…",
     "retry": "أعد المحاولة",
     "soon": "قريبًا"
