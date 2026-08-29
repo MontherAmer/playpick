@@ -5,6 +5,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { LandingPage } from '@/pages/LandingPage'
 import { CopyPlaylistsPage } from '@/pages/CopyPlaylistsPage'
 import { BuildPlaylistPage } from '@/pages/BuildPlaylistPage'
+import { MergePlaylistsPage } from '@/pages/MergePlaylistsPage'
 import { CreatePlaylistPage } from '@/pages/CreatePlaylistPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { ReorderPlaylistPage } from '@/pages/ReorderPlaylistPage'
@@ -24,6 +25,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.tools.copy, element: <CopyPlaylistsPage /> },
         { path: ROUTES.tools.create, element: <CreatePlaylistPage /> },
         { path: ROUTES.tools.build, element: <BuildPlaylistPage /> },
+        { path: ROUTES.tools.merge, element: <MergePlaylistsPage /> },
       ],
     },
     { path: '*', element: <NotFoundPage /> },

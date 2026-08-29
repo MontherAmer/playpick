@@ -17,7 +17,7 @@ export const PRIMARY_TOOLS: readonly ITool[] = [
 /** Secondary tools, shown as compact cards. */
 export const SECONDARY_TOOLS: readonly ITool[] = [
   { id: 'build', icon: Layers, path: ROUTES.tools.build, status: 'available' },
-  { id: 'merge', icon: Merge, path: ROUTES.tools.merge, status: 'soon' },
+  { id: 'merge', icon: Merge, path: ROUTES.tools.merge, status: 'available' },
   { id: 'duplicate', icon: Copy, path: ROUTES.tools.duplicate, status: 'soon' },
 ]
 
