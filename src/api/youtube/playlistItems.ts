@@ -1,4 +1,5 @@
-import { youtubeGet, youtubePut } from '@/api/youtube/client'
+import { youtubeGet, youtubePost, youtubePut } from '@/api/youtube/client'
+import { YouTubeError } from '@/api/youtube/errors'
 import type { IPlaylistItem } from '@/models/playlistItem'
 
 /**
@@ -208,4 +209,82 @@ export async function updatePlaylistItemPosition(
     },
     signal,
   )
+}
+
+export interface IAddPlaylistItemInput {
+  playlistId: string
+  videoId: string
+  /** Zero-based. Omit entirely when the person expressed no placement. */
+  position?: number
+}
+
+/**
+ * `manualSortRequired` arrives as a 400, which the shared classifier maps to
+ * `unknown` — it has no reason-specific meaning outside this one call. Detected
+ * here rather than added to the taxonomy, because the caller never needs to see
+ * it: the request is simply retried without the position.
+ */
+function isManualSortRequired(cause: unknown): boolean {
+  return cause instanceof YouTubeError && cause.code === 'unknown' && /manualSortRequired/i.test(cause.message)
+}
+
+/**
+ * Adds one video to a playlist, costing **50 quota units**.
+ *
+ * ## `part` is `snippet` and must stay that way
+ *
+ * The API deletes any property that already has a value and is absent from a
+ * write. `contentDetails.note` is a user-authored annotation, so naming
+ * `contentDetails` without echoing the note back would destroy it. Restricting
+ * `part` to `snippet` leaves it untouched, which is why this is not a parameter.
+ *
+ * ## A position is sent only when one was chosen
+ *
+ * Omitting it appends — the API's own default — and keeps the request out of the
+ * one failure a position can cause. When a position *is* sent and the
+ * destination does not use manual sorting, YouTube refuses it; that single
+ * insert is then retried once **without** the position, because placement is a
+ * preference and copying is the point. The retry is invisible to the caller, so
+ * a save's progress count and remainder stay honest.
+ *
+ * The **source playlist is never named here**. No operation in this feature can
+ * write to it.
+ *
+ * Rejects with `YouTubeError`; a cancellation propagates unchanged.
+ */
+export async function addPlaylistItem(
+  getAccessToken: () => Promise<string>,
+  input: IAddPlaylistItemInput,
+  signal?: AbortSignal,
+): Promise<void> {
+  const send = async (position: number | undefined) => {
+    await youtubePost(
+      getAccessToken,
+      PLAYLIST_ITEMS_PATH,
+      { part: 'snippet' },
+      {
+        snippet: {
+          playlistId: input.playlistId,
+          resourceId: { kind: 'youtube#video', videoId: input.videoId },
+          ...(position === undefined ? {} : { position }),
+        },
+      },
+      signal,
+    )
+  }
+
+  if (input.position === undefined) {
+    await send(undefined)
+
+    return
+  }
+
+  try {
+    await send(input.position)
+  } catch (cause) {
+    if (!isManualSortRequired(cause)) throw cause
+
+    // The playlist will not take a position. Copy the video anyway.
+    await send(undefined)
+  }
 }
