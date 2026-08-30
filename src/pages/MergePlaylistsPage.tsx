@@ -1,8 +1,9 @@
-import { CheckCircle2, ExternalLink } from 'lucide-react'
+import { CheckCircle2, ExternalLink, RotateCcw } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+import { ErrorState } from '@/components/common/ErrorState'
 import { ProgressDialog } from '@/components/common/ProgressDialog'
 import { MergeResultFields } from '@/components/merge/MergeResultFields'
 import { MergeSourcePicker } from '@/components/merge/MergeSourcePicker'
@@ -13,6 +14,7 @@ import { buildMergePlan } from '@/features/merge/buildMergePlan'
 import { useSelectedPlaylistItems } from '@/features/merge/useSelectedPlaylistItems'
 import { isDraftSubmittable } from '@/features/create/validatePlaylistDraft'
 import { useCreateAndFillPlaylist } from '@/features/playlists/useCreateAndFillPlaylist'
+import type { YouTubeErrorCode } from '@/api/youtube/errors'
 import type { IBuildDestination } from '@/models/build'
 import type { IMergeSummary } from '@/models/merge'
 import type { IPlaylist } from '@/models/playlist'
@@ -21,6 +23,13 @@ import { EMPTY_DRAFT, type IPlaylistDraft } from '@/models/playlistDraft'
 function playlistUrl(playlistId: string): string {
   return `https://www.youtube.com/playlist?list=${playlistId}`
 }
+
+/**
+ * Failures another attempt cannot fix: the day's allowance is spent, the account
+ * holds all the playlists YouTube allows, or this deployment was never
+ * configured to reach the API.
+ */
+const NO_RETRY: readonly YouTubeErrorCode[] = ['quotaExceeded', 'playlistLimitReached', 'apiNotEnabled']
 
 /**
  * Merge Playlists: combine several playlists into one new one.
@@ -133,6 +142,49 @@ export function MergePlaylistsPage() {
 
         <p className="mt-1 text-sm text-muted-foreground sm:text-base">{t('merge.subtitle')}</p>
       </div>
+
+      {save.status === 'failed' && save.failure !== null && (
+        <div className="mb-6 flex flex-col gap-2">
+          {/* No `onRetry` here: ErrorState's control reads "Try again", which
+              could be taken to mean redoing the whole merge. The
+              remainder-only wording is rendered separately, below. */}
+          <ErrorState code={save.failure} messageKey={`merge.save.${save.failure}`} />
+
+          {/* What actually happened, stated apart from why it stopped: a run
+              that added six of nine is not a failed run. */}
+          {save.failedDuring === 'add' && (
+            <p role="status" className="text-center text-sm text-muted-foreground">
+              {t('merge.save.partial', {
+                // `count` drives the plural; the other two are the text.
+                count: save.completed,
+                completed: save.completed,
+                total: save.total,
+              })}
+            </p>
+          )}
+
+          {/* The playlist exists. Saying so is what stops someone merging again
+              and ending up with two playlists they cannot delete. */}
+          {save.failedDuring === 'add' && save.createdPlaylist && (
+            <p role="status" className="text-center text-sm text-muted-foreground">
+              {t('merge.save.createdButIncomplete', { playlist: save.createdPlaylist.title })}
+            </p>
+          )}
+
+          {!NO_RETRY.includes(save.failure) && save.remaining.length > 0 && (
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  void save.retry()
+                }}>
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                {t('merge.save.retry')}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* `minmax(0, …)` on both tracks, not bare widths: a grid item defaults to
           `min-width: auto`, so an intrinsically wide child would widen its track

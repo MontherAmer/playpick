@@ -389,6 +389,18 @@
       "description_one": "{{count}} video was added to “{{playlist}}” on YouTube. Your other playlists are unchanged.",
       "description_other": "{{count}} videos were added to “{{playlist}}” on YouTube. Your other playlists are unchanged.",
       "another": "Merge more playlists"
+    },
+    "save": {
+      "quotaExceeded": "PlayPick has reached today's YouTube request limit, so the remaining videos were not added. Trying again today will not help — please try tomorrow.",
+      "playlistFull": "The new playlist is full and cannot hold any more videos.",
+      "playlistLimitReached": "Your YouTube account has reached the maximum number of playlists, so the merged playlist was not created.",
+      "insufficientPermissions": "PlayPick is not allowed to create playlists or add to them. Sign in again and grant YouTube access.",
+      "notFound": "The new playlist or one of the videos no longer exists on YouTube.",
+      "unknown": "The merge could not be completed. Please try again.",
+      "partial_one": "{{completed}} of {{total}} videos was added. The rest were not.",
+      "partial_other": "{{completed}} of {{total}} videos were added. The rest were not.",
+      "createdButIncomplete": "“{{playlist}}” was created on YouTube and is missing some videos. Adding the rest will not create a second playlist.",
+      "retry": "Add the rest"
     }
   }
 }
