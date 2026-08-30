@@ -93,7 +93,11 @@ export function DuplicatePlaylistPage() {
       setSource(playlist)
       setDraft((current) => ({
         ...current,
-        title: current.title === '' ? t('duplicate.namePlaceholder', { name: playlist.title }) : current.title,
+        // `nameSuggestion`, not `namePlaceholder`. The placeholder reads
+        // "e.g. Copy of X" — an example of what to type, which as a seeded
+        // value would name the playlist literally that. The approved design
+        // uses one key for both and has exactly that bug.
+        title: current.title === '' ? t('duplicate.nameSuggestion', { name: playlist.title }) : current.title,
         description: current.description === '' ? (playlist.description ?? '') : current.description,
       }))
     },
