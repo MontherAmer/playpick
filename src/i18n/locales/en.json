@@ -427,5 +427,47 @@
       "createdButIncomplete": "“{{playlist}}” was created on YouTube and is missing some videos. Adding the rest will not create a second playlist.",
       "retry": "Add the rest"
     }
+  },
+  "duplicate": {
+    "title": "Duplicate Playlist",
+    "subtitle": "Make a copy of a playlist you own. The original is kept exactly as it is.",
+    "choose": "Choose a playlist to duplicate",
+    "source": "Copying from",
+    "changeSource": "Choose a different playlist",
+    "videoCount_one": "{{count}} video",
+    "videoCount_other": "{{count}} videos",
+    "review": "What will be copied",
+    "reviewNotice": "Nothing here has been copied to YouTube yet.",
+    "keepsSource": "“{{playlist}}” is kept exactly as it is. Nothing is removed, reordered or deleted.",
+    "cost": "Copying videos uses a shared daily YouTube limit of about 200 a day, for everyone using PlayPick.",
+    "costLarge": "This is a large playlist. Copying it will use most of today's shared limit, and may stop partway — you can add the rest later.",
+    "counting": "Reading the playlist…",
+    "countingHint": "These numbers are not final yet.",
+    "action": "Duplicate playlist",
+    "name": "New playlist name",
+    "namePlaceholder": "e.g. Copy of {{name}}",
+    "description": "Description",
+    "descriptionPlaceholder": "What is this playlist about?",
+    "descriptionOptional": "optional",
+    "required": "This field is required",
+    "confirm": {
+      "title_one": "Create “{{playlist}}” with {{count}} video?",
+      "title_other": "Create “{{playlist}}” with {{count}} videos?",
+      "action": "Create the copy"
+    },
+    "success": {
+      "title": "Playlist duplicated",
+      "description_one": "{{count}} video was copied into “{{playlist}}” on YouTube.",
+      "description_other": "{{count}} videos were copied into “{{playlist}}” on YouTube.",
+      "another": "Duplicate another playlist"
+    },
+    "save": {
+      "quotaExceeded": "PlayPick has reached today's YouTube request limit, so the remaining videos were not copied. Trying again today will not help — please try tomorrow.",
+      "playlistFull": "The new playlist is full and cannot hold any more videos.",
+      "playlistLimitReached": "Your YouTube account has reached the maximum number of playlists, so the copy was not created.",
+      "insufficientPermissions": "PlayPick is not allowed to create playlists or add to them. Sign in again and grant YouTube access.",
+      "notFound": "The new playlist or one of the videos no longer exists on YouTube.",
+      "unknown": "The playlist could not be duplicated. Please try again."
+    }
   }
 }
