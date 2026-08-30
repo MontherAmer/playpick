@@ -51,14 +51,46 @@ export function useMergeDraft(
   destinationVideoIds: ReadonlySet<string> | null,
   removeDuplicates: boolean,
 ): IMergeDraft {
-  const [held, setHeld] = useState<readonly IMergeEntry[]>([])
+  const [entries, setEntries] = useState<IMergeEntry[]>([])
 
   /**
-   * Reconciled during render rather than in an effect, so the entries rendered
-   * are always the ones the current sources justify — an effect would paint one
-   * frame of the stale order first.
+   * What the sources actually say, collapsed to a value that can be compared.
+   *
+   * The sources array is rebuilt on every render, so identity cannot be the
+   * trigger — comparing it would reconcile forever. Playlist, status and the
+   * memberships within it are the only things reconciliation reads, so a change
+   * in any of them is exactly when it needs to run, and nothing else is.
    */
-  const entries = useMemo(() => reconcileMergeDraft(held, sources), [held, sources])
+  const signature = useMemo(
+    () =>
+      sources
+        .map((source) => `${source.playlist.id}:${source.status}:${source.items.map((item) => item.id).join(',')}`)
+        .join('|'),
+    [sources],
+  )
+
+  const [lastSignature, setLastSignature] = useState<string | null>(null)
+
+  /**
+   * Reconcile during render, and **hold the result** — the ordinary React
+   * pattern for adjusting state when inputs change.
+   *
+   * Holding it is not an optimisation; it is what makes an in-flight re-read
+   * safe. If the order were re-derived on every render from whatever the sources
+   * currently say, a source leaving `'read'` would take its rows with it and the
+   * draft would visibly shrink mid-read — a deletion, as far as anyone watching
+   * is concerned — and then grow back. Because the reconciled order is held,
+   * there is something for the next reconciliation to preserve.
+   *
+   * Reconciliation runs on a **change in the sources** and nothing else.
+   * Changing the destination, toggling the duplicate opt-in and re-rendering
+   * during a save all leave `signature` untouched, so none of them can reorder
+   * or rebuild the draft.
+   */
+  if (signature !== lastSignature) {
+    setLastSignature(signature)
+    setEntries(reconcileMergeDraft(entries, sources))
+  }
 
   const destinationIds = destinationVideoIds ?? NO_DESTINATION
 
@@ -105,13 +137,8 @@ export function useMergeDraft(
   )
 
   /**
-   * Moves against `entries` — the reconciled order actually on screen — rather
-   * than against `held`, which can lag it whenever a source has just finished
-   * reading. Indexing into the list someone is looking at is the only way a drop
-   * lands where they aimed.
-   *
-   * Reconciliation is idempotent, so writing the moved order back is stable: the
-   * next render reconciles it and gets it unchanged.
+   * Moves against the order actually on screen, which is the only way a drop
+   * lands where it was aimed.
    */
   const move = useCallback(
     (fromIndex: number, toIndex: number) => {
@@ -132,7 +159,9 @@ export function useMergeDraft(
 
       next.splice(toIndex, 0, moved)
 
-      setHeld(next)
+      // The signature is unchanged, so nothing reconciles on the next render and
+      // the arrangement stands until the sources themselves change.
+      setEntries(next)
     },
     [entries],
   )
