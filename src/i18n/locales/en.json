@@ -481,7 +481,12 @@
       "playlistLimitReached": "Your YouTube account has reached the maximum number of playlists, so the copy was not created.",
       "insufficientPermissions": "PlayPick is not allowed to create playlists or add to them. Sign in again and grant YouTube access.",
       "notFound": "The new playlist or one of the videos no longer exists on YouTube.",
-      "unknown": "The playlist could not be duplicated. Please try again."
+      "unknown": "The playlist could not be duplicated. Please try again.",
+      "partial_one": "{{completed}} of {{total}} videos was copied. The rest were not.",
+      "partial_other": "{{completed}} of {{total}} videos were copied. The rest were not.",
+      "createdButIncomplete": "“{{playlist}}” was created on YouTube and is missing some videos. Adding the rest will not create a second playlist.",
+      "retry": "Add the rest",
+      "retryCreate": "Try again"
     }
   }
 }

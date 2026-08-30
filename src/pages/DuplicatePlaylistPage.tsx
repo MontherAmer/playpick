@@ -2,6 +2,7 @@ import { CheckCircle2, CircleAlert, ExternalLink, Loader2 } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import type { YouTubeErrorCode } from '@/api/youtube/errors'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
 import { ErrorState } from '@/components/common/ErrorState'
 import { ProgressDialog } from '@/components/common/ProgressDialog'
@@ -21,6 +22,14 @@ import { EMPTY_DRAFT, type IPlaylistDraft } from '@/models/playlistDraft'
 function playlistUrl(playlistId: string): string {
   return `https://www.youtube.com/playlist?list=${playlistId}`
 }
+
+/**
+ * Failures another attempt cannot fix: the daily allowance is spent, the account
+ * holds all the playlists YouTube allows, or this deployment was never
+ * configured to reach the API. Offering a retry would only invite the person to
+ * spend their time proving the same thing twice.
+ */
+const NO_RETRY: readonly YouTubeErrorCode[] = ['quotaExceeded', 'playlistLimitReached', 'apiNotEnabled']
 
 /**
  * Duplicate Playlist: one source in, one faithful copy out.
@@ -165,7 +174,53 @@ export function DuplicatePlaylistPage() {
 
       {save.status === 'failed' && save.failure !== null && (
         <div className="mb-4 flex flex-col gap-2">
+          {/* No `onRetry`: its control reads "Try again", which here could be
+              taken to mean the whole run. The remainder-only wording matters
+              enough to render the control separately. */}
           <ErrorState code={save.failure} messageKey={`duplicate.save.${save.failure}`} />
+
+          {/* What actually happened, stated separately from why it stopped: a
+              run that copied nine of twelve is not a failed run. */}
+          {save.failedDuring === 'add' && (
+            <p role="status" className="text-center text-sm text-muted-foreground">
+              {t('duplicate.save.partial', {
+                // `count` drives the plural form; the other two are the text.
+                count: save.completed,
+                completed: save.completed,
+                total: save.total,
+              })}
+            </p>
+          )}
+
+          {/* The playlist exists. Saying so is the difference between an honest
+              report and one that invites a second, undeletable playlist.
+              Rendered only for an `'add'` failure — a failure during creation
+              must never claim a playlist exists. */}
+          {save.failedDuring === 'add' && save.createdPlaylist && (
+            <p role="status" className="text-center text-sm text-muted-foreground">
+              {t('duplicate.save.createdButIncomplete', { playlist: save.createdPlaylist.title })}
+            </p>
+          )}
+
+          {!NO_RETRY.includes(save.failure) && save.remaining.length > 0 && (
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                disabled={isDuplicating}
+                onClick={() => {
+                  // `retry()`, never `save()`. `save()` would create a second
+                  // playlist, and PlayPick cannot delete one.
+                  void save.retry()
+                }}>
+                {/* "Add the rest" is only true when something was added. A
+                    failure during creation left nothing behind and nothing
+                    outstanding, so the control there is a plain retry — which
+                    re-enters at the create step and still creates exactly one
+                    playlist. */}
+                {save.failedDuring === 'add' ? t('duplicate.save.retry') : t('duplicate.save.retryCreate')}
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
