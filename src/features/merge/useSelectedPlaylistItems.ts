@@ -75,8 +75,6 @@ export function useSelectedPlaylistItems(playlists: readonly IPlaylist[]): ISele
   const selectedIds = playlists.map((playlist) => playlist.id).join('|')
 
   useEffect(() => {
-    let cancelled = false
-
     for (const playlistId of selectedIds === '' ? [] : selectedIds.split('|')) {
       const key = `${userId}::${playlistId}`
 
@@ -91,21 +89,29 @@ export function useSelectedPlaylistItems(playlists: readonly IPlaylist[]): ISele
           // No durations, deliberately — see the note above.
           const items = await listAllPlaylistItems(getAccessToken, playlistId)
 
-          if (cancelled) return
-
           setEntries((current) => new Map(current).set(key, { status: 'read', items, error: null }))
         } catch (cause) {
-          if (cancelled) return
-
           // A failure, never an empty playlist.
           setEntries((current) => new Map(current).set(key, { status: 'failed', items: [], error: toErrorCode(cause) }))
         }
       })()
     }
 
-    return () => {
-      cancelled = true
-    }
+    /**
+     * **No cleanup that abandons in-flight reads.**
+     *
+     * The obvious `let cancelled = false` / `cancelled = true` pattern is wrong
+     * here, and wrong in a way that strands a playlist forever: selecting a
+     * second playlist while the first is still loading re-runs this effect, the
+     * old run's cleanup discards the first playlist's result, and `startedRef`
+     * already marks it started — so nothing ever retries it and the summary sits
+     * on "still counting" for good.
+     *
+     * Letting the write land is safe because every entry is keyed by account and
+     * playlist. A result for a playlist since deselected is simply never read; a
+     * result from a previous account is stored under a key the current account
+     * can never look up.
+     */
   }, [selectedIds, userId, attempt, getAccessToken])
 
   const retry = (playlistId: string) => {
