@@ -10,13 +10,12 @@ import { MergeSourcePicker } from '@/components/merge/MergeSourcePicker'
 import { MergeSummary } from '@/components/merge/MergeSummary'
 import { Button } from '@/components/ui/Button'
 import { buttonStyles } from '@/components/ui/buttonStyles'
-import { LARGE_MERGE_THRESHOLD, buildMergePlan } from '@/features/merge/buildMergePlan'
+import { useMergeDraft } from '@/features/merge/useMergeDraft'
 import { useSelectedPlaylistItems } from '@/features/merge/useSelectedPlaylistItems'
 import { isDraftSubmittable } from '@/features/create/validatePlaylistDraft'
 import { useCreateAndFillPlaylist } from '@/features/playlists/useCreateAndFillPlaylist'
 import type { YouTubeErrorCode } from '@/api/youtube/errors'
 import type { IBuildDestination } from '@/models/build'
-import type { IMergeSummary } from '@/models/merge'
 import type { IPlaylist } from '@/models/playlist'
 import { EMPTY_DRAFT, type IPlaylistDraft } from '@/models/playlistDraft'
 
@@ -51,24 +50,15 @@ export function MergePlaylistsPage() {
   const { sources, retry } = useSelectedPlaylistItems(selected)
   const save = useCreateAndFillPlaylist()
 
-  const plan = useMemo(() => buildMergePlan(sources, removeDuplicates), [sources, removeDuplicates])
+  /**
+   * A new playlist holds nothing, so nothing can already be in it — an **empty**
+   * set rather than `null`, which would mean the destination is still unknown
+   * and would block the merge. An existing destination arrives in T013.
+   */
+  const destinationVideoIds = useMemo(() => new Set<string>(), [])
 
-  const summary = useMemo<IMergeSummary>(
-    () => ({
-      playlistCount: selected.length,
-      totalVideos: plan.totalVideos,
-      duplicateCount: plan.duplicateCount,
-      unavailableCount: plan.unavailableCount,
-      willAddCount: plan.steps.length,
-      isCounting: sources.some((source) => source.status === 'pending' || source.status === 'reading'),
-      failedSources: sources.filter((source) => source.status === 'failed').map((source) => source.playlist),
-      isLargeMerge: plan.steps.length >= LARGE_MERGE_THRESHOLD,
-      /** No existing destination is offered yet, so nothing can be a duplicate against one. */
-      destinationDuplicateCount: 0,
-      isDestinationCounting: false,
-    }),
-    [selected.length, plan, sources],
-  )
+  const draft = useMergeDraft(sources, destinationVideoIds, removeDuplicates)
+  const { summary } = draft
 
   const destination = useMemo<IBuildDestination>(() => ({ kind: 'new', draft: result }), [result])
 
@@ -226,7 +216,7 @@ export function MergePlaylistsPage() {
         }}
         onConfirm={() => {
           setIsConfirming(false)
-          void save.save(plan.steps, destination)
+          void save.save(draft.plan, destination)
         }}
       />
     </div>
