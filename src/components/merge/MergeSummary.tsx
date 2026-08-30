@@ -1,4 +1,4 @@
-import { CircleAlert, Info, Layers, Loader2 } from 'lucide-react'
+import { CircleAlert, Gauge, Info, Layers, Loader2 } from 'lucide-react'
 import { useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -156,6 +156,19 @@ export function MergeSummary({
           className="h-4 w-4 shrink-0 rounded border-input accent-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         />
       </label>
+
+      {/* Always shown, and sharpened when the merge is large enough to matter
+          to everyone else using this deployment. Never blocking: PlayPick
+          cannot see the remaining allowance, so refusing would mean refusing on
+          a guess. */}
+      <p
+        className={cn(
+          'inline-flex items-start gap-2 rounded-lg border p-3 text-sm',
+          summary.isLargeMerge ? 'border-destructive/30 bg-destructive/5' : 'bg-muted/40 text-muted-foreground',
+        )}>
+        <Gauge className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+        {summary.isLargeMerge ? t('merge.costLarge') : t('merge.cost')}
+      </p>
 
       {/* The one expectation a "merge" screen has to correct explicitly. */}
       <p className="inline-flex items-start gap-2 rounded-lg border bg-muted/40 p-3 text-sm text-muted-foreground">

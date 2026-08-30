@@ -9,6 +9,20 @@ export interface IMergePlan {
   unavailableCount: number
 }
 
+/**
+ * Where a merge stops being a personal decision and becomes a deployment-wide
+ * one.
+ *
+ * The daily YouTube allowance is 10,000 units for the **whole deployment** and
+ * an insert costs 50, so the day holds roughly **200 writes**. A merge of 100
+ * videos is half of that — for every user of PlayPick, not just the person
+ * doing it. That is the point at which they deserve to be told.
+ *
+ * A named constant rather than a number sprinkled through the interface, so a
+ * better figure can replace it in one place.
+ */
+export const LARGE_MERGE_THRESHOLD = 100
+
 /** Unique per emitted step, and deliberately unrelated to any video or membership id. */
 let nextKey = 0
 

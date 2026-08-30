@@ -10,7 +10,7 @@ import { MergeSourcePicker } from '@/components/merge/MergeSourcePicker'
 import { MergeSummary } from '@/components/merge/MergeSummary'
 import { Button } from '@/components/ui/Button'
 import { buttonStyles } from '@/components/ui/buttonStyles'
-import { buildMergePlan } from '@/features/merge/buildMergePlan'
+import { LARGE_MERGE_THRESHOLD, buildMergePlan } from '@/features/merge/buildMergePlan'
 import { useSelectedPlaylistItems } from '@/features/merge/useSelectedPlaylistItems'
 import { isDraftSubmittable } from '@/features/create/validatePlaylistDraft'
 import { useCreateAndFillPlaylist } from '@/features/playlists/useCreateAndFillPlaylist'
@@ -62,7 +62,7 @@ export function MergePlaylistsPage() {
       willAddCount: plan.steps.length,
       isCounting: sources.some((source) => source.status === 'pending' || source.status === 'reading'),
       failedSources: sources.filter((source) => source.status === 'failed').map((source) => source.playlist),
-      isLargeMerge: false,
+      isLargeMerge: plan.steps.length >= LARGE_MERGE_THRESHOLD,
     }),
     [selected.length, plan, sources],
   )
@@ -216,7 +216,7 @@ export function MergePlaylistsPage() {
       <ConfirmDialog
         open={isConfirming}
         title={t('merge.confirm.title', { count: summary.willAddCount, playlist: result.title.trim() })}
-        message={t('merge.keepsSources')}
+        message={`${t('merge.keepsSources')} ${summary.isLargeMerge ? t('merge.costLarge') : t('merge.cost')}`}
         confirmLabel={t('merge.confirm.action')}
         onCancel={() => {
           setIsConfirming(false)

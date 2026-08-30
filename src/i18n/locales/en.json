@@ -372,6 +372,8 @@
     "retrySource": "Try again",
     "deselectSource": "Remove from selection",
     "keepsSources": "Your existing playlists are kept exactly as they are. Nothing is removed or deleted.",
+    "cost": "Adding videos uses a shared daily YouTube limit of about 200 a day, for everyone using PlayPick.",
+    "costLarge": "This is a large merge. It will use most of today's shared limit, and may stop partway — you can add the rest later.",
     "name": "New playlist name",
     "namePlaceholder": "e.g. Everything running",
     "description": "Description",
