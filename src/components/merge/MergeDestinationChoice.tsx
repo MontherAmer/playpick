@@ -1,7 +1,7 @@
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { MergeResultFields } from '@/components/merge/MergeResultFields'
+import { NewPlaylistFieldset } from '@/components/create/NewPlaylistFieldset'
 import { PlaylistPicker } from '@/components/playlists/PlaylistPicker'
 import type { IPlaylist } from '@/models/playlist'
 import type { IPlaylistDraft } from '@/models/playlistDraft'
@@ -39,15 +39,21 @@ const OPTIONS: readonly MergeDestinationKind[] = ['existing', 'new']
  * destination is by definition already in it, so the ordinary duplicate
  * detection catches it.
  *
- * ## Why this is not Build's `DestinationChoice`
+ * ## Why this is still not Build's `DestinationChoice`
  *
- * Build has a component that offers the same-looking choice, and generalising it
- * was considered and rejected: the shared part is a two-option radio group,
- * while the labels differ and the *new playlist* branch renders different fields
- * (`MergeResultFields` here, `NewPlaylistFields` there). Sharing is worth it
- * when the shape is identical, not when the silhouette is similar — the seam for
- * a third consumer would be a `newFields` slot plus three label props, and is a
- * task of its own.
+ * Build has a component offering the same-looking choice, and generalising it
+ * was considered and rejected in feature 008. **Part of that reasoning has since
+ * expired**: it argued that the *new playlist* branches rendered different
+ * fields, and after feature 009 they render the same `NewPlaylistFieldset`.
+ *
+ * What is left is a two-option radio group whose two labels differ, wrapped
+ * around a picker and a fieldset that are now both shared. That is a genuinely
+ * small amount of duplication, and the merge-specific rule it carries — **no
+ * `excludeId`**, so a playlist chosen as the destination stays selectable as a
+ * source — has no counterpart in Build.
+ *
+ * The seam, if a third chooser appears: the two labels and the picker's own
+ * label become props. It is a task of its own, and smaller now than it was.
  */
 export function MergeDestinationChoice({
   kind,
@@ -108,7 +114,7 @@ export function MergeDestinationChoice({
           />
         </div>
       ) : (
-        <MergeResultFields draft={result} onChange={onResultChange} disabled={disabled} />
+        <NewPlaylistFieldset draft={result} onChange={onResultChange} namespace="merge" disabled={disabled} />
       )}
     </div>
   )
