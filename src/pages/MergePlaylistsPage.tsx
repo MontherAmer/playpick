@@ -63,6 +63,9 @@ export function MergePlaylistsPage() {
       isCounting: sources.some((source) => source.status === 'pending' || source.status === 'reading'),
       failedSources: sources.filter((source) => source.status === 'failed').map((source) => source.playlist),
       isLargeMerge: plan.steps.length >= LARGE_MERGE_THRESHOLD,
+      /** No existing destination is offered yet, so nothing can be a duplicate against one. */
+      destinationDuplicateCount: 0,
+      isDestinationCounting: false,
     }),
     [selected.length, plan, sources],
   )
