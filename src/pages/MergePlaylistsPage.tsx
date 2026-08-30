@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
 import { ErrorState } from '@/components/common/ErrorState'
 import { ProgressDialog } from '@/components/common/ProgressDialog'
+import { MergeDraftList } from '@/components/merge/MergeDraftList'
 import { MergeSourcePicker } from '@/components/merge/MergeSourcePicker'
 import { MergeSummary } from '@/components/merge/MergeSummary'
 import { Button } from '@/components/ui/Button'
@@ -235,7 +236,20 @@ export function MergePlaylistsPage() {
           `min-width: auto`, so an intrinsically wide child would widen its track
           and scroll the whole page sideways at 320px. */}
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
-        <MergeSourcePicker selectedIds={new Set(selected.map((playlist) => playlist.id))} onToggle={toggle} />
+        {/* The draft sits beneath the picker rather than in a third track: three
+            narrow columns at `lg` would reproduce the 380 px squeeze that cost
+            feature 006 a defect. Below `lg` the order is sources → draft →
+            summary, which is the order the decision is made in. */}
+        <div className="flex min-w-0 flex-col gap-6">
+          <MergeSourcePicker selectedIds={new Set(selected.map((playlist) => playlist.id))} onToggle={toggle} />
+
+          <MergeDraftList
+            entries={draft.entries}
+            duplicateFlags={draft.duplicateFlags}
+            onMove={draft.move}
+            disabled={isMerging}
+          />
+        </div>
 
         <MergeSummary
           summary={summary}
