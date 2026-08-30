@@ -1,7 +1,7 @@
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { NewPlaylistFields } from '@/components/build/NewPlaylistFields'
+import { NewPlaylistFieldset } from '@/components/create/NewPlaylistFieldset'
 import { PlaylistPicker } from '@/components/playlists/PlaylistPicker'
 import type { IPlaylist } from '@/models/playlist'
 import type { IPlaylistDraft } from '@/models/playlistDraft'
@@ -98,7 +98,7 @@ export function DestinationChoice({
           />
         </div>
       ) : (
-        <NewPlaylistFields draft={newPlaylist} onChange={onNewPlaylistChange} disabled={disabled} />
+        <NewPlaylistFieldset draft={newPlaylist} onChange={onNewPlaylistChange} namespace="build" disabled={disabled} />
       )}
     </div>
   )

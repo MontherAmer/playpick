@@ -7,9 +7,21 @@ import { validatePlaylistDraft } from '@/features/create/validatePlaylistDraft'
 import type { IPlaylistDraft } from '@/models/playlistDraft'
 import { cn } from '@/utils/cn'
 
-interface NewPlaylistFieldsProps {
+/**
+ * Which tool's words to use.
+ *
+ * The only thing that varies between consumers. Everything else — the markup,
+ * the validation, the visited-and-left behaviour, the not-a-`<form>` rule — is
+ * identical for all three, which is why there is one component rather than
+ * three.
+ */
+export type NewPlaylistNamespace = 'build' | 'merge' | 'duplicate'
+
+interface NewPlaylistFieldsetProps {
   draft: IPlaylistDraft
   onChange: (draft: IPlaylistDraft) => void
+  /** Selects the `<namespace>.name` / `.description` / … label keys. */
+  namespace: NewPlaylistNamespace
   disabled?: boolean
 }
 
@@ -20,23 +32,41 @@ const FIELD_CLASSES =
  * The playlist about to be created: a name, an optional description, and who
  * can see it.
  *
+ * Used by Build, Merge and Duplicate. Only the words differ between them, which
+ * is what `namespace` selects.
+ *
+ * ## Why this is one component and not three
+ *
+ * It was three. Feature 006 wrote it, 007 copied it, and by feature 009 the two
+ * files were **identical code** — verified by a normalised diff, not by reading
+ * — differing only in their label prefix. Three copies of the same markup is
+ * untidy; three copies of the rule below is dangerous.
+ *
+ * ## The rule this exists to hold in one place
+ *
+ * **No visibility is ever pre-selected.** `PrivacyChoice` renders nothing
+ * checked while the choice is unmade, and `validatePlaylistDraft` refuses a
+ * draft without one, so the save control stays unavailable. PlayPick can
+ * neither edit nor delete a playlist, which makes a default nobody noticed
+ * permanent — and a public source quietly producing a second public playlist is
+ * exactly the outcome that is unrecoverable.
+ *
+ * That rule now exists once. Three copies meant three places it could silently
+ * drift back.
+ *
  * **Not a `<form>`, deliberately.** `PlaylistForm` is one, and reusing it here
- * would nest a form inside the build page's own submit flow — invalid markup
+ * would nest a form inside the consuming page's own submit flow — invalid markup
  * whose inner submit would swallow Enter and act on the wrong thing. The parts
  * one level down are reused instead: `PrivacyChoice` verbatim, and
  * `validatePlaylistDraft` to decide what is missing.
  *
- * That shared validator is what makes the no-default-visibility rule structural
- * rather than a matter of discipline: a build with no visibility chosen cannot
- * be saved for exactly the same reason a Create Playlist with none cannot be
- * submitted.
- *
  * Issues appear once a field has been **visited and left** rather than only
  * after a submit attempt — the save control is unavailable while the draft is
  * incomplete, so "tell them when they try to submit" would never fire for the
- * one person who most needs to be told what is missing.
+ * one person who most needs to be told what is missing. That was feature 005's
+ * fix, and it too now exists once rather than three times.
  */
-export function NewPlaylistFields({ draft, onChange, disabled = false }: NewPlaylistFieldsProps) {
+export function NewPlaylistFieldset({ draft, onChange, namespace, disabled = false }: NewPlaylistFieldsetProps) {
   const { t } = useTranslation()
 
   const titleId = useId()
@@ -53,7 +83,7 @@ export function NewPlaylistFields({ draft, onChange, disabled = false }: NewPlay
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <label htmlFor={titleId} className="text-sm font-medium">
-          {t('build.name')} <span aria-hidden="true">*</span>
+          {t(`${namespace}.name`)} <span aria-hidden="true">*</span>
         </label>
 
         <input
@@ -63,7 +93,7 @@ export function NewPlaylistFields({ draft, onChange, disabled = false }: NewPlay
           disabled={disabled}
           aria-invalid={titleIssue}
           aria-describedby={titleIssue ? titleIssueId : undefined}
-          placeholder={t('build.namePlaceholder')}
+          placeholder={t(`${namespace}.namePlaceholder`)}
           onChange={(event) => {
             onChange({ ...draft, title: event.target.value })
           }}
@@ -76,15 +106,15 @@ export function NewPlaylistFields({ draft, onChange, disabled = false }: NewPlay
         {titleIssue && (
           <p id={titleIssueId} role="alert" className="inline-flex items-center gap-1.5 text-sm text-destructive">
             <CircleAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
-            {t('build.required')}
+            {t(`${namespace}.required`)}
           </p>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
         <label htmlFor={descriptionId} className="text-sm font-medium">
-          {t('build.description')}{' '}
-          <span className="font-normal text-muted-foreground">({t('build.descriptionOptional')})</span>
+          {t(`${namespace}.description`)}{' '}
+          <span className="font-normal text-muted-foreground">({t(`${namespace}.descriptionOptional`)})</span>
         </label>
 
         <textarea
@@ -92,7 +122,7 @@ export function NewPlaylistFields({ draft, onChange, disabled = false }: NewPlay
           rows={2}
           value={draft.description}
           disabled={disabled}
-          placeholder={t('build.descriptionPlaceholder')}
+          placeholder={t(`${namespace}.descriptionPlaceholder`)}
           onChange={(event) => {
             onChange({ ...draft, description: event.target.value })
           }}
@@ -102,7 +132,8 @@ export function NewPlaylistFields({ draft, onChange, disabled = false }: NewPlay
 
       {/* Reused verbatim, including rendering nothing checked while the choice
           is unmade and its own "choose who can see this" message — that wording
-          belongs to the control, not to this page, so it is not overridden.
+          belongs to the control, not to its consumers, so it is **not**
+          namespaced and not overridden.
 
           The wrapper carries `onBlur` rather than the component taking a new
           prop: blur bubbles as `focusout`, so leaving the group without choosing
