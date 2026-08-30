@@ -46,7 +46,7 @@ export function DuplicateReviewList({ items }: DuplicateReviewListProps) {
       </h2>
 
       {items.length === 0 ? (
-        <EmptyState icon={ListVideo} title={t('duplicate.reviewNotice')} className="py-8" />
+        <EmptyState icon={ListVideo} title={t('duplicate.reviewEmpty')} className="py-8" />
       ) : (
         <>
           {/* Said plainly. The person is looking at a list of videos that are
@@ -61,7 +61,21 @@ export function DuplicateReviewList({ items }: DuplicateReviewListProps) {
           <ul className="max-h-[32rem] min-h-0 list-none space-y-2 overflow-y-auto p-0">
             {items.map((item, index) => (
               <li key={item.id}>
-                <VideoCard item={item} position={index + 1} />
+                <VideoCard
+                  item={item}
+                  position={index + 1}
+                  badge={
+                    item.isUnavailable ? (
+                      // Says what it means *for this tool* — VideoCard already
+                      // says the video is unavailable; this says the
+                      // consequence, which is what someone reviewing a copy
+                      // needs. Text, never colour alone.
+                      <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                        {t('duplicate.notCopyable')}
+                      </span>
+                    ) : undefined
+                  }
+                />
               </li>
             ))}
           </ul>

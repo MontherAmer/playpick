@@ -1,4 +1,4 @@
-import { CheckCircle2, ExternalLink, Loader2 } from 'lucide-react'
+import { CheckCircle2, CircleAlert, ExternalLink, Loader2 } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -52,7 +52,7 @@ export function DuplicatePlaylistPage() {
   const [draft, setDraft] = useState<IPlaylistDraft>(EMPTY_DRAFT)
   const [isConfirming, setIsConfirming] = useState(false)
 
-  const { status, items, plan, summary } = useDuplicateSource(source)
+  const { status, error, items, plan, summary, reload } = useDuplicateSource(source)
   const save = useCreateAndFillPlaylist()
 
   const isDuplicating = save.status === 'creating' || save.status === 'adding'
@@ -126,6 +126,16 @@ export function DuplicatePlaylistPage() {
             {t('duplicate.success.description', { count: save.completed, playlist: target.title })}
           </p>
 
+          {/* Said here too, not only before the confirmation. A result that
+              reports only what landed reads as a complete copy, and this one
+              is not — the person needs to know their copy is short and why,
+              at the moment they might go and look at it. */}
+          {summary.unavailableCount > 0 && (
+            <p className="max-w-md text-sm text-muted-foreground">
+              {t('duplicate.success.excluded', { count: summary.unavailableCount })}
+            </p>
+          )}
+
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             <a
               href={playlistUrl(target.id)}
@@ -171,6 +181,35 @@ export function DuplicatePlaylistPage() {
             }}
             disabled={isDuplicating}
           />
+
+          {/* Blocks the duplicate rather than merely warning about it: a copy
+              built from contents that are partly unknown would be silently
+              short, and PlayPick can neither delete a playlist nor remove a
+              video from one. Retrying does not re-choose the source. */}
+          {status === 'failed' && error !== null && (
+            <div
+              role="alert"
+              className="flex flex-col gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
+              <p className="inline-flex items-start gap-2">
+                <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
+                {t('duplicate.readFailed', { playlist: source.title })}
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" onClick={reload}>
+                  {t('duplicate.retrySource')}
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setSource(undefined)
+                  }}>
+                  {t('duplicate.changeSource')}
+                </Button>
+              </div>
+            </div>
+          )}
 
           <NewPlaylistFieldset draft={draft} onChange={setDraft} namespace="duplicate" disabled={isDuplicating} />
 

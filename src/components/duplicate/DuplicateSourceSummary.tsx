@@ -62,6 +62,37 @@ export function DuplicateSourceSummary({
         </p>
       )}
 
+      {/* What will and will not be copied, and — said before the confirmation —
+          that repeats are kept. Every other tool in this application would drop
+          them, so a faithful copy has to be announced rather than discovered.
+
+          Dimmed as well as labelled while the source is still being read: a
+          number that is going to change should not look settled. */}
+      <div aria-live="polite" className={cn('flex flex-col gap-1', summary.isLoading && 'opacity-60')}>
+        <p className="text-sm font-semibold text-foreground">
+          {t('duplicate.willCopy', { count: summary.copyableCount })}
+        </p>
+
+        {summary.unavailableCount > 0 && (
+          <p className="text-sm text-muted-foreground">
+            {t('duplicate.unavailable', { count: summary.unavailableCount })}
+          </p>
+        )}
+
+        {summary.repeatedCount > 0 && (
+          <p className="text-sm text-muted-foreground">
+            {t('duplicate.repeatsKept', { count: summary.repeatedCount })}
+          </p>
+        )}
+
+        {/* Reachable whenever the source is empty or entirely unavailable. An
+            outcome, not an error — it must explain the unavailable control
+            rather than leaving it unexplained. */}
+        {summary.hasNothingToCopy && (
+          <p className="text-sm text-muted-foreground">{t('duplicate.nothingToCopy', { playlist: source.title })}</p>
+        )}
+      </div>
+
       {/* Always shown, and sharpened when copying this playlist would consume
           most of the day's allowance for everyone using this deployment. Never
           blocking: PlayPick cannot see the remaining allowance, so refusing
