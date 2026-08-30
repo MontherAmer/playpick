@@ -7,6 +7,8 @@ import { ROUTES } from '@/routes'
  * The three tools of the MVP, shown as large cards.
  * Flip a `status` to `'available'` and register its `path` in the router
  * together — an available tool whose path is not served is a broken link.
+ *
+ * Every tool PlayPick offers is now available. None is still forthcoming.
  */
 export const PRIMARY_TOOLS: readonly ITool[] = [
   { id: 'reorder', icon: Shuffle, path: ROUTES.tools.reorder, status: 'available' },
@@ -18,7 +20,7 @@ export const PRIMARY_TOOLS: readonly ITool[] = [
 export const SECONDARY_TOOLS: readonly ITool[] = [
   { id: 'build', icon: Layers, path: ROUTES.tools.build, status: 'available' },
   { id: 'merge', icon: Merge, path: ROUTES.tools.merge, status: 'available' },
-  { id: 'duplicate', icon: Copy, path: ROUTES.tools.duplicate, status: 'soon' },
+  { id: 'duplicate', icon: Copy, path: ROUTES.tools.duplicate, status: 'available' },
 ]
 
 /**

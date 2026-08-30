@@ -5,6 +5,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { LandingPage } from '@/pages/LandingPage'
 import { CopyPlaylistsPage } from '@/pages/CopyPlaylistsPage'
 import { BuildPlaylistPage } from '@/pages/BuildPlaylistPage'
+import { DuplicatePlaylistPage } from '@/pages/DuplicatePlaylistPage'
 import { MergePlaylistsPage } from '@/pages/MergePlaylistsPage'
 import { CreatePlaylistPage } from '@/pages/CreatePlaylistPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
@@ -18,14 +19,15 @@ export const router = createBrowserRouter(
       element: <AppLayout />,
       children: [
         { path: ROUTES.dashboard, element: <DashboardPage /> },
-        // The tools served so far. The remaining three keep their recorded
-        // addresses in ROUTES.tools and stay unregistered, so entering one
-        // still falls through to the catch-all below.
+        // Every tool PlayPick offers. `toolCatalog.ts` and this list must
+        // move together: a tool advertised as available whose path is not
+        // registered here is a broken link on the dashboard.
         { path: ROUTES.tools.reorder, element: <ReorderPlaylistPage /> },
         { path: ROUTES.tools.copy, element: <CopyPlaylistsPage /> },
         { path: ROUTES.tools.create, element: <CreatePlaylistPage /> },
         { path: ROUTES.tools.build, element: <BuildPlaylistPage /> },
         { path: ROUTES.tools.merge, element: <MergePlaylistsPage /> },
+        { path: ROUTES.tools.duplicate, element: <DuplicatePlaylistPage /> },
       ],
     },
     { path: '*', element: <NotFoundPage /> },
