@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { EmptyState } from '@/components/common/EmptyState'
 import { Button } from '@/components/ui/Button'
 import type { IMergeSummary } from '@/models/merge'
+import { cn } from '@/utils/cn'
 
 interface MergeSummaryProps {
   summary: IMergeSummary
@@ -106,9 +107,26 @@ export function MergeSummary({
         </div>
       ))}
 
-      <p aria-live="polite" className="text-lg font-semibold">
-        {t('merge.willAdd', { count: summary.willAddCount })}
-      </p>
+      {/* The breakdown, then the one number that matters. Every figure comes
+          from the single plan computation, so they cannot disagree with the
+          confirmation or the progress total.
+          
+          While counting, the figures are dimmed as well as labelled: a number
+          that is going to change should not look settled. */}
+      <div aria-live="polite" className={cn('flex flex-col gap-1', summary.isCounting && 'opacity-60')}>
+        <p className="flex items-baseline justify-between gap-3 text-sm text-muted-foreground">
+          <span>{t('merge.playlistCount', { count: summary.playlistCount })}</span>
+          <span className="tabular-nums">{t('merge.totalVideos', { count: summary.totalVideos })}</span>
+        </p>
+
+        {summary.unavailableCount > 0 && (
+          <p className="text-sm text-muted-foreground">{t('merge.unavailable', { count: summary.unavailableCount })}</p>
+        )}
+
+        <p className="mt-1 text-lg font-semibold text-foreground">
+          {t('merge.willAdd', { count: summary.willAddCount })}
+        </p>
+      </div>
 
       {/* The one expectation a "merge" screen has to correct explicitly. */}
       <p className="inline-flex items-start gap-2 rounded-lg border bg-muted/40 p-3 text-sm text-muted-foreground">
