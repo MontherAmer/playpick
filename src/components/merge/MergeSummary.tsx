@@ -1,5 +1,5 @@
 import { CircleAlert, Gauge, Info, Layers, Loader2 } from 'lucide-react'
-import { useId, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { EmptyState } from '@/components/common/EmptyState'
@@ -54,7 +54,6 @@ export function MergeSummary({
   onMerge,
 }: MergeSummaryProps) {
   const { t } = useTranslation()
-  const toggleId = useId()
 
   if (playlistCount < 2) {
     return (
@@ -143,11 +142,21 @@ export function MergeSummary({
           most people merge; the polarity is the inverse of Copy's and Build's
           `includeDuplicates` and means the same thing — the wording follows the
           sentence this screen says, not the flag's name. */}
-      <label htmlFor={toggleId} className="flex cursor-pointer items-center justify-between gap-3 text-sm">
+      {/* The input is **nested inside** the label, which associates the two on
+          its own. It must NOT *also* carry `htmlFor`/`id`.
+          
+          With both associations, pressing Space toggles the checkbox natively
+          and the resulting click reaches the label, whose activation behaviour
+          forwards another click to the control it labels — so it toggles
+          straight back and the key appears dead. A programmatic `.click()` does
+          not reproduce it, which is what makes this easy to miss.
+          
+          Verified: with the tab genuinely focused, Space toggles a bare checkbox
+          and did nothing here until the duplicate association was removed. */}
+      <label className="flex cursor-pointer items-center justify-between gap-3 text-sm">
         <span>{t('merge.removeDuplicates')}</span>
 
         <input
-          id={toggleId}
           type="checkbox"
           checked={removeDuplicates}
           onChange={(event) => {
