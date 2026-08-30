@@ -36,12 +36,13 @@ export function MergePlaylistsPage() {
   const [selected, setSelected] = useState<IPlaylist[]>([])
   const [result, setResult] = useState<IPlaylistDraft>(EMPTY_DRAFT)
   const [isConfirming, setIsConfirming] = useState(false)
+  /** On by default: de-duplicating is the main reason people merge at all. */
+  const [removeDuplicates, setRemoveDuplicates] = useState(true)
 
   const { sources, retry } = useSelectedPlaylistItems(selected)
   const save = useCreateAndFillPlaylist()
 
-  // Duplicates are removed; the control that changes this arrives with US3.
-  const plan = useMemo(() => buildMergePlan(sources, true), [sources])
+  const plan = useMemo(() => buildMergePlan(sources, removeDuplicates), [sources, removeDuplicates])
 
   const summary = useMemo<IMergeSummary>(
     () => ({
@@ -141,6 +142,8 @@ export function MergePlaylistsPage() {
 
         <MergeSummary
           summary={summary}
+          removeDuplicates={removeDuplicates}
+          onRemoveDuplicatesChange={setRemoveDuplicates}
           playlistCount={selected.length}
           resultFields={<MergeResultFields draft={result} onChange={setResult} disabled={isMerging} />}
           canMerge={canMerge}

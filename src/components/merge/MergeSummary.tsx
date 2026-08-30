@@ -1,5 +1,5 @@
 import { CircleAlert, Info, Layers, Loader2 } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { EmptyState } from '@/components/common/EmptyState'
@@ -9,6 +9,8 @@ import { cn } from '@/utils/cn'
 
 interface MergeSummaryProps {
   summary: IMergeSummary
+  removeDuplicates: boolean
+  onRemoveDuplicatesChange: (value: boolean) => void
   /** Below two, merging is impossible and the reason is stated rather than implied. */
   playlistCount: number
   /** The result fields, supplied by the page. */
@@ -41,6 +43,8 @@ interface MergeSummaryProps {
  */
 export function MergeSummary({
   summary,
+  removeDuplicates,
+  onRemoveDuplicatesChange,
   playlistCount,
   resultFields,
   canMerge,
@@ -50,6 +54,7 @@ export function MergeSummary({
   onMerge,
 }: MergeSummaryProps) {
   const { t } = useTranslation()
+  const toggleId = useId()
 
   if (playlistCount < 2) {
     return (
@@ -123,10 +128,34 @@ export function MergeSummary({
           <p className="text-sm text-muted-foreground">{t('merge.unavailable', { count: summary.unavailableCount })}</p>
         )}
 
+        <p className="text-sm text-muted-foreground">
+          {summary.duplicateCount > 0
+            ? t('merge.duplicates', { count: summary.duplicateCount })
+            : t('merge.duplicatesNone')}
+        </p>
+
         <p className="mt-1 text-lg font-semibold text-foreground">
           {t('merge.willAdd', { count: summary.willAddCount })}
         </p>
       </div>
+
+      {/* Sits with the count it governs. Defaulting to on is the whole reason
+          most people merge; the polarity is the inverse of Copy's and Build's
+          `includeDuplicates` and means the same thing — the wording follows the
+          sentence this screen says, not the flag's name. */}
+      <label htmlFor={toggleId} className="flex cursor-pointer items-center justify-between gap-3 text-sm">
+        <span>{t('merge.removeDuplicates')}</span>
+
+        <input
+          id={toggleId}
+          type="checkbox"
+          checked={removeDuplicates}
+          onChange={(event) => {
+            onRemoveDuplicatesChange(event.target.checked)
+          }}
+          className="h-4 w-4 shrink-0 rounded border-input accent-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        />
+      </label>
 
       {/* The one expectation a "merge" screen has to correct explicitly. */}
       <p className="inline-flex items-start gap-2 rounded-lg border bg-muted/40 p-3 text-sm text-muted-foreground">
