@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { EmptyState } from '@/components/common/EmptyState'
 import { Button } from '@/components/ui/Button'
 import type { IMergeSummary } from '@/models/merge'
+import type { IPlaylist } from '@/models/playlist'
 import { cn } from '@/utils/cn'
 
 interface MergeSummaryProps {
@@ -13,8 +14,14 @@ interface MergeSummaryProps {
   onRemoveDuplicatesChange: (value: boolean) => void
   /** Below two, merging is impossible and the reason is stated rather than implied. */
   playlistCount: number
-  /** The result fields, supplied by the page. */
-  resultFields: ReactNode
+  /** The destination choice and its fields, supplied by the page. */
+  destinationChoice: ReactNode
+  /** The chosen existing destination, if there is one. Named in what is said about it. */
+  destinationPlaylist?: IPlaylist
+  /** Its contents could not be read, which blocks the merge. */
+  destinationReadFailed: boolean
+  onRetryDestination: () => void
+  onClearDestination: () => void
   canMerge: boolean
   isMerging: boolean
   onRetrySource: (playlistId: string) => void
@@ -46,7 +53,11 @@ export function MergeSummary({
   removeDuplicates,
   onRemoveDuplicatesChange,
   playlistCount,
-  resultFields,
+  destinationChoice,
+  destinationPlaylist,
+  destinationReadFailed,
+  onRetryDestination,
+  onClearDestination,
   canMerge,
   isMerging,
   onRetrySource,
@@ -71,7 +82,7 @@ export function MergeSummary({
       className="flex min-w-0 flex-col gap-4 rounded-xl border bg-card p-4 shadow-card">
       <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">{t('merge.summary')}</h2>
 
-      {summary.isCounting && (
+      {(summary.isCounting || summary.isDestinationCounting) && (
         <p role="status" className="inline-flex items-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden="true" />
           <span>
@@ -111,13 +122,41 @@ export function MergeSummary({
         </div>
       ))}
 
+      {/* A destination that could not be read blocks the merge for the same
+          reason a source does, and for a sharper one: an unknown destination
+          means an unknown duplicate count, so every video already in it would
+          be added a second time. Retrying it, or choosing a different playlist,
+          are the two ways forward. */}
+      {destinationReadFailed && destinationPlaylist && (
+        <div
+          role="alert"
+          className="flex flex-col gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
+          <p className="inline-flex items-start gap-2">
+            <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
+            {t('merge.destinationReadFailed', { playlist: destinationPlaylist.title })}
+          </p>
+
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={onRetryDestination}>
+              {t('merge.retrySource')}
+            </Button>
+
+            <Button variant="ghost" onClick={onClearDestination}>
+              {t('merge.clearDestination')}
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* The breakdown, then the one number that matters. Every figure comes
           from the single plan computation, so they cannot disagree with the
           confirmation or the progress total.
           
           While counting, the figures are dimmed as well as labelled: a number
           that is going to change should not look settled. */}
-      <div aria-live="polite" className={cn('flex flex-col gap-1', summary.isCounting && 'opacity-60')}>
+      <div
+        aria-live="polite"
+        className={cn('flex flex-col gap-1', (summary.isCounting || summary.isDestinationCounting) && 'opacity-60')}>
         <p className="flex items-baseline justify-between gap-3 text-sm text-muted-foreground">
           <span>{t('merge.playlistCount', { count: summary.playlistCount })}</span>
           <span className="tabular-nums">{t('merge.totalVideos', { count: summary.totalVideos })}</span>
@@ -133,9 +172,30 @@ export function MergeSummary({
             : t('merge.duplicatesNone')}
         </p>
 
+        {/* Said alongside the overall count rather than instead of it, so the
+            fall in "will be added" has a visible cause. */}
+        {summary.destinationDuplicateCount > 0 && destinationPlaylist && (
+          <p className="text-sm text-muted-foreground">
+            {t('merge.destinationDuplicates', {
+              count: summary.destinationDuplicateCount,
+              playlist: destinationPlaylist.title,
+            })}
+          </p>
+        )}
+
         <p className="mt-1 text-lg font-semibold text-foreground">
           {t('merge.willAdd', { count: summary.willAddCount })}
         </p>
+
+        {/* Newly reachable with a full draft: everything selected is already in
+            the destination. That is an outcome, not an error — it must not read
+            as a failure, and it must not leave the disabled control
+            unexplained. */}
+        {summary.willAddCount === 0 && !summary.isCounting && !summary.isDestinationCounting && destinationPlaylist && (
+          <p className="text-sm text-muted-foreground">
+            {t('merge.nothingToAdd', { playlist: destinationPlaylist.title })}
+          </p>
+        )}
       </div>
 
       {/* Sits with the count it governs. Defaulting to on is the whole reason
@@ -185,11 +245,13 @@ export function MergeSummary({
         {t('merge.keepsSources')}
       </p>
 
-      <div className="border-t pt-4">{resultFields}</div>
+      {/* The whole decision sits in one column: what you get, then where it
+          goes, then the control that commits it. */}
+      <div className="border-t pt-4">{destinationChoice}</div>
 
       <Button variant="brand" className="w-full" disabled={!canMerge || isMerging} onClick={onMerge}>
         {isMerging && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-        {t('merge.action')}
+        {destinationPlaylist ? t('merge.actionExisting') : t('merge.action')}
       </Button>
     </section>
   )

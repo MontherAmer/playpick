@@ -463,6 +463,7 @@
     "clearDestination": "اختر قائمة تشغيل أخرى",
     "nothingToAdd": "كل مقاطع الفيديو موجودة بالفعل في «{{playlist}}»، لذا لا يوجد ما يُضاف.",
     "action": "الدمج في قائمة تشغيل جديدة",
+    "actionExisting": "دمج في قائمة التشغيل هذه",
     "confirm": {
       "title_one": "إنشاء «{{playlist}}» بفيديو واحد؟",
       "title_two": "إنشاء «{{playlist}}» بفيديوين؟",

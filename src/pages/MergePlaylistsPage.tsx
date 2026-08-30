@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
 import { ErrorState } from '@/components/common/ErrorState'
 import { ProgressDialog } from '@/components/common/ProgressDialog'
-import { MergeResultFields } from '@/components/merge/MergeResultFields'
 import { MergeSourcePicker } from '@/components/merge/MergeSourcePicker'
 import { MergeSummary } from '@/components/merge/MergeSummary'
 import { Button } from '@/components/ui/Button'
 import { buttonStyles } from '@/components/ui/buttonStyles'
+import { MergeDestinationChoice, type MergeDestinationKind } from '@/components/merge/MergeDestinationChoice'
 import { useMergeDraft } from '@/features/merge/useMergeDraft'
 import { useSelectedPlaylistItems } from '@/features/merge/useSelectedPlaylistItems'
 import { isDraftSubmittable } from '@/features/create/validatePlaylistDraft'
@@ -46,21 +46,66 @@ export function MergePlaylistsPage() {
   const [isConfirming, setIsConfirming] = useState(false)
   /** On by default: de-duplicating is the main reason people merge at all. */
   const [removeDuplicates, setRemoveDuplicates] = useState(true)
-
-  const { sources, retry } = useSelectedPlaylistItems(selected)
-  const save = useCreateAndFillPlaylist()
+  const [destinationKind, setDestinationKind] = useState<MergeDestinationKind>('new')
+  const [destinationPlaylist, setDestinationPlaylist] = useState<IPlaylist | undefined>(undefined)
 
   /**
-   * A new playlist holds nothing, so nothing can already be in it — an **empty**
-   * set rather than `null`, which would mean the destination is still unknown
-   * and would block the merge. An existing destination arrives in T013.
+   * The destination rides along on the sources' read rather than getting a hook
+   * of its own, **deduplicated**.
+   *
+   * A second `useSelectedPlaylistItems` would carry its own memo, so a playlist
+   * that is both a source and the destination — which is explicitly allowed —
+   * would be read **twice**. Deduplicating the input list makes that impossible
+   * rather than merely unlikely.
    */
-  const destinationVideoIds = useMemo(() => new Set<string>(), [])
+  const readTargets = useMemo(() => {
+    if (destinationKind !== 'existing' || !destinationPlaylist) return selected
+    if (selected.some((playlist) => playlist.id === destinationPlaylist.id)) return selected
+
+    return [...selected, destinationPlaylist]
+  }, [selected, destinationKind, destinationPlaylist])
+
+  const { sources: readSources, retry } = useSelectedPlaylistItems(readTargets)
+  const save = useCreateAndFillPlaylist()
+
+  /** Only the selected playlists are sources; the destination is not merged from. */
+  const sources = useMemo(
+    () => readSources.filter((source) => selected.some((playlist) => playlist.id === source.playlist.id)),
+    [readSources, selected],
+  )
+
+  const destinationSource = useMemo(
+    () =>
+      destinationKind === 'existing' && destinationPlaylist
+        ? readSources.find((source) => source.playlist.id === destinationPlaylist.id)
+        : undefined,
+    [readSources, destinationKind, destinationPlaylist],
+  )
+
+  /**
+   * `null` means *unknown*, which blocks the merge; an empty set means *known to
+   * hold nothing that matters*. A new playlist is the latter — it holds nothing
+   * because it does not exist yet.
+   */
+  const destinationVideoIds = useMemo<ReadonlySet<string> | null>(() => {
+    if (destinationKind === 'new') return new Set<string>()
+    if (!destinationSource || destinationSource.status !== 'read') return null
+
+    return new Set(destinationSource.items.map((item) => item.videoId))
+  }, [destinationKind, destinationSource])
 
   const draft = useMergeDraft(sources, destinationVideoIds, removeDuplicates)
   const { summary } = draft
 
-  const destination = useMemo<IBuildDestination>(() => ({ kind: 'new', draft: result }), [result])
+  const destinationReadFailed = destinationSource?.status === 'failed'
+
+  const destination = useMemo<IBuildDestination>(
+    () =>
+      destinationKind === 'existing' && destinationPlaylist
+        ? { kind: 'existing', playlist: destinationPlaylist }
+        : { kind: 'new', draft: result },
+    [destinationKind, destinationPlaylist, result],
+  )
 
   const isMerging = save.status === 'creating' || save.status === 'adding'
 
@@ -72,8 +117,13 @@ export function MergePlaylistsPage() {
     selected.length >= 2 &&
     summary.failedSources.length === 0 &&
     !summary.isCounting &&
+    // An unknown destination means an unknown duplicate count, so merging into
+    // one would add videos that are already there — and PlayPick can remove
+    // neither them nor the playlist.
+    !summary.isDestinationCounting &&
+    !destinationReadFailed &&
     summary.willAddCount > 0 &&
-    isDraftSubmittable(result)
+    (destinationKind === 'existing' ? destinationPlaylist !== undefined : isDraftSubmittable(result))
 
   const toggle = useCallback((playlist: IPlaylist) => {
     setSelected((current) =>
@@ -91,6 +141,8 @@ export function MergePlaylistsPage() {
     save.reset()
     setSelected([])
     setResult(EMPTY_DRAFT)
+    setDestinationKind('new')
+    setDestinationPlaylist(undefined)
   }, [save])
 
   if (save.status === 'succeeded' && save.targetPlaylist) {
@@ -190,7 +242,25 @@ export function MergePlaylistsPage() {
           removeDuplicates={removeDuplicates}
           onRemoveDuplicatesChange={setRemoveDuplicates}
           playlistCount={selected.length}
-          resultFields={<MergeResultFields draft={result} onChange={setResult} disabled={isMerging} />}
+          destinationChoice={
+            <MergeDestinationChoice
+              kind={destinationKind}
+              onKindChange={setDestinationKind}
+              existing={destinationPlaylist}
+              onExistingChange={setDestinationPlaylist}
+              result={result}
+              onResultChange={setResult}
+              disabled={isMerging}
+            />
+          }
+          destinationPlaylist={destinationKind === 'existing' ? destinationPlaylist : undefined}
+          destinationReadFailed={destinationReadFailed}
+          onRetryDestination={() => {
+            if (destinationPlaylist) retry(destinationPlaylist.id)
+          }}
+          onClearDestination={() => {
+            setDestinationPlaylist(undefined)
+          }}
           canMerge={canMerge}
           isMerging={isMerging}
           onRetrySource={retry}
@@ -208,9 +278,21 @@ export function MergePlaylistsPage() {
       {/* Nothing is sent until this is accepted. */}
       <ConfirmDialog
         open={isConfirming}
-        title={t('merge.confirm.title', { count: summary.willAddCount, playlist: result.title.trim() })}
+        /* Says which of the two things is about to happen. Claiming to create a
+           playlist that already exists would be the defect feature 006 hit. */
+        title={
+          destinationKind === 'existing' && destinationPlaylist
+            ? t('merge.confirm.existing', {
+                count: summary.willAddCount,
+                playlist: destinationPlaylist.title,
+              })
+            : t('merge.confirm.title', {
+                count: summary.willAddCount,
+                playlist: result.title.trim(),
+              })
+        }
         message={`${t('merge.keepsSources')} ${summary.isLargeMerge ? t('merge.costLarge') : t('merge.cost')}`}
-        confirmLabel={t('merge.confirm.action')}
+        confirmLabel={destinationKind === 'existing' ? t('merge.confirm.actionExisting') : t('merge.confirm.action')}
         onCancel={() => {
           setIsConfirming(false)
         }}
