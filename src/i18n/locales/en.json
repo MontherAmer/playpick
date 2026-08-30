@@ -380,11 +380,25 @@
     "descriptionPlaceholder": "What is this playlist about?",
     "descriptionOptional": "optional",
     "required": "This field is required",
+    "destination": {
+      "legend": "Where should the merged videos go?",
+      "existing": "A playlist I already have",
+      "new": "A new playlist",
+      "choose": "Choose the destination playlist"
+    },
+    "destinationDuplicates_one": "{{count}} of them is already in “{{playlist}}”",
+    "destinationDuplicates_other": "{{count}} of them are already in “{{playlist}}”",
+    "destinationReadFailed": "“{{playlist}}” could not be read, so PlayPick cannot tell which videos are already in it.",
+    "clearDestination": "Choose a different playlist",
+    "nothingToAdd": "Every video is already in “{{playlist}}”, so there is nothing to add.",
     "action": "Merge into a new playlist",
     "confirm": {
       "title_one": "Create “{{playlist}}” with {{count}} video?",
       "title_other": "Create “{{playlist}}” with {{count}} videos?",
-      "action": "Create and merge"
+      "action": "Create and merge",
+      "existing_one": "Add {{count}} video to “{{playlist}}”?",
+      "existing_other": "Add {{count}} videos to “{{playlist}}”?",
+      "actionExisting": "Add to playlist"
     },
     "success": {
       "title": "Playlists merged",

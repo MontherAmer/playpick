@@ -447,6 +447,21 @@
     "descriptionPlaceholder": "عمّ تدور قائمة التشغيل هذه؟",
     "descriptionOptional": "اختياري",
     "required": "هذا الحقل مطلوب",
+    "destination": {
+      "legend": "أين تريد إضافة مقاطع الفيديو المدمجة؟",
+      "existing": "قائمة تشغيل لديّ بالفعل",
+      "new": "قائمة تشغيل جديدة",
+      "choose": "اختر قائمة التشغيل الوجهة"
+    },
+    "destinationDuplicates_zero": "لا شيء منها موجود في «{{playlist}}»",
+    "destinationDuplicates_one": "واحد منها موجود بالفعل في «{{playlist}}»",
+    "destinationDuplicates_two": "اثنان منها موجودان بالفعل في «{{playlist}}»",
+    "destinationDuplicates_few": "{{count}} منها موجودة بالفعل في «{{playlist}}»",
+    "destinationDuplicates_many": "{{count}} منها موجودة بالفعل في «{{playlist}}»",
+    "destinationDuplicates_other": "{{count}} منها موجودة بالفعل في «{{playlist}}»",
+    "destinationReadFailed": "تعذّرت قراءة «{{playlist}}»، لذا لا يستطيع PlayPick معرفة مقاطع الفيديو الموجودة فيها بالفعل.",
+    "clearDestination": "اختر قائمة تشغيل أخرى",
+    "nothingToAdd": "كل مقاطع الفيديو موجودة بالفعل في «{{playlist}}»، لذا لا يوجد ما يُضاف.",
     "action": "الدمج في قائمة تشغيل جديدة",
     "confirm": {
       "title_one": "إنشاء «{{playlist}}» بفيديو واحد؟",
@@ -454,7 +469,14 @@
       "title_few": "إنشاء «{{playlist}}» بـ {{count}} فيديوهات؟",
       "title_many": "إنشاء «{{playlist}}» بـ {{count}} فيديو؟",
       "title_other": "إنشاء «{{playlist}}» بـ {{count}} فيديو؟",
-      "action": "إنشاء ودمج"
+      "action": "إنشاء ودمج",
+      "existing_zero": "إضافة {{count}} مقطع إلى «{{playlist}}»؟",
+      "existing_one": "إضافة مقطع واحد إلى «{{playlist}}»؟",
+      "existing_two": "إضافة مقطعين إلى «{{playlist}}»؟",
+      "existing_few": "إضافة {{count}} مقاطع إلى «{{playlist}}»؟",
+      "existing_many": "إضافة {{count}} مقطعًا إلى «{{playlist}}»؟",
+      "existing_other": "إضافة {{count}} مقطع إلى «{{playlist}}»؟",
+      "actionExisting": "إضافة إلى قائمة التشغيل"
     },
     "success": {
       "title": "تم دمج قوائم التشغيل",
