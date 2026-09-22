@@ -2,18 +2,20 @@ import type { JSX } from 'react'
 
 import { ArrowRight } from 'lucide-react'
 
-import type { ILandingCopy, IToolDefinition, Locale } from '@/models/landing.interface'
+import type { ILandingCopy, IToolDefinition, Locale, ToolId } from '@/models/landing.interface'
 
 interface ILandingToolsSectionProps {
   locale: Locale
   copy: ILandingCopy
   tools: IToolDefinition[]
+  onToolSelect: (toolId: ToolId) => void
 }
 
 export function LandingToolsSection({
   locale,
   copy,
   tools,
+  onToolSelect,
 }: ILandingToolsSectionProps): JSX.Element {
   return (
     <section id="features" className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
@@ -30,10 +32,14 @@ export function LandingToolsSection({
       </div>
       <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
         {tools.map((tool) => (
-          <a
+          <button
             key={tool.id}
-            href={`#${tool.id}`}
-            className="group min-h-48 bg-card p-5 transition-colors hover:bg-accent"
+            id={tool.id}
+            type="button"
+            onClick={() => {
+              onToolSelect(tool.id)
+            }}
+            className="group min-h-48 bg-card p-5 text-start transition-colors hover:bg-accent"
           >
             <tool.icon className="size-6 text-primary" />
             <h3 className="mt-10 font-display text-lg font-bold">
@@ -41,7 +47,7 @@ export function LandingToolsSection({
             </h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">{tool.desc}</p>
             <ArrowRight className="mt-4 size-4 transition-transform group-hover:translate-x-1 rtl:rotate-180" />
-          </a>
+          </button>
         ))}
       </div>
     </section>

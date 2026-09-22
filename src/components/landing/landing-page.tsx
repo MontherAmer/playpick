@@ -1,5 +1,6 @@
 import type { JSX } from 'react'
 
+import { LoginDialog } from '@/components/auth/login-dialog'
 import { LandingFooter } from '@/components/landing/landing-footer'
 import { LandingHeader } from '@/components/landing/landing-header'
 import { LandingHero } from '@/components/landing/landing-hero'
@@ -11,12 +12,21 @@ export function LandingPage(): JSX.Element {
     locale,
     isDark,
     isToolsMenuOpen,
+    isLoginDialogOpen,
+    isAuthenticated,
+    isSigningIn,
+    user,
     copy,
+    authCopy,
+    authErrorMessage,
     tools,
     handleToggleLocale,
     handleToggleTheme,
     handleToggleToolsMenu,
-    handleCloseToolsMenu,
+    handleSignIn,
+    handleToolSelect,
+    handleCloseLoginDialog,
+    handleExploreTools,
   } = useLandingPage()
 
   return (
@@ -25,18 +35,49 @@ export function LandingPage(): JSX.Element {
         locale={locale}
         isDark={isDark}
         isToolsMenuOpen={isToolsMenuOpen}
+        isAuthenticated={isAuthenticated}
+        user={user}
         copy={copy}
         tools={tools}
         onToggleLocale={handleToggleLocale}
         onToggleTheme={handleToggleTheme}
         onToggleToolsMenu={handleToggleToolsMenu}
-        onCloseToolsMenu={handleCloseToolsMenu}
+        onToolSelect={handleToolSelect}
       />
       <main>
-        <LandingHero copy={copy} />
-        <LandingToolsSection locale={locale} copy={copy} tools={tools} />
+        <LandingHero
+          copy={copy}
+          isAuthenticated={isAuthenticated}
+          isSigningIn={isSigningIn}
+          continueLabel={authCopy.continue}
+          connectingLabel={authCopy.connecting}
+          goToToolsLabel={authCopy.goToTools}
+          authErrorMessage={authErrorMessage}
+          onSignIn={handleSignIn}
+          onExploreTools={handleExploreTools}
+        />
+        <LandingToolsSection
+          locale={locale}
+          copy={copy}
+          tools={tools}
+          onToolSelect={handleToolSelect}
+        />
       </main>
       <LandingFooter copy={copy} />
+      {isLoginDialogOpen ? (
+        <LoginDialog
+          title={authCopy.loginTitle}
+          description={authCopy.loginDescription}
+          continueLabel={authCopy.continue}
+          connectingLabel={authCopy.connecting}
+          privacy={authCopy.privacy}
+          closeLabel={authCopy.close}
+          isSigningIn={isSigningIn}
+          errorMessage={authErrorMessage}
+          onSignIn={handleSignIn}
+          onClose={handleCloseLoginDialog}
+        />
+      ) : null}
     </div>
   )
 }

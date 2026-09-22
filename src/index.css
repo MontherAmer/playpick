@@ -32,6 +32,7 @@
   --color-ring: var(--ring);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
+  --color-overlay: var(--overlay);
 }
 
 :root {
@@ -58,6 +59,7 @@
   --ring: oklch(0.704 0.04 256.788);
   --success: oklch(0.53 0.14 158);
   --success-soft: oklch(0.95 0.04 158);
+  --overlay: oklch(0.16 0.02 255);
 }
 
 .dark {
@@ -83,6 +85,7 @@
   --ring: oklch(0.551 0.027 264.364);
   --success: oklch(0.72 0.15 158);
   --success-soft: oklch(0.25 0.055 158);
+  --overlay: oklch(0.08 0.01 255);
 }
 
 @layer base {

@@ -1,7 +1,8 @@
 import type { JSX } from 'react'
 
-import { ArrowRight, Copy, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowRight, Copy, LayoutDashboard, ShieldCheck, Sparkles } from 'lucide-react'
 
+import { ContinueWithGoogleButton } from '@/components/auth/continue-with-google-button'
 import { MiniVideo } from '@/components/landing/mini-video'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,9 +13,27 @@ import type { ILandingCopy } from '@/models/landing.interface'
 
 interface ILandingHeroProps {
   copy: ILandingCopy
+  isAuthenticated: boolean
+  isSigningIn: boolean
+  continueLabel: string
+  connectingLabel: string
+  goToToolsLabel: string
+  authErrorMessage: string | null
+  onSignIn: () => void
+  onExploreTools: () => void
 }
 
-export function LandingHero({ copy }: ILandingHeroProps): JSX.Element {
+export function LandingHero({
+  copy,
+  isAuthenticated,
+  isSigningIn,
+  continueLabel,
+  connectingLabel,
+  goToToolsLabel,
+  authErrorMessage,
+  onSignIn,
+  onExploreTools,
+}: ILandingHeroProps): JSX.Element {
   return (
     <section className="relative overflow-hidden border-b border-border">
       <div className="mx-auto grid min-h-[640px] max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.05fr_.95fr]">
@@ -30,17 +49,34 @@ export function LandingHero({ copy }: ILandingHeroProps): JSX.Element {
             {copy.sub}
           </p>
           <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            <Button size="lg" className="shadow-lg shadow-primary/20">
-              <span className="grid size-6 place-items-center rounded-full bg-primary-foreground text-xs font-black text-primary">
-                G
+            {isAuthenticated ? (
+              <Button
+                size="lg"
+                className="shadow-lg shadow-primary/20"
+                onClick={onExploreTools}
+              >
+                <LayoutDashboard className="size-5" />
+                {goToToolsLabel}
+                <ArrowRight className="rtl:rotate-180" />
+              </Button>
+            ) : (
+              <ContinueWithGoogleButton
+                label={continueLabel}
+                connectingLabel={connectingLabel}
+                isSigningIn={isSigningIn}
+                onSignIn={onSignIn}
+              />
+            )}
+            {authErrorMessage && !isAuthenticated ? (
+              <p role="alert" className="max-w-xs text-xs font-medium leading-5 text-destructive">
+                {authErrorMessage}
+              </p>
+            ) : (
+              <span className="max-w-xs text-xs leading-5 text-muted-foreground">
+                <ShieldCheck className="me-1 inline size-4 text-success" />
+                {copy.privacy}
               </span>
-              {copy.continue}
-              <ArrowRight className="rtl:rotate-180" />
-            </Button>
-            <span className="max-w-xs text-xs leading-5 text-muted-foreground">
-              <ShieldCheck className="me-1 inline size-4 text-success" />
-              {copy.privacy}
-            </span>
+            )}
           </div>
         </div>
         <LandingHeroPreview copy={copy} />
@@ -49,7 +85,7 @@ export function LandingHero({ copy }: ILandingHeroProps): JSX.Element {
   )
 }
 
-function LandingHeroPreview({ copy }: ILandingHeroProps): JSX.Element {
+function LandingHeroPreview({ copy }: { copy: ILandingCopy }): JSX.Element {
   return (
     <div className="relative min-h-[430px]">
       <div className="absolute inset-x-0 top-6 overflow-hidden rounded-xl border border-border bg-card shadow-2xl">

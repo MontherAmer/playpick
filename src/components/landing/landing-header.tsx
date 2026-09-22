@@ -2,32 +2,38 @@ import type { JSX } from 'react'
 
 import { ChevronDown, Languages, Menu, Moon, Sun } from 'lucide-react'
 
+import { UserAvatar } from '@/components/auth/user-avatar'
 import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
-import type { ILandingCopy, IToolDefinition, Locale } from '@/models/landing.interface'
+import type { ILandingCopy, IToolDefinition, Locale, ToolId } from '@/models/landing.interface'
+import type { IUser } from '@/models/user.interface'
 
 interface ILandingHeaderProps {
   locale: Locale
   isDark: boolean
   isToolsMenuOpen: boolean
+  isAuthenticated: boolean
+  user: IUser | null
   copy: ILandingCopy
   tools: IToolDefinition[]
   onToggleLocale: () => void
   onToggleTheme: () => void
   onToggleToolsMenu: () => void
-  onCloseToolsMenu: () => void
+  onToolSelect: (toolId: ToolId) => void
 }
 
 export function LandingHeader({
   locale,
   isDark,
   isToolsMenuOpen,
+  isAuthenticated,
+  user,
   copy,
   tools,
   onToggleLocale,
   onToggleTheme,
   onToggleToolsMenu,
-  onCloseToolsMenu,
+  onToolSelect,
 }: ILandingHeaderProps): JSX.Element {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
@@ -42,11 +48,13 @@ export function LandingHeader({
             {isToolsMenuOpen ? (
               <div className="absolute start-0 top-11 grid w-[420px] grid-cols-2 gap-1 rounded-lg border border-border bg-popover p-2 shadow-xl">
                 {tools.map((tool) => (
-                  <a
+                  <button
                     key={tool.id}
-                    href="#features"
-                    onClick={onCloseToolsMenu}
-                    className="flex gap-3 rounded-md p-3 hover:bg-accent"
+                    type="button"
+                    onClick={() => {
+                      onToolSelect(tool.id)
+                    }}
+                    className="flex gap-3 rounded-md p-3 text-start hover:bg-accent"
                   >
                     <tool.icon className="mt-0.5 size-4 text-primary" />
                     <span>
@@ -55,7 +63,7 @@ export function LandingHeader({
                       </b>
                       <small className="text-muted-foreground">{tool.desc}</small>
                     </span>
-                  </a>
+                  </button>
                 ))}
               </div>
             ) : null}
@@ -86,9 +94,7 @@ export function LandingHeader({
             {isDark ? <Sun /> : <Moon />}
             <span className="sr-only">Theme</span>
           </Button>
-          <div className="ms-2 grid size-9 place-items-center rounded-full bg-secondary font-bold text-secondary-foreground">
-            MA
-          </div>
+          {isAuthenticated && user ? <UserAvatar user={user} /> : null}
           <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu">
             <Menu />
           </Button>
