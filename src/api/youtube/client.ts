@@ -32,7 +32,7 @@ async function youtubeRequest({
   body,
   signal,
 }: {
-  method: 'GET' | 'POST'
+  method: 'DELETE' | 'GET' | 'POST'
   getAccessToken: () => Promise<string>
   path: string
   params: Record<string, string>
@@ -95,4 +95,12 @@ export function youtubePost(
   body: unknown,
 ): Promise<unknown> {
   return youtubeRequest({ method: 'POST', getAccessToken, path, params, body })
+}
+
+export function youtubeDelete(
+  getAccessToken: () => Promise<string>,
+  path: string,
+  params: Record<string, string>,
+): Promise<unknown> {
+  return youtubeRequest({ method: 'DELETE', getAccessToken, path, params })
 }

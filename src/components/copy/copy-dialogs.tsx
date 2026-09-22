@@ -50,21 +50,23 @@ function Dialog({
 export function DiscardDialog({
   onCancel,
   onConfirm,
+  translationPrefix = 'copy',
 }: {
   onCancel: () => void
   onConfirm: () => void
+  translationPrefix?: 'copy' | 'move'
 }): JSX.Element {
   const { t } = useTranslation()
 
   return (
     <Dialog
-      title={t('copy.discard.title')}
-      description={t('copy.discard.description')}
+      title={t(`${translationPrefix}.discard.title`)}
+      description={t(`${translationPrefix}.discard.description`)}
       onClose={onCancel}
     >
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={onCancel}>{t('common.cancel')}</Button>
-        <Button variant="destructive" onClick={onConfirm}>{t('copy.discard.confirm')}</Button>
+        <Button variant="destructive" onClick={onConfirm}>{t(`${translationPrefix}.discard.confirm`)}</Button>
       </div>
     </Dialog>
   )
@@ -74,25 +76,27 @@ export function DuplicateDialog({
   count,
   onCancel,
   onConfirm,
+  translationPrefix = 'copy',
 }: {
   count: number
   onCancel: () => void
   onConfirm: (includeDuplicates: boolean) => void
+  translationPrefix?: 'copy' | 'move'
 }): JSX.Element {
   const { t } = useTranslation()
 
   return (
     <Dialog
-      title={t('copy.duplicates.title', { count })}
-      description={t('copy.duplicates.description')}
+      title={t(`${translationPrefix}.duplicates.title`, { count })}
+      description={t(`${translationPrefix}.duplicates.description`)}
       onClose={onCancel}
     >
       <div className="space-y-2">
         <Button className="w-full" onClick={() => onConfirm(false)}>
-          {t('copy.duplicates.skip')}
+          {t(`${translationPrefix}.duplicates.skip`)}
         </Button>
         <Button className="w-full" variant="outline" onClick={() => onConfirm(true)}>
-          {t('copy.duplicates.include')}
+          {t(`${translationPrefix}.duplicates.include`)}
         </Button>
       </div>
     </Dialog>
@@ -103,10 +107,12 @@ export function SaveDialog({
   progress,
   onRetry,
   onClose,
+  translationPrefix = 'copy',
 }: {
   progress: ISaveProgress
   onRetry: () => void
   onClose: () => void
+  translationPrefix?: 'copy' | 'move'
 }): JSX.Element | null {
   const { t } = useTranslation()
 
@@ -116,10 +122,10 @@ export function SaveDialog({
 
   return (
     <Dialog
-      title={t(isSaving ? 'copy.saving.title' : 'copy.saveFailed.title')}
+      title={t(isSaving ? `${translationPrefix}.saving.title` : `${translationPrefix}.saveFailed.title`)}
       description={
         isSaving
-          ? t('copy.saving.progress', {
+          ? t(`${translationPrefix}.saving.progress`, {
               completed: progress.completed,
               total: progress.total,
             })
@@ -133,7 +139,7 @@ export function SaveDialog({
         <div className="flex items-center justify-end gap-2">
           <AlertTriangle className="me-auto size-6 text-amber-500" />
           <Button variant="outline" onClick={onClose}>{t('common.close')}</Button>
-          <Button onClick={onRetry}>{t('copy.retry')}</Button>
+          <Button onClick={onRetry}>{t(`${translationPrefix}.retry`)}</Button>
         </div>
       )}
     </Dialog>
@@ -144,18 +150,20 @@ export function CopySuccess({
   count,
   destinationId,
   onReset,
+  translationPrefix = 'copy',
 }: {
   count: number
   destinationId?: string
   onReset: () => void
+  translationPrefix?: 'copy' | 'move'
 }): JSX.Element {
   const { t } = useTranslation()
 
   return (
     <section className="rounded-lg border border-border bg-card p-8 text-center sm:p-14">
       <CheckCircle2 className="mx-auto size-12 text-success" />
-      <h2 className="mt-4 font-display text-2xl font-extrabold">{t('copy.success.title')}</h2>
-      <p className="mt-2 text-muted-foreground">{t('copy.success.description', { count })}</p>
+      <h2 className="mt-4 font-display text-2xl font-extrabold">{t(`${translationPrefix}.success.title`)}</h2>
+      <p className="mt-2 text-muted-foreground">{t(`${translationPrefix}.success.description`, { count })}</p>
       <div className="mt-6 flex flex-wrap justify-center gap-2">
         {destinationId ? (
           <a
@@ -164,10 +172,10 @@ export function CopySuccess({
             rel="noreferrer"
             className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
           >
-            {t('copy.success.openYoutube')}
+            {t(`${translationPrefix}.success.openYoutube`)}
           </a>
         ) : null}
-        <Button variant="outline" onClick={onReset}>{t('copy.success.copyMore')}</Button>
+        <Button variant="outline" onClick={onReset}>{t(`${translationPrefix}.success.copyMore`)}</Button>
       </div>
     </section>
   )

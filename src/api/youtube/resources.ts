@@ -1,6 +1,6 @@
 import type { IPlaylist, IVideo, PlaylistPrivacy } from '@/models/copy.interface'
 
-import { youtubeGet, youtubePost } from './client'
+import { youtubeDelete, youtubeGet, youtubePost } from './client'
 import { YouTubeError } from './errors'
 
 const PAGE_SIZE = '50'
@@ -245,4 +245,11 @@ export async function addPlaylistVideo(
       },
     },
   )
+}
+
+export async function removePlaylistVideo(
+  getAccessToken: () => Promise<string>,
+  playlistItemId: string,
+): Promise<void> {
+  await youtubeDelete(getAccessToken, '/playlistItems', { id: playlistItemId })
 }

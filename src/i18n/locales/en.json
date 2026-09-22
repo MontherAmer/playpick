@@ -118,6 +118,58 @@
       "copyMore": "Copy more videos"
     }
   },
+  "move": {
+    "connect": {
+      "title": "Connect YouTube to move videos",
+      "description": "Sign in with Google to move videos safely between playlists you own."
+    },
+    "warning": {
+      "title": "Moving removes the originals.",
+      "description": "Each video is removed from the source only after it is added successfully to the destination."
+    },
+    "sourcePlaylist": "Source playlist",
+    "destinationPlaylist": "Destination playlist",
+    "filter": "Filter videos",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "selectedCount": "{{count}} selected",
+    "addSelected": "Add selected",
+    "dropZone": "Drag videos here or use Add selected",
+    "stats": {
+      "existing": "Existing",
+      "pending": "Pending",
+      "duplicates": "Duplicates",
+      "total": "Total"
+    },
+    "pendingChanges": "{{count}} moves ready",
+    "duplicateCount": "{{count}} duplicate detected",
+    "save": "Move videos",
+    "retry": "Retry the rest",
+    "discard": {
+      "title": "Discard pending moves?",
+      "description": "Neither playlist has changed yet, but this move draft will be lost.",
+      "confirm": "Discard changes"
+    },
+    "duplicates": {
+      "title": "{{count}} duplicate found",
+      "description": "Skipped duplicates remain in the source. Choose whether to add and remove them anyway.",
+      "skip": "Skip duplicates and move",
+      "include": "Move duplicates anyway"
+    },
+    "saving": {
+      "title": "Moving videos",
+      "progress": "{{completed}} of {{total}} videos moved"
+    },
+    "saveFailed": {
+      "title": "Move stopped safely"
+    },
+    "success": {
+      "title": "Videos moved",
+      "description": "{{count}} videos were added to the destination and removed from the source.",
+      "openYoutube": "Open destination on YouTube",
+      "copyMore": "Move more videos"
+    }
+  },
   "landing": {
     "badge": "10 tools. One tidy library.",
     "tagline": "Your playlists, finally under control.",
