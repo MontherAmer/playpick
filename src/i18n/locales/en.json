@@ -7,7 +7,8 @@
     "switchLanguage": "Switch language",
     "toggleTheme": "Toggle theme",
     "openMenu": "Open menu",
-    "close": "Close"
+    "close": "Close",
+    "cancel": "Cancel"
   },
   "nav": {
     "tools": "Tools",
@@ -30,6 +31,91 @@
       "accessDenied": "Google access was denied. Grant playlist permission to continue.",
       "profileUnavailable": "Signed in, but your Google profile could not be loaded.",
       "unknown": "Something went wrong while signing in. Please try again."
+    },
+    "youtube": {
+      "network": "Could not reach YouTube. Check your connection and try again.",
+      "authExpired": "Your YouTube session expired. Sign in again.",
+      "quotaExceeded": "The YouTube API quota has been reached. Try again later.",
+      "apiNotEnabled": "The YouTube API is not enabled for this application.",
+      "insufficientPermissions": "YouTube did not allow this action. Check your account permissions.",
+      "notFound": "That playlist or video could not be found or is private.",
+      "playlistFull": "The destination playlist is full.",
+      "service": "YouTube is temporarily unavailable. Try again shortly.",
+      "unknown": "YouTube could not complete the request. Please try again."
+    }
+  },
+  "copy": {
+    "connect": {
+      "title": "Connect YouTube to copy videos",
+      "description": "Sign in with Google to load your playlists and save selected videos to YouTube."
+    },
+    "sources": {
+      "mine": "My Playlists",
+      "saved": "Saved",
+      "playlist": "YouTube Playlist",
+      "search": "Search",
+      "paste": "Paste URL"
+    },
+    "sourcePlaylist": "Source playlist",
+    "destinationPlaylist": "Destination playlist",
+    "choosePlaylist": "Choose a playlist",
+    "untitled": "Untitled",
+    "savedUnavailable": "YouTube does not expose saved Library playlists through its API. Use a playlist URL or search instead.",
+    "sourceInput": {
+      "playlist": "Paste a playlist URL or ID",
+      "search": "Search YouTube videos",
+      "paste": "Paste one or more video URLs"
+    },
+    "load": "Load",
+    "filter": "Filter videos",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "selectedCount": "{{count}} selected",
+    "selectVideo": "Select {{title}}",
+    "addVideo": "Add {{title}}",
+    "addSelected": "Add selected",
+    "noVideos": "Choose or load a source to see videos.",
+    "destinationEmpty": "Choose a destination playlist to begin.",
+    "dropZone": "Drag videos here or use Add selected",
+    "removePending": "Remove pending video",
+    "stats": {
+      "existing": "Existing",
+      "pending": "Pending",
+      "duplicates": "Duplicates",
+      "total": "Total"
+    },
+    "status": {
+      "new": "NEW",
+      "duplicate": "DUPLICATE",
+      "existing": "EXISTING"
+    },
+    "pendingChanges": "{{count}} changes ready",
+    "duplicateCount": "{{count}} duplicate detected",
+    "save": "Save changes",
+    "retry": "Retry the rest",
+    "discard": {
+      "title": "Discard pending copies?",
+      "description": "Your destination playlist has not changed yet, but this draft will be lost.",
+      "confirm": "Discard changes"
+    },
+    "duplicates": {
+      "title": "{{count}} duplicate found",
+      "description": "Choose whether videos already present in the destination should be copied again.",
+      "skip": "Skip duplicates and save",
+      "include": "Add duplicates anyway"
+    },
+    "saving": {
+      "title": "Saving to YouTube",
+      "progress": "{{completed}} of {{total}} videos copied"
+    },
+    "saveFailed": {
+      "title": "Copy stopped"
+    },
+    "success": {
+      "title": "Videos copied",
+      "description": "{{count}} videos were added to your destination playlist.",
+      "openYoutube": "Open on YouTube",
+      "copyMore": "Copy more videos"
     }
   },
   "landing": {

@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, JSX } from 'react'
 
 import { cn } from '@/lib/cn'
 
-type ButtonVariant = 'default' | 'ghost' | 'secondary'
+type ButtonVariant = 'default' | 'destructive' | 'ghost' | 'outline' | 'secondary'
 type ButtonSize = 'default' | 'sm' | 'lg' | 'icon'
 
 interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -12,7 +12,10 @@ interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   default: 'bg-primary text-primary-foreground shadow hover:bg-primary/90',
+  destructive:
+    'bg-destructive text-destructive-foreground shadow hover:bg-destructive/90',
   ghost: 'hover:bg-accent hover:text-accent-foreground',
+  outline: 'border border-input bg-background shadow-sm hover:bg-accent',
   secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
 }
 
