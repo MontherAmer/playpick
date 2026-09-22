@@ -1,12 +1,14 @@
 import type { JSX } from 'react'
 
-import { LandingPage } from '@/components/landing/landing-page'
+import { RouterProvider } from 'react-router-dom'
+
 import { AuthProvider } from '@/providers/auth-provider'
+import { router } from '@/router'
 
 function App(): JSX.Element {
   return (
     <AuthProvider>
-      <LandingPage />
+      <RouterProvider router={router} />
     </AuthProvider>
   )
 }
