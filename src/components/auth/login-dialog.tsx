@@ -1,17 +1,12 @@
 import { useEffect, type JSX } from 'react'
 
 import { ShieldCheck, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { ContinueWithGoogleButton } from '@/components/auth/continue-with-google-button'
 import { Button } from '@/components/ui/button'
 
 interface ILoginDialogProps {
-  title: string
-  description: string
-  continueLabel: string
-  connectingLabel: string
-  privacy: string
-  closeLabel: string
   isSigningIn: boolean
   errorMessage: string | null
   onSignIn: () => void
@@ -19,17 +14,13 @@ interface ILoginDialogProps {
 }
 
 export function LoginDialog({
-  title,
-  description,
-  continueLabel,
-  connectingLabel,
-  privacy,
-  closeLabel,
   isSigningIn,
   errorMessage,
   onSignIn,
   onClose,
 }: ILoginDialogProps): JSX.Element {
+  const { t } = useTranslation()
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (event.key === 'Escape' && !isSigningIn) {
@@ -66,13 +57,13 @@ export function LoginDialog({
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 id="login-dialog-title" className="font-display text-xl font-extrabold">
-              {title}
+              {t('auth.loginTitle')}
             </h2>
             <p
               id="login-dialog-description"
               className="mt-2 text-sm leading-6 text-muted-foreground"
             >
-              {description}
+              {t('auth.loginDescription')}
             </p>
           </div>
           <Button
@@ -80,7 +71,7 @@ export function LoginDialog({
             size="icon"
             onClick={onClose}
             disabled={isSigningIn}
-            aria-label={closeLabel}
+            aria-label={t('common.close')}
           >
             <X />
           </Button>
@@ -88,8 +79,8 @@ export function LoginDialog({
 
         <div className="mt-6 flex flex-col gap-4">
           <ContinueWithGoogleButton
-            label={continueLabel}
-            connectingLabel={connectingLabel}
+            label={t('auth.continue')}
+            connectingLabel={t('auth.connecting')}
             isSigningIn={isSigningIn}
             onSignIn={onSignIn}
             className="w-full"
@@ -102,7 +93,7 @@ export function LoginDialog({
           ) : (
             <p className="text-xs leading-5 text-muted-foreground">
               <ShieldCheck className="me-1 inline size-4 text-success" />
-              {privacy}
+              {t('auth.privacy')}
             </p>
           )}
         </div>

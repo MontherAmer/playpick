@@ -1,20 +1,19 @@
 import type { JSX } from 'react'
 
 import { ChevronDown, Languages, Menu, Moon, Sun } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { UserAvatar } from '@/components/auth/user-avatar'
 import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
-import type { ILandingCopy, IToolDefinition, Locale, ToolId } from '@/models/landing.interface'
+import type { IToolDefinition, ToolId } from '@/models/landing.interface'
 import type { IUser } from '@/models/user.interface'
 
 interface ILandingHeaderProps {
-  locale: Locale
   isDark: boolean
   isToolsMenuOpen: boolean
   isAuthenticated: boolean
   user: IUser | null
-  copy: ILandingCopy
   tools: IToolDefinition[]
   onToggleLocale: () => void
   onToggleTheme: () => void
@@ -23,18 +22,18 @@ interface ILandingHeaderProps {
 }
 
 export function LandingHeader({
-  locale,
   isDark,
   isToolsMenuOpen,
   isAuthenticated,
   user,
-  copy,
   tools,
   onToggleLocale,
   onToggleTheme,
   onToggleToolsMenu,
   onToolSelect,
 }: ILandingHeaderProps): JSX.Element {
+  const { t } = useTranslation()
+
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 sm:flex sm:px-6">
@@ -42,7 +41,7 @@ export function LandingHeader({
         <nav className="ms-8 hidden items-center gap-1 md:flex">
           <div className="relative">
             <Button variant="ghost" onClick={onToggleToolsMenu}>
-              {copy.tools}
+              {t('nav.tools')}
               <ChevronDown className="size-4" />
             </Button>
             {isToolsMenuOpen ? (
@@ -58,10 +57,10 @@ export function LandingHeader({
                   >
                     <tool.icon className="mt-0.5 size-4 text-primary" />
                     <span>
-                      <b className="block text-sm">
-                        {locale === 'ar' ? tool.ar : tool.label}
-                      </b>
-                      <small className="text-muted-foreground">{tool.desc}</small>
+                      <b className="block text-sm">{t(`tools.${tool.id}.title`)}</b>
+                      <small className="text-muted-foreground">
+                        {t(`tools.${tool.id}.description`)}
+                      </small>
                     </span>
                   </button>
                 ))}
@@ -72,7 +71,7 @@ export function LandingHeader({
             href="#features"
             className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
           >
-            {copy.library}
+            {t('nav.library')}
           </a>
         </nav>
         <div className="ms-auto flex items-center gap-1">
@@ -80,22 +79,27 @@ export function LandingHeader({
             variant="ghost"
             size="icon"
             onClick={onToggleLocale}
-            title="Switch language"
+            title={t('common.switchLanguage')}
           >
             <Languages />
-            <span className="sr-only">Language</span>
+            <span className="sr-only">{t('common.switchLanguage')}</span>
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggleTheme}
-            title="Toggle theme"
+            title={t('common.toggleTheme')}
           >
             {isDark ? <Sun /> : <Moon />}
-            <span className="sr-only">Theme</span>
+            <span className="sr-only">{t('common.toggleTheme')}</span>
           </Button>
           {isAuthenticated && user ? <UserAvatar user={user} /> : null}
-          <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            aria-label={t('common.openMenu')}
+          >
             <Menu />
           </Button>
         </div>

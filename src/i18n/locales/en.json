@@ -1,0 +1,98 @@
+{
+  "app": {
+    "name": "PlayPick",
+    "tagline": "Playlist productivity, without the clutter."
+  },
+  "common": {
+    "switchLanguage": "Switch language",
+    "toggleTheme": "Toggle theme",
+    "openMenu": "Open menu",
+    "close": "Close"
+  },
+  "nav": {
+    "tools": "Tools",
+    "library": "Library"
+  },
+  "auth": {
+    "continue": "Continue with Google",
+    "connecting": "Connecting…",
+    "privacy": "We only request playlist access when you connect. Your data stays yours.",
+    "loginTitle": "Sign in to use PlayPick tools",
+    "loginDescription": "Connect your Google account to build, clean, and organize your YouTube playlists.",
+    "goToTools": "Explore tools"
+  },
+  "errors": {
+    "auth": {
+      "missingClientId": "Google sign-in is not configured yet.",
+      "scriptUnavailable": "Could not load Google sign-in. Check your connection and try again.",
+      "popupBlocked": "Your browser blocked the Google sign-in popup. Allow popups and try again.",
+      "popupClosed": "Sign-in was cancelled before it finished.",
+      "accessDenied": "Google access was denied. Grant playlist permission to continue.",
+      "profileUnavailable": "Signed in, but your Google profile could not be loaded.",
+      "unknown": "Something went wrong while signing in. Please try again."
+    }
+  },
+  "landing": {
+    "badge": "10 tools. One tidy library.",
+    "tagline": "Your playlists, finally under control.",
+    "sub": "Build, combine, clean, and organize your YouTube playlists in one focused workspace.",
+    "privacy": "We only request playlist access when you connect. Your data stays yours.",
+    "toolboxLabel": "THE TOOLBOX",
+    "toolboxTitle": "Every playlist job, covered.",
+    "toolboxDescription": "Purpose-built tools replace repetitive playlist chores with clear, reviewable workflows.",
+    "footerTagline": "Playlist productivity, without the clutter.",
+    "privacyLink": "Privacy",
+    "termsLink": "Terms",
+    "helpLink": "Help",
+    "preview": {
+      "title": "Copy videos",
+      "ready": "Ready",
+      "source": "Source · JavaScript Basics",
+      "destination": "Destination · React Mastery",
+      "changes": "changes ready",
+      "save": "Save changes"
+    }
+  },
+  "tools": {
+    "copy": {
+      "title": "Copy videos",
+      "description": "Copy selected videos between playlists"
+    },
+    "move": {
+      "title": "Move videos",
+      "description": "Transfer videos and remove originals"
+    },
+    "build": {
+      "title": "Build playlist",
+      "description": "Create a playlist from many sources"
+    },
+    "merge": {
+      "title": "Merge playlists",
+      "description": "Combine playlists in the order you choose"
+    },
+    "duplicate": {
+      "title": "Duplicate playlist",
+      "description": "Clone a playlist with new settings"
+    },
+    "reorder": {
+      "title": "Reorder playlist",
+      "description": "Sort and arrange every video"
+    },
+    "rename": {
+      "title": "Rename & number",
+      "description": "Add structured labels to your videos"
+    },
+    "compare": {
+      "title": "Compare playlists",
+      "description": "Find shared and missing videos"
+    },
+    "cleaner": {
+      "title": "Playlist cleaner",
+      "description": "Remove duplicates and unavailable entries"
+    },
+    "insights": {
+      "title": "Library insights",
+      "description": "Understand your playlist library"
+    }
+  }
+}
