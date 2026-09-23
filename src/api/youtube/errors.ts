@@ -6,6 +6,8 @@ export type YouTubeErrorCode =
   | 'insufficientPermissions'
   | 'notFound'
   | 'playlistFull'
+  | 'playlistLimitReached'
+  | 'invalidPlaylistDetails'
   | 'service'
   | 'unknown'
 
@@ -51,6 +53,20 @@ export function toYouTubeErrorCode(status: number, body: unknown): YouTubeErrorC
   }
 
   if (status === 404) return 'notFound'
+
+  if (status === 400) {
+    const reasons = readReasons(body)
+
+    if (reasons.includes('maxPlaylistExceeded')) return 'playlistLimitReached'
+    if (
+      reasons.some((reason) =>
+        ['invalidPlaylistSnippet', 'playlistTitleRequired'].includes(reason),
+      )
+    ) {
+      return 'invalidPlaylistDetails'
+    }
+  }
+
   if (status >= 500) return 'service'
 
   return 'unknown'

@@ -40,6 +40,8 @@
       "insufficientPermissions": "YouTube did not allow this action. Check your account permissions.",
       "notFound": "That playlist or video could not be found or is private.",
       "playlistFull": "The destination playlist is full.",
+      "playlistLimitReached": "Your YouTube account has reached its playlist limit.",
+      "invalidPlaylistDetails": "YouTube rejected the playlist details. Check the name and try again.",
       "service": "YouTube is temporarily unavailable. Try again shortly.",
       "unknown": "YouTube could not complete the request. Please try again."
     }
@@ -168,6 +170,66 @@
       "description": "{{count}} videos were added to the destination and removed from the source.",
       "openYoutube": "Open destination on YouTube",
       "copyMore": "Move more videos"
+    }
+  },
+  "build": {
+    "connect": {
+      "title": "Connect YouTube to build a playlist",
+      "description": "Sign in with Google to gather videos and create the finished playlist on YouTube."
+    },
+    "modes": {
+      "empty": "Create empty",
+      "build": "Build playlist"
+    },
+    "detailsTitle": "Playlist details",
+    "sourcePlaylist": "Source playlist",
+    "addToDraft": "Add to draft",
+    "create": "Create playlist",
+    "createAndAdd": "Create and add videos",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "My new playlist",
+      "description": "Description",
+      "descriptionPlaceholder": "What is this playlist about?",
+      "privacy": "Privacy",
+      "private": "Private",
+      "unlisted": "Unlisted",
+      "public": "Public"
+    },
+    "draft": {
+      "title": "Playlist draft",
+      "empty": "Add videos from any source to build your playlist.",
+      "ready": "{{count}} videos ready",
+      "duplicates": "{{count}} duplicates detected",
+      "includeDuplicates": "Include duplicates",
+      "duplicate": "DUPLICATE",
+      "moveUp": "Move video up",
+      "moveDown": "Move video down",
+      "remove": "Remove video"
+    },
+    "confirm": {
+      "title": "Create this playlist?",
+      "description": "Create “{{playlist}}” with {{count}} videos? YouTube charges quota for the playlist and every added video.",
+      "action": "Create on YouTube"
+    },
+    "discard": {
+      "title": "Discard this playlist draft?",
+      "description": "The gathered videos will be removed from this draft. YouTube has not changed yet.",
+      "action": "Discard draft"
+    },
+    "progress": {
+      "creating": "Creating playlist",
+      "creatingDescription": "Creating the playlist on YouTube before adding videos.",
+      "adding": "Adding videos",
+      "count": "{{completed}} of {{total}} videos added",
+      "failed": "Build stopped",
+      "retry": "Retry the rest"
+    },
+    "success": {
+      "title": "Playlist created",
+      "description": "Your playlist was created with {{count}} videos.",
+      "openYoutube": "Open on YouTube",
+      "copyMore": "Build another playlist"
     }
   },
   "landing": {

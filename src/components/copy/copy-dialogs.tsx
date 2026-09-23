@@ -155,7 +155,7 @@ export function CopySuccess({
   count: number
   destinationId?: string
   onReset: () => void
-  translationPrefix?: 'copy' | 'move'
+  translationPrefix?: 'build' | 'copy' | 'move'
 }): JSX.Element {
   const { t } = useTranslation()
 

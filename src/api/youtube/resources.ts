@@ -137,6 +137,38 @@ export async function listMyPlaylists(
   return playlists
 }
 
+export async function createPlaylist(
+  getAccessToken: () => Promise<string>,
+  {
+    title,
+    description,
+    privacy,
+  }: {
+    title: string
+    description?: string
+    privacy: PlaylistPrivacy
+  },
+): Promise<IPlaylist> {
+  const trimmedDescription = description?.trim()
+  const body = await youtubePost(
+    getAccessToken,
+    '/playlists',
+    { part: 'snippet,status' },
+    {
+      snippet: {
+        title: title.trim(),
+        ...(trimmedDescription ? { description: trimmedDescription } : {}),
+      },
+      status: { privacyStatus: privacy },
+    },
+  )
+  const playlist = mapPlaylist(body)
+
+  if (!playlist) throw new YouTubeError('unknown')
+
+  return playlist
+}
+
 export async function getPlaylist(
   getAccessToken: () => Promise<string>,
   playlistId: string,
