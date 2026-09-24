@@ -139,6 +139,23 @@ export function useBuildSave() {
     [run],
   )
 
+  const saveToExisting = useCallback(
+    (steps: readonly IBuildStep[], playlist: IPlaylist): Promise<boolean> => {
+      const existingDraft: IPlaylistDraft = {
+        title: playlist.title,
+        description: '',
+        privacy: playlist.privacy,
+      }
+
+      draftRef.current = existingDraft
+      targetRef.current = playlist
+      remainingRef.current = [...steps]
+
+      return run(steps, existingDraft, 0, steps.length)
+    },
+    [run],
+  )
+
   const retry = useCallback((): Promise<boolean> => {
     const draft = draftRef.current
 
@@ -155,5 +172,5 @@ export function useBuildSave() {
     setState(INITIAL_STATE)
   }, [])
 
-  return { ...state, save, retry, reset }
+  return { ...state, save, saveToExisting, retry, reset }
 }

@@ -46,23 +46,25 @@ export function BuildConfirmDialog({
   playlistName,
   onCancel,
   onConfirm,
+  translationPrefix = 'build',
 }: {
   count: number
   playlistName: string
   onCancel: () => void
   onConfirm: () => void
+  translationPrefix?: 'build' | 'merge'
 }): JSX.Element {
   const { t } = useTranslation()
 
   return (
     <DialogFrame
-      title={t('build.confirm.title')}
-      description={t('build.confirm.description', { count, playlist: playlistName })}
+      title={t(`${translationPrefix}.confirm.title`)}
+      description={t(`${translationPrefix}.confirm.description`, { count, playlist: playlistName })}
       onClose={onCancel}
     >
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={onCancel}>{t('common.cancel')}</Button>
-        <Button onClick={onConfirm}>{t('build.confirm.action')}</Button>
+        <Button onClick={onConfirm}>{t(`${translationPrefix}.confirm.action`)}</Button>
       </div>
     </DialogFrame>
   )
@@ -95,10 +97,12 @@ export function BuildProgressDialog({
   state,
   onClose,
   onRetry,
+  translationPrefix = 'build',
 }: {
   state: IBuildSaveState
   onClose: () => void
   onRetry: () => void
+  translationPrefix?: 'build' | 'merge'
 }): JSX.Element | null {
   const { t } = useTranslation()
 
@@ -110,20 +114,20 @@ export function BuildProgressDialog({
     <DialogFrame
       title={t(
         state.status === 'creating'
-          ? 'build.progress.creating'
+          ? `${translationPrefix}.progress.creating`
           : state.status === 'adding'
-            ? 'build.progress.adding'
-            : 'build.progress.failed',
+            ? `${translationPrefix}.progress.adding`
+            : `${translationPrefix}.progress.failed`,
       )}
       description={
         state.status === 'adding'
-          ? t('build.progress.count', {
+          ? t(`${translationPrefix}.progress.count`, {
               completed: state.completed,
               total: state.total,
             })
           : state.status === 'failed'
             ? t(`errors.youtube.${state.error ?? 'unknown'}`)
-            : t('build.progress.creatingDescription')
+            : t(`${translationPrefix}.progress.creatingDescription`)
       }
       onClose={isBusy ? undefined : onClose}
     >
@@ -132,7 +136,7 @@ export function BuildProgressDialog({
       ) : (
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={onClose}>{t('common.close')}</Button>
-          <Button onClick={onRetry}>{t('build.progress.retry')}</Button>
+          <Button onClick={onRetry}>{t(`${translationPrefix}.progress.retry`)}</Button>
         </div>
       )}
     </DialogFrame>

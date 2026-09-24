@@ -232,6 +232,68 @@
       "copyMore": "Build another playlist"
     }
   },
+  "merge": {
+    "connect": {
+      "title": "Connect YouTube to merge playlists",
+      "description": "Sign in with Google to combine owned playlists into one ordered result."
+    },
+    "sources": {
+      "title": "Source playlists",
+      "description": "Add at least two playlists and arrange their merge order.",
+      "selected": "{{count}} selected",
+      "empty": "No source playlists selected yet.",
+      "choose": "Choose a playlist",
+      "add": "Add playlist",
+      "loading": "Loading videos",
+      "videoCount": "{{count}} videos",
+      "moveUp": "Move playlist up",
+      "moveDown": "Move playlist down",
+      "remove": "Remove playlist"
+    },
+    "preview": {
+      "title": "Combined preview",
+      "description": "Videos follow the source playlist order shown above.",
+      "empty": "Select playlists to preview the merged result.",
+      "duplicate": "DUPLICATE",
+      "more": "{{count}} more videos"
+    },
+    "destination": {
+      "title": "Merge into",
+      "new": "New playlist",
+      "existing": "Existing playlist",
+      "playlist": "Destination playlist"
+    },
+    "stats": {
+      "sources": "Sources",
+      "total": "Total",
+      "duplicates": "Duplicates",
+      "willAdd": "Will add"
+    },
+    "removeDuplicates": "Remove duplicate videos",
+    "unavailable": "{{count}} unavailable videos will be skipped.",
+    "sourceError": "Retry failed source playlists before merging.",
+    "keepsSources": "Merging never changes the source playlists. Videos are appended to the destination in preview order.",
+    "action": "Merge playlists",
+    "confirm": {
+      "title": "Merge these playlists?",
+      "description": "Add {{count}} videos to “{{playlist}}”? YouTube charges quota for every added video.",
+      "action": "Merge on YouTube"
+    },
+    "progress": {
+      "creating": "Creating destination",
+      "creatingDescription": "Creating the destination playlist before adding videos.",
+      "adding": "Merging videos",
+      "count": "{{completed}} of {{total}} videos added",
+      "failed": "Merge stopped",
+      "retry": "Retry the rest"
+    },
+    "success": {
+      "title": "Playlists merged",
+      "description": "{{count}} videos were added to the merged playlist.",
+      "openYoutube": "Open on YouTube",
+      "copyMore": "Merge more playlists"
+    }
+  },
   "landing": {
     "badge": "10 tools. One tidy library.",
     "tagline": "Your playlists, finally under control.",
