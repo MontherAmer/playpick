@@ -294,6 +294,53 @@
       "copyMore": "Merge more playlists"
     }
   },
+  "duplicate": {
+    "connect": {
+      "title": "Connect YouTube to duplicate a playlist",
+      "description": "Sign in with Google to create a faithful copy of one of your playlists."
+    },
+    "sourcePlaylist": "Playlist to duplicate",
+    "chooseSource": "Choose a source playlist to preview its contents.",
+    "detailsTitle": "New playlist details",
+    "nameSuggestion": "Copy of {{name}}",
+    "stats": {
+      "total": "Total",
+      "copyable": "Copyable",
+      "repeated": "Repeated",
+      "unavailable": "Unavailable"
+    },
+    "keepsSourceTitle": "The original stays unchanged.",
+    "keepsSource": "Every available playlist entry is copied in its original order, including intentional repeats.",
+    "action": "Duplicate playlist",
+    "retrySource": "Retry source",
+    "preview": {
+      "title": "Playlist preview",
+      "description": "Unavailable videos are shown but will not be copied.",
+      "empty": "Choose a source playlist to see its videos.",
+      "unavailable": "UNAVAILABLE",
+      "more": "{{count}} more videos"
+    },
+    "confirm": {
+      "title": "Duplicate this playlist?",
+      "description": "Create “{{playlist}}” and copy {{count}} videos? YouTube charges quota for the playlist and every added video.",
+      "action": "Duplicate on YouTube"
+    },
+    "progress": {
+      "creating": "Creating duplicate",
+      "creatingDescription": "Creating the new playlist before copying its videos.",
+      "adding": "Copying playlist",
+      "count": "{{completed}} of {{total}} videos copied",
+      "failed": "Duplication stopped",
+      "retry": "Retry the rest"
+    },
+    "success": {
+      "title": "Playlist duplicated",
+      "description": "The new playlist was created with {{count}} videos.",
+      "excluded": "{{count}} unavailable videos could not be copied.",
+      "openYoutube": "Open on YouTube",
+      "copyMore": "Duplicate another playlist"
+    }
+  },
   "landing": {
     "badge": "10 tools. One tidy library.",
     "tagline": "Your playlists, finally under control.",

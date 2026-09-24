@@ -47,6 +47,7 @@ function mapPlaylist(value: unknown): IPlaylist | null {
   return {
     id,
     title: readText(snippet?.title) ?? '',
+    description: readText(snippet?.description),
     thumbnailUrl: readThumbnail(snippet?.thumbnails),
     itemCount: readCount(readRecord(resource.contentDetails)?.itemCount),
     privacy: readPrivacy(readRecord(resource.status)?.privacyStatus),

@@ -6,6 +6,7 @@ export type CopySourceMode = 'mine' | 'saved' | 'playlist' | 'search' | 'paste'
 export interface IPlaylist {
   id: string
   title: string
+  description?: string
   thumbnailUrl?: string
   itemCount: number
   privacy: PlaylistPrivacy

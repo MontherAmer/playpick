@@ -52,7 +52,7 @@ export function BuildConfirmDialog({
   playlistName: string
   onCancel: () => void
   onConfirm: () => void
-  translationPrefix?: 'build' | 'merge'
+  translationPrefix?: 'build' | 'duplicate' | 'merge'
 }): JSX.Element {
   const { t } = useTranslation()
 
@@ -102,7 +102,7 @@ export function BuildProgressDialog({
   state: IBuildSaveState
   onClose: () => void
   onRetry: () => void
-  translationPrefix?: 'build' | 'merge'
+  translationPrefix?: 'build' | 'duplicate' | 'merge'
 }): JSX.Element | null {
   const { t } = useTranslation()
 
