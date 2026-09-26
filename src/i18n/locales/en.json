@@ -341,6 +341,51 @@
       "copyMore": "Duplicate another playlist"
     }
   },
+  "reorder": {
+    "connect": {
+      "title": "Connect YouTube to reorder a playlist",
+      "description": "Sign in with Google to preview a new order and save only the necessary moves."
+    },
+    "playlist": "Playlist",
+    "choose": "Choose a playlist to begin reordering.",
+    "empty": "This playlist has no videos to reorder.",
+    "preview": "Preview order · {{count}} videos",
+    "instructions": "Drag rows or use the arrow controls",
+    "sort": {
+      "title": "Title",
+      "channel": "Channel",
+      "date": "Date added",
+      "reverse": "Reverse",
+      "shuffle": "Shuffle"
+    },
+    "moveTop": "Move to top",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "moveBottom": "Move to bottom",
+    "retryLoad": "Retry playlist",
+    "pendingChanges": "{{count}} position changes ready",
+    "quotaEstimate": "Only the minimum required YouTube updates will be sent.",
+    "save": "Save order",
+    "discard": {
+      "title": "Discard the new order?",
+      "description": "The playlist has not changed on YouTube yet. Your local arrangement will be lost.",
+      "confirm": "Discard order"
+    },
+    "saving": {
+      "title": "Saving playlist order",
+      "progress": "{{completed}} of {{total}} position changes saved"
+    },
+    "saveFailed": {
+      "title": "Reorder stopped"
+    },
+    "retry": "Retry the rest",
+    "success": {
+      "title": "Playlist reordered",
+      "description": "The new order was saved using {{count}} position changes.",
+      "openYoutube": "Open on YouTube",
+      "copyMore": "Reorder another playlist"
+    }
+  },
   "landing": {
     "badge": "10 tools. One tidy library.",
     "tagline": "Your playlists, finally under control.",

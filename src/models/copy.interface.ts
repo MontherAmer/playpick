@@ -19,6 +19,7 @@ export interface IVideo {
   channelTitle?: string
   thumbnailUrl?: string
   duration?: string
+  dateAdded?: string
   isUnavailable: boolean
 }
 

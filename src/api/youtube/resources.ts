@@ -1,6 +1,6 @@
 import type { IPlaylist, IVideo, PlaylistPrivacy } from '@/models/copy.interface'
 
-import { youtubeDelete, youtubeGet, youtubePost } from './client'
+import { youtubeDelete, youtubeGet, youtubePost, youtubePut } from './client'
 import { YouTubeError } from './errors'
 
 const PAGE_SIZE = '50'
@@ -73,6 +73,7 @@ function mapPlaylistItem(value: unknown): IVideo | null {
     title,
     channelTitle: readText(snippet?.videoOwnerChannelTitle) ?? readText(snippet?.channelTitle),
     thumbnailUrl: readThumbnail(snippet?.thumbnails),
+    dateAdded: readText(snippet?.publishedAt),
     isUnavailable:
       privacyStatus === 'private' || ['Deleted video', 'Private video'].includes(title),
   }
@@ -285,4 +286,33 @@ export async function removePlaylistVideo(
   playlistItemId: string,
 ): Promise<void> {
   await youtubeDelete(getAccessToken, '/playlistItems', { id: playlistItemId })
+}
+
+export async function updatePlaylistVideoPosition(
+  getAccessToken: () => Promise<string>,
+  {
+    playlistItemId,
+    playlistId,
+    videoId,
+    position,
+  }: {
+    playlistItemId: string
+    playlistId: string
+    videoId: string
+    position: number
+  },
+): Promise<void> {
+  await youtubePut(
+    getAccessToken,
+    '/playlistItems',
+    { part: 'snippet' },
+    {
+      id: playlistItemId,
+      snippet: {
+        playlistId,
+        resourceId: { kind: 'youtube#video', videoId },
+        position,
+      },
+    },
+  )
 }
