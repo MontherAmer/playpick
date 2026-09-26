@@ -112,7 +112,7 @@ export function SaveDialog({
   progress: ISaveProgress
   onRetry: () => void
   onClose: () => void
-  translationPrefix?: 'compare' | 'copy' | 'move' | 'rename' | 'reorder'
+  translationPrefix?: 'cleaner' | 'compare' | 'copy' | 'move' | 'rename' | 'reorder'
 }): JSX.Element | null {
   const { t } = useTranslation()
 
@@ -155,7 +155,15 @@ export function CopySuccess({
   count: number
   destinationId?: string
   onReset: () => void
-  translationPrefix?: 'build' | 'copy' | 'duplicate' | 'merge' | 'move' | 'rename' | 'reorder'
+  translationPrefix?:
+    | 'build'
+    | 'cleaner'
+    | 'copy'
+    | 'duplicate'
+    | 'merge'
+    | 'move'
+    | 'rename'
+    | 'reorder'
 }): JSX.Element {
   const { t } = useTranslation()
 

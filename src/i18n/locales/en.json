@@ -500,6 +500,75 @@
     },
     "retry": "Retry the rest"
   },
+  "cleaner": {
+    "connect": {
+      "title": "Connect YouTube to clean playlists",
+      "description": "Sign in with Google to scan a playlist for duplicate, deleted, and unavailable videos."
+    },
+    "playlist": "Playlist",
+    "choose": "Choose a playlist to scan for cleanup.",
+    "scan": {
+      "title": "Scanning playlist…",
+      "description": "Checking duplicates, deleted videos, and availability."
+    },
+    "scanAgain": "Scan again",
+    "retryLoad": "Retry playlist",
+    "stats": {
+      "duplicateVideos": "Duplicate videos",
+      "unavailableVideos": "Unavailable videos",
+      "deletedOrPrivate": "Deleted / private"
+    },
+    "clean": {
+      "title": "This playlist looks clean",
+      "description": "No duplicate, deleted, or unavailable videos were found."
+    },
+    "duplicates": {
+      "title": "Duplicate instances",
+      "description": "Choose which occurrence to keep.",
+      "empty": "No duplicate videos in this playlist.",
+      "appears": "Appears {{count}} times",
+      "keepLabel": "Which occurrence of {{title}} to keep",
+      "keep": {
+        "first": "Keep first occurrence",
+        "latest": "Keep latest occurrence"
+      }
+    },
+    "issues": {
+      "title": "Unavailable entries",
+      "description": "Deleted, private, and other videos YouTube can no longer play.",
+      "empty": "No unavailable videos in this playlist.",
+      "select": "Remove {{title}}",
+      "kind": {
+        "unavailable": "UNAVAILABLE",
+        "deleted": "DELETED",
+        "private": "PRIVATE"
+      }
+    },
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "pendingChanges": "{{count}} items ready to remove",
+    "pendingHint": "Only extra copies and selected unavailable entries will be removed.",
+    "save": "Clean playlist",
+    "confirm": {
+      "title": "Remove these items?",
+      "description": "Remove {{count}} items from {{playlist}}. PlayPick cannot restore them.",
+      "action": "Clean playlist"
+    },
+    "saving": {
+      "title": "Cleaning playlist",
+      "progress": "{{completed}} of {{total}} items removed"
+    },
+    "saveFailed": {
+      "title": "Cleanup stopped"
+    },
+    "retry": "Retry the rest",
+    "success": {
+      "title": "Playlist cleaned",
+      "description": "{{count}} items were removed from the playlist.",
+      "openYoutube": "Open on YouTube",
+      "copyMore": "Clean another playlist"
+    }
+  },
   "landing": {
     "badge": "10 tools. One tidy library.",
     "tagline": "Your playlists, finally under control.",
