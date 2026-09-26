@@ -336,6 +336,48 @@ export async function getVideoDetails(
   return details
 }
 
+export interface IVideoDuration {
+  videoId: string
+  isoDuration: string
+}
+
+function mapVideoDuration(value: unknown): IVideoDuration | null {
+  const resource = readRecord(value)
+  const videoId = readText(resource?.id)
+  const isoDuration = readText(readRecord(resource?.contentDetails)?.duration)
+
+  if (!videoId || !isoDuration) return null
+
+  return { videoId, isoDuration }
+}
+
+export async function getVideoDurations(
+  getAccessToken: () => Promise<string>,
+  videoIds: readonly string[],
+  signal?: AbortSignal,
+): Promise<IVideoDuration[]> {
+  const uniqueIds = [...new Set(videoIds.filter(Boolean))]
+  const durations: IVideoDuration[] = []
+
+  for (let index = 0; index < uniqueIds.length; index += Number(PAGE_SIZE)) {
+    const batch = uniqueIds.slice(index, index + Number(PAGE_SIZE))
+    const body = await youtubeGet(
+      getAccessToken,
+      '/videos',
+      { part: 'contentDetails', id: batch.join(','), maxResults: PAGE_SIZE },
+      signal,
+    )
+
+    durations.push(
+      ...readItems(body)
+        .map(mapVideoDuration)
+        .filter((video): video is IVideoDuration => video !== null),
+    )
+  }
+
+  return durations
+}
+
 export async function updateVideoTitle(
   getAccessToken: () => Promise<string>,
   {

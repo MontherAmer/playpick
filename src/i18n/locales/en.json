@@ -569,6 +569,61 @@
       "copyMore": "Clean another playlist"
     }
   },
+  "insights": {
+    "connect": {
+      "title": "Connect YouTube to see library insights",
+      "description": "Sign in with Google to scan your playlists and understand how your library is built."
+    },
+    "scan": {
+      "title": "Scanning your library…",
+      "description": "Loading playlists, video entries, and durations.",
+      "playlists": "Loading playlists…",
+      "videos": "Scanning playlists {{completed}} of {{total}}",
+      "durations": "Loading video durations…"
+    },
+    "scanAgain": "Scan again",
+    "retry": "Retry scan",
+    "partialFailure": "{{count}} playlists could not be scanned. Totals may be incomplete.",
+    "empty": {
+      "title": "No playlists yet",
+      "description": "Create or copy a playlist, then scan again to see insights."
+    },
+    "stats": {
+      "playlists": "Playlists",
+      "videoEntries": "Video entries",
+      "uniqueVideos": "Unique videos",
+      "duplicates": "Duplicates",
+      "duration": "Playlist duration"
+    },
+    "duration": {
+      "hoursMinutes": "{{hours}}h {{minutes}}m",
+      "minutes": "{{minutes}}m"
+    },
+    "cleanDuplicates": "Clean duplicates →",
+    "years": {
+      "title": "Videos added by year",
+      "description": "Playlist entries across your library",
+      "empty": "No add dates were available for this library.",
+      "barLabel": "{{year}}: {{count}} videos"
+    },
+    "channels": {
+      "title": "Top channels",
+      "empty": "No channel names were available."
+    },
+    "playlists": {
+      "title": "Largest playlists",
+      "empty": "No playlists to rank yet."
+    },
+    "buckets": {
+      "title": "Duration distribution",
+      "empty": "Video durations were not available.",
+      "under5": "< 5m",
+      "from5to20": "5–20m",
+      "from20to60": "20–60m",
+      "over60": "1h+",
+      "barLabel": "{{label}}: {{count}} videos"
+    }
+  },
   "landing": {
     "badge": "10 tools. One tidy library.",
     "tagline": "Your playlists, finally under control.",
