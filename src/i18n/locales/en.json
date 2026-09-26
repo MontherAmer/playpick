@@ -386,6 +386,70 @@
       "copyMore": "Reorder another playlist"
     }
   },
+  "rename": {
+    "connect": {
+      "title": "Connect YouTube to rename and number videos",
+      "description": "Sign in with Google to preview structured labels and apply titles only to videos you own."
+    },
+    "playlist": "Playlist",
+    "choose": "Choose a playlist to preview numbered labels.",
+    "empty": "This playlist has no videos to label.",
+    "pattern": {
+      "title": "Label pattern",
+      "prefix": "Prefix",
+      "suffix": "Suffix",
+      "separator": "Separator",
+      "startAt": "Start at",
+      "step": "Step",
+      "padding": "Number padding",
+      "preserveTitle": "Preserve original title",
+      "direction": "Numbering",
+      "asc": "Ascending",
+      "desc": "Descending"
+    },
+    "presets": {
+      "numberedTitle": "01 - Title",
+      "lessonNumber": "Lesson 01",
+      "partTitle": "Part 1: Title"
+    },
+    "warning": {
+      "title": "PlayPick labels only, except videos you own.",
+      "description": "YouTube titles can be updated only for videos on your channel. Other videos stay as a local preview."
+    },
+    "preview": {
+      "title": "Preview · {{count}} labels",
+      "description": "Owned videos can be saved to YouTube. Everything else is a PlayPick label."
+    },
+    "status": {
+      "apply": "WILL APPLY",
+      "unchanged": "UNCHANGED",
+      "labelOnly": "LABEL ONLY",
+      "unavailable": "UNAVAILABLE"
+    },
+    "pendingChanges": "{{count}} owned titles ready",
+    "ownershipSummary": "{{owned}} owned · {{labels}} label-only",
+    "save": "Apply owned titles",
+    "retryLoad": "Retry playlist",
+    "discard": {
+      "title": "Discard these labels?",
+      "description": "YouTube titles have not changed yet. This numbering preview will be lost.",
+      "confirm": "Discard labels"
+    },
+    "saving": {
+      "title": "Updating owned titles",
+      "progress": "{{completed}} of {{total}} titles updated"
+    },
+    "saveFailed": {
+      "title": "Rename stopped"
+    },
+    "retry": "Retry the rest",
+    "success": {
+      "title": "Owned titles updated",
+      "description": "{{count}} video titles were updated on YouTube.",
+      "openYoutube": "Open playlist on YouTube",
+      "copyMore": "Label another playlist"
+    }
+  },
   "landing": {
     "badge": "10 tools. One tidy library.",
     "tagline": "Your playlists, finally under control.",

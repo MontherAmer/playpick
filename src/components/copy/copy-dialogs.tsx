@@ -54,7 +54,7 @@ export function DiscardDialog({
 }: {
   onCancel: () => void
   onConfirm: () => void
-  translationPrefix?: 'copy' | 'move' | 'reorder'
+  translationPrefix?: 'copy' | 'move' | 'rename' | 'reorder'
 }): JSX.Element {
   const { t } = useTranslation()
 
@@ -112,7 +112,7 @@ export function SaveDialog({
   progress: ISaveProgress
   onRetry: () => void
   onClose: () => void
-  translationPrefix?: 'copy' | 'move' | 'reorder'
+  translationPrefix?: 'copy' | 'move' | 'rename' | 'reorder'
 }): JSX.Element | null {
   const { t } = useTranslation()
 
@@ -155,7 +155,7 @@ export function CopySuccess({
   count: number
   destinationId?: string
   onReset: () => void
-  translationPrefix?: 'build' | 'copy' | 'duplicate' | 'merge' | 'move' | 'reorder'
+  translationPrefix?: 'build' | 'copy' | 'duplicate' | 'merge' | 'move' | 'rename' | 'reorder'
 }): JSX.Element {
   const { t } = useTranslation()
 

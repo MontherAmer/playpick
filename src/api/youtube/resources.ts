@@ -263,6 +263,111 @@ export async function getVideos(
     .filter((video): video is IVideo => video !== null)
 }
 
+export interface IVideoDetails {
+  videoId: string
+  channelId: string
+  title: string
+  description: string
+  categoryId?: string
+  tags: string[]
+}
+
+function mapVideoDetails(value: unknown): IVideoDetails | null {
+  const resource = readRecord(value)
+  const videoId = readText(resource?.id)
+  const snippet = readRecord(resource?.snippet)
+  const channelId = readText(snippet?.channelId)
+
+  if (!videoId || !channelId) return null
+
+  const tagsValue = snippet?.tags
+
+  return {
+    videoId,
+    channelId,
+    title: readText(snippet?.title) ?? '',
+    description: readText(snippet?.description) ?? '',
+    categoryId: readText(snippet?.categoryId),
+    tags: Array.isArray(tagsValue)
+      ? tagsValue.filter((tag): tag is string => typeof tag === 'string')
+      : [],
+  }
+}
+
+export async function getMyChannelId(
+  getAccessToken: () => Promise<string>,
+  signal?: AbortSignal,
+): Promise<string | null> {
+  const body = await youtubeGet(
+    getAccessToken,
+    '/channels',
+    { part: 'id', mine: 'true', maxResults: '1' },
+    signal,
+  )
+  const channel = readRecord(readItems(body)[0])
+
+  return readText(channel?.id) ?? null
+}
+
+export async function getVideoDetails(
+  getAccessToken: () => Promise<string>,
+  videoIds: readonly string[],
+  signal?: AbortSignal,
+): Promise<IVideoDetails[]> {
+  const uniqueIds = [...new Set(videoIds.filter(Boolean))]
+  const details: IVideoDetails[] = []
+
+  for (let index = 0; index < uniqueIds.length; index += Number(PAGE_SIZE)) {
+    const batch = uniqueIds.slice(index, index + Number(PAGE_SIZE))
+    const body = await youtubeGet(
+      getAccessToken,
+      '/videos',
+      { part: 'snippet', id: batch.join(','), maxResults: PAGE_SIZE },
+      signal,
+    )
+
+    details.push(
+      ...readItems(body)
+        .map(mapVideoDetails)
+        .filter((video): video is IVideoDetails => video !== null),
+    )
+  }
+
+  return details
+}
+
+export async function updateVideoTitle(
+  getAccessToken: () => Promise<string>,
+  {
+    videoId,
+    title,
+    description,
+    categoryId,
+    tags,
+  }: {
+    videoId: string
+    title: string
+    description: string
+    categoryId: string
+    tags: readonly string[]
+  },
+): Promise<void> {
+  await youtubePut(
+    getAccessToken,
+    '/videos',
+    { part: 'snippet' },
+    {
+      id: videoId,
+      snippet: {
+        title,
+        description,
+        categoryId,
+        ...(tags.length > 0 ? { tags } : {}),
+      },
+    },
+  )
+}
+
 export async function addPlaylistVideo(
   getAccessToken: () => Promise<string>,
   playlistId: string,
