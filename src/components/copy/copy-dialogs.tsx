@@ -112,7 +112,7 @@ export function SaveDialog({
   progress: ISaveProgress
   onRetry: () => void
   onClose: () => void
-  translationPrefix?: 'copy' | 'move' | 'rename' | 'reorder'
+  translationPrefix?: 'compare' | 'copy' | 'move' | 'rename' | 'reorder'
 }): JSX.Element | null {
   const { t } = useTranslation()
 

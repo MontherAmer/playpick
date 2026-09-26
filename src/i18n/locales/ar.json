@@ -450,6 +450,56 @@
       "copyMore": "تسمية قائمة أخرى"
     }
   },
+  "compare": {
+    "connect": {
+      "title": "اربط يوتيوب لمقارنة القوائم",
+      "description": "سجّل الدخول باستخدام Google لتحميل قائمتين ورؤية ما هو مشترك أو مفقود."
+    },
+    "playlistA": "القائمة أ",
+    "playlistB": "القائمة ب",
+    "videoCount": "{{count}} فيديو",
+    "videoCountHint": "اختر قائمة لتحميل فيديوهاتها.",
+    "chooseBoth": "اختر قائمتين لمقارنة فيديوهاتهما.",
+    "emptyFilter": "لا توجد فيديوهات تطابق عامل التصفية هذا.",
+    "stats": {
+      "totalA": "إجمالي أ",
+      "totalB": "إجمالي ب",
+      "shared": "مشتركة",
+      "onlyA": "فقط أ",
+      "onlyB": "فقط ب"
+    },
+    "filters": {
+      "onlyA": "فقط في أ",
+      "both": "في الاثنتين",
+      "onlyB": "فقط في ب"
+    },
+    "status": {
+      "onlyA": "فقط أ",
+      "both": "مشتركة",
+      "onlyB": "فقط ب",
+      "unavailable": "غير متاح"
+    },
+    "selectAll": "تحديد الكل",
+    "deselectAll": "إلغاء تحديد الكل",
+    "selectedCount": "{{count}} محدد",
+    "selectVideo": "تحديد {{title}}",
+    "copyToA": "نسخ إلى أ",
+    "copyToB": "نسخ إلى ب",
+    "retryLoad": "إعادة تحميل القائمة",
+    "confirm": {
+      "title": "نسخ هذه الفيديوهات؟",
+      "description": "أضف {{count}} فيديو إلى {{playlist}}. الفيديوهات الموجودة أصلاً ستبقى كما هي.",
+      "action": "نسخ الفيديوهات"
+    },
+    "saving": {
+      "title": "جارٍ النسخ إلى يوتيوب",
+      "progress": "تم نسخ {{completed}} من {{total}} فيديو"
+    },
+    "saveFailed": {
+      "title": "توقف النسخ"
+    },
+    "retry": "إعادة محاولة الباقي"
+  },
   "landing": {
     "badge": "10 أدوات. مكتبة مرتبة واحدة.",
     "tagline": "قوائم تشغيلك، تحت السيطرة أخيراً.",

@@ -450,6 +450,56 @@
       "copyMore": "Label another playlist"
     }
   },
+  "compare": {
+    "connect": {
+      "title": "Connect YouTube to compare playlists",
+      "description": "Sign in with Google to load two playlists and see what they share or miss."
+    },
+    "playlistA": "Playlist A",
+    "playlistB": "Playlist B",
+    "videoCount": "{{count}} videos",
+    "videoCountHint": "Choose a playlist to load its videos.",
+    "chooseBoth": "Choose two playlists to compare their videos.",
+    "emptyFilter": "No videos match this filter.",
+    "stats": {
+      "totalA": "Total A",
+      "totalB": "Total B",
+      "shared": "Shared",
+      "onlyA": "Only A",
+      "onlyB": "Only B"
+    },
+    "filters": {
+      "onlyA": "Only in A",
+      "both": "In both",
+      "onlyB": "Only in B"
+    },
+    "status": {
+      "onlyA": "ONLY A",
+      "both": "SHARED",
+      "onlyB": "ONLY B",
+      "unavailable": "UNAVAILABLE"
+    },
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "selectedCount": "{{count}} selected",
+    "selectVideo": "Select {{title}}",
+    "copyToA": "Copy to A",
+    "copyToB": "Copy to B",
+    "retryLoad": "Retry playlist",
+    "confirm": {
+      "title": "Copy these videos?",
+      "description": "Add {{count}} videos to {{playlist}}. Videos already there will stay as they are.",
+      "action": "Copy videos"
+    },
+    "saving": {
+      "title": "Copying to YouTube",
+      "progress": "{{completed}} of {{total}} videos copied"
+    },
+    "saveFailed": {
+      "title": "Copy stopped"
+    },
+    "retry": "Retry the rest"
+  },
   "landing": {
     "badge": "10 tools. One tidy library.",
     "tagline": "Your playlists, finally under control.",

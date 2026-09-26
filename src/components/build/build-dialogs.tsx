@@ -52,7 +52,7 @@ export function BuildConfirmDialog({
   playlistName: string
   onCancel: () => void
   onConfirm: () => void
-  translationPrefix?: 'build' | 'duplicate' | 'merge'
+  translationPrefix?: 'build' | 'compare' | 'duplicate' | 'merge'
 }): JSX.Element {
   const { t } = useTranslation()
 
